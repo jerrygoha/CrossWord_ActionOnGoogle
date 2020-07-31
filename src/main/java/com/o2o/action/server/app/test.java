@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 public class test extends DialogflowApp {
 
-  String URL = "https://actions/o2o.kr/devsvr7/test/index.html";
+  String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
 
   @ForIntent("Default Welcome Intent")
   public ActionResponse defaultWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
@@ -148,7 +148,7 @@ public class test extends DialogflowApp {
     int totalWord = 4;
     htmldata.put("command", "ingame");
     htmldata.put("board",board);
-    htmldata.put("timeLimmit",timeLimit);
+    htmldata.put("timeLimit",timeLimit);
     htmldata.put("totalWord",totalWord);
 
 
@@ -167,25 +167,30 @@ public class test extends DialogflowApp {
     Map<String, Object> htmldata = new HashMap<>();
     HtmlResponse htmlResponse = new HtmlResponse();
 
-    String response;
+    String response ="";
 
     String word = CommonUtil.makeSafeString(request.getParameter("any"));
+
     if(word.equals("hint open")) {
       htmldata.put("command","openHint");
       htmldata.put("hint","this is hint");
+        response = "open hint";
     }
     else if(word.equals("hint close")){
       htmldata.put("command","closeHint");
+        response = "close hint";
     }
     else {
       if(word.equals("apple")){
         htmldata.put("command","correct");
+          response = "correct";
       }
-      else
-        htmldata.put("command","wrong");
+      else {
+          htmldata.put("command", "wrong");
+          response = "wrong";
+      }
     }
 
-    response = ""+word;
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();

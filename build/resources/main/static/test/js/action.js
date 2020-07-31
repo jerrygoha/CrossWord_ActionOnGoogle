@@ -86,21 +86,6 @@ class Action {
                 hideall();
                 document.getElementById("result").style.display = "block";
             },
-            // RANKING: function (data) {
-            //     console.log("실행 : ranking");
-            //     hideall();
-            //     document.getElementById("ranking").style.display = "block";
-            // },
-            // SETTING: function (data) {
-            //     console.log("실행 : setting");
-            //     hideall();
-            //     document.getElementById("setting").style.display = "block";
-            // },
-            // STORE: function (data) {
-            //     console.log("실행 : store");
-            //     hideall();
-            //     document.getElementById("store").style.display = "block";
-            // },
         };
     }
 
