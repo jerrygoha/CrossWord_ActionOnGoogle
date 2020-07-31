@@ -1,11 +1,15 @@
+/**
+ * 해당 Class의 div 전부 숨기기
+ */
 
 function hideall() {
     let elements = document.getElementsByClassName("testclass");
 
-    for(let i = 0; i < elements.length; i++){
+    for (let i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
     }
 }
+
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
@@ -15,8 +19,23 @@ class Action {
      * @param {*} scene which serves as a container of all visual elements
      */
     constructor(scene) {
-        var common = "<BR><BR><BR><BR><BR><BR><div><span>level 2</span><span>hint</span><span>coin</span></div><div>exp</div>";
-        var setting = "<div>설정</div>";
+        let level;
+        let exp;
+        let myHint;
+        let myCoin;
+
+        let winMoney1;
+        let winMoney2;
+        let winMoney3;
+        let betMoney1;
+        let betMoney2;
+        let betMoney3;
+        let timeLimit1;
+        let timeLimit2;
+        let timeLimit3;
+
+        let timeLimit;
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -25,66 +44,179 @@ class Action {
                 hideall();
                 document.getElementById("welcome").style.display = "block";
                 document.getElementById("welcome").innerHTML = `<BR><BR><BR><BR><BR><BR><button> START </button>`;
-
-                // document.getElementById("welcome").innerHTML =
-                //     `<BR><BR><BR><BR><BR>데이터는 이렇게 JSON 형태로 옵니다.<BR>${JSON.stringify(data)}`;
             },
-            MOVETOMAIN: function (data) {
+            MAIN: function (data) {
                 console.log("실행 : main");
                 hideall();
                 document.getElementById("main").style.display = "block";
-                document.getElementById("main").innerHTML = `<BR><BR><BR><BR><BR><BR><div><span>${JSON.stringify(data)}</span></div><div><span>keep going</span><span>select stage</span></div><div>설정</div>`;
-                // document.getElementById("menuplate").innerHTML = `<BR><BR><BR><BR><BR>Java Object에 담을 수 있다면 모두 보낼 수 있을 겁니다... 아마도?<BR>아래는 배열의 예제입니다. JS에서 바로 쓸 수 있어요.<BR><BR>${data.menuplate[0]}<BR>${data.menuplate[1]}<BR>${data.menuplate[2]}`;
+                level = data.level;
+                exp = data.myExp + "/" + data.fullExp;
+                myHint = data.myHint;
+                myCoin = data.myCoin;
+                document.getElementById("main").innerHTML
+                    = `<BR><BR><BR><BR><BR><BR>
+                        <div style="margin:20px">
+                            <span style="margin:20px">
+                                <div style="margin:20px">Lv.${level}</div>
+                                <div style="margin:20px">${exp}</div>
+                            </span>
+                            <span style="margin: 20px">
+                                <button>HINT</button> ${myHint}
+                            </span>
+                            <span style="margin:20px">
+                                <button>COIN</button> ${myCoin}
+                            </span>
+                        </div>
+                        <div style="margin:20px">
+                            <span style="margin:20px">
+                                <button>KEEP GOING</button>
+                            </span>
+                            <span style="margin:20px">
+                                <button>SELECT STAGE</button>
+                            </span>
+                        </div>
+                        <div style="margin: 20px">
+                            <button>SETTING</button>
+                        </div>`;
             },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
                 hideall();
                 document.getElementById("stage").style.display = "block";
-                document.getElementById("stage").innerHTML = `<BR><BR><BR><BR><BR><BR><div><span>level 2</span><span>hint</span><span>coin</span></div><div>exp</div><div><span>return</span><span>stage 1</span><span>stage 2</span><span>locked</span><span>locked</span><span>locked</span></div><div>설정</div>`
-                // document.getElementById("stage").innerHTML = `<BR><BR><BR><BR><BR><BR>${JSON.stringify(data)}`;
-                // if (data.menu === "짜장면") {
-                //     document.getElementById("stage").innerHTML += `<img src="https://dimg.donga.com/ugc/CDB/SHINDONGA/Article/5c/33/f3/15/5c33f3152603d2738de6.jpg">`;
-                // } else if (data.menu === "짬뽕") {
-                //     document.getElementById("stage").innerHTML += `<img src="https://t3.daumcdn.net/thumb/R720x0.fpng/?fname=http://t1.daumcdn.net/brunch/service/user/GvS/image/t948j6MlNec-e4hxlSD9E34ouC0.png">`;
-                // } else if (data.menu === "탕수육") {
-                //     document.getElementById("stage").innerHTML += `<img src="https://t1.daumcdn.net/cfile/blog/99667B395D0390AB2F">`;
-                // }
+                var stagenum = 1;
+                document.getElementById("stage").style.display = "block";
+                document.getElementById("stage").innerHTML
+                    = `<BR><BR><BR><BR><BR><BR>
+                        <div>
+                            <span style="margin:20px">
+                                <div style="margin:20px">Lv.${level}</div>
+                                <div style="margin:20px">${exp}</div>
+                            </span>
+                            <span style="margin: 20px">
+                                <button>HINT</button>${myHint}
+                            </span>
+                            <span style="margin: 20px">
+                                <button>COIN</button>${myCoin}
+                            </span>
+                        </div>`;
+                document.getElementById("stage").innerHTML
+                    += `<div style="margin: 20px">
+                            <span style="margin: 20px">
+                                <button>RETURN</button>
+                            </span>
+                            <span style="margin: 20px">
+                                <table><tr><th><button disabled = "boolean">STAGE ${stagenum}</button></th><th><button disabled = "boolean">stage ${stagenum}</button></th><th><button>stage 3</button></th><th><button disabled = "boolean">stage 4</button></th><th>stage 5</th></tr><tr><th>stage 6</th><th>stage 7</th><th>stage 8</th><th>stage 9</th><th>stage 10</th></tr></table>
+                            </span>
+                        </div>
+                        <div style="margin: 20px"><button>SETTING</button></div>`;
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
                 hideall();
                 document.getElementById("difficulty").style.display = "block";
-                document.getElementById("difficulty").innerHTML = `<BR><BR><BR><BR><BR><BR><div><span>level 2</span><span>hint</span><span>coin</span></div><div>exp</div><div><span>return</span><span>Easy</span><span>Medium</span><span>Hard</span></div><div>설정</div>`;
+                winMoney1 = data.winMoney1;
+                winMoney2 = data.winMoney2;
+                winMoney3 = data.winMoney3;
+                betMoney1 = data.betMoney1;
+                betMoney2 = data.betMoney2;
+                betMoney3 = data.betMoney3;
+                timeLimit1 = data.timeLimit1;
+                timeLimit2 = data.timeLimit2;
+                timeLimit3 = data.timeLimit3;
+                document.getElementById("difficulty").innerHTML
+                    = `<BR><BR><BR><BR><BR><BR>
+                       <div style="margin:20px">
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">Lv.${level}</div>
+                            <div style="margin: 20px">${exp}</div>
+                        </span>
+                        <span style="margin: 20px"><button>HINT </button>${myHint}</span>
+                        <span style="margin: 20px"><button>COIN </button>${myCoin}</span>
+                       </div>
+                       <div style="margin: 20px">
+                        <span style="margin: 20px"><button>return</button></span>
+                        <span  style="border : 1px; margin: 20px">
+                            <button>Easy<br>● winMoney : ${winMoney1}<br>● betMoney : ${betMoney1}<br>● timeLimit : ${timeLimit1}</button>
+                        </span>
+                        <span style="border: 1px; margin: 20px">
+                            <button>Medium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
+                        </span>
+                        <span style="border: 1px; margin: 20px">
+                            <button>Hard<br>● winMoney : ${winMoney3}<br>● betMoney : ${betMoney3}<br>● timeLimit : ${timeLimit3}</button>
+                         </span>
+                        </div>
+                        <div style="margin: 20px"><button>SETTING</button></div>`;
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("ingame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
+                let board = data.board;
+                timeLimit = data.timeLimit;
+                let totalWord = data.totalWord;
+                document.getElementById("inGame").innerHTML
+                    = `<BR><BR><BR><BR><BR><BR>
+                        <span style="margin: 20px">
+                            <div style="margin:20px">hint</div>
+                            <div style="margin: 20px">${totalWord}</div>
+                        </span>
+                        <span style="margin: 20px">${board}</span>
+                        <span>${timeLimit}</span>
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">${myHint}</div>
+                            <div style="margin: 20px"><button>SETTING</button></div>
+                        </span>`;
+
+                setTimeout(function () {
+                    window.canvas.sendTextQuery('get result');
+                }, timeLimit * 1000);
             },
             CORRECT: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("ingame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
             },
             WRONG: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("ingame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
             },
             OPENHINT: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("ingame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
             },
             CLOSEHINT: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("ingame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
             },
             RESULT: function (data) {
                 console.log("실행 : result");
                 hideall();
                 document.getElementById("result").style.display = "block";
+                let result = data.result;
+                let correctList = data.correctList;
+                let wrongList = data.wrongList;
+                document.getElementById("result").innerHTML
+                    = `<BR><BR><BR><BR><BR><BR>
+                       <div style="margin: 20px">
+                        <span style="margin: 20px">
+                            <button>RETURN</button>
+                        </span>
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">{$result}</div>
+                            <div style="margin: 20px">${level} ${exp}++</div>
+                            <div style="margin: 20px">CORRECT : ${correctList}, WRONG : ${wrongList}</div>
+                        </span>
+                        <span style="margin\: 20px">
+                            <button>KEEP OR RETRY</button>
+                        </span>
+                       </div>
+                        <span style="margin: 20px">
+                            <button>SETTING</button>
+                        </span>
+                       </div>`;
             },
         };
     }
@@ -103,13 +235,13 @@ class Action {
                     // command가 전부 대문자가 되어서 Action.commands에 들어감
                     that.commands[data.command.toUpperCase()](data);
                     console.log("onUpdate : " + data.command);
-                }
-                catch ( e ) {
+                } catch (e) {
                     // AoG 입력값을 매칭하지 못했을 경우
-                    console.log( "error : " + e );
+                    console.log("error : " + e);
                 }
             },
         };
+
         // called by the Interactive Canvas web app once web app has loaded to
         // register callbacks
         this.canvas.ready(callbacks);
