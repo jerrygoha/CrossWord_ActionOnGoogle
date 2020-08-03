@@ -22,11 +22,25 @@ public class GameBoard {
     private int y;
     // 유저정보
     private UserInfo userinfo;
-    public GameBoard()
+    // 난이도
+    public enum Difficulty{easy, hard, medium}
+    // 현재 게임판의 스테이지
+    private int stage;
+    // 현재 게임판의 난이도
+    private Difficulty difficulty;
+    //GameInfo
+    private GameInfo gameinfo;
+    // 생성자
+
+    public GameBoard(Difficulty _difficulty, int _stage)
     {
-        // UserInfo를 생성해서 게임 룰에 따라 보드를 생성한다.
-        userinfo = new UserInfo();
-        makeBoard(userinfo.getLevel()+2,userinfo.getLevel()+2,3);
+        // UserInfo를 생성
+        userinfo = new UserInfo(1,31,54,3,5000);
+        // 매개변수 대입
+        stage = _stage;
+        difficulty = _difficulty;
+        // 보드판 생성
+        makeBoard(stage+2,stage+2,3);
     }
     private void printBoard(char[][]board,int x, int y)
     {
@@ -39,6 +53,16 @@ public class GameBoard {
             System.out.println();
         }
     }
+    // 타임시간 가져오기
+    public int getTimeLimit()
+    {
+        return 30;
+    }
+    // 총 단어 개수 가져오기
+    public int getTotalWord()
+    {
+        return answercount;
+    }
     // 보드판 배열 가져오기
     public char[][] getBoard()
     {
@@ -48,11 +72,15 @@ public class GameBoard {
     private void loadAnswer()
     {
         answer = new AnswerWord[x];
-        for (int i = 0; i<answercount; i++)
-        {
-            AnswerWord answerWord = new AnswerWord("aa"+i,new String[]{"힌트입니다."});
-            answer[i]=answerWord;
-        }
+     /*   for (int i = 0; i<answercount; i++)
+        {*/
+            AnswerWord answerWord = new AnswerWord("aaa",new String[]{"힌트입니다."});
+        answer[0]=answerWord;
+        answerWord = new AnswerWord("ccc",new String[]{"힌트입니다."});
+        answer[1]=answerWord;
+        answerWord = new AnswerWord("ddd",new String[]{"힌트입니다."});
+        answer[2]=answerWord;
+        //}
     }
     // 보드판 만들기
     private void makeBoard(int _x, int _y, int _answercount)

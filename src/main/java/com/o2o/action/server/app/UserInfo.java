@@ -14,9 +14,10 @@ public class UserInfo {
             myExp = 31;
             fullExp = 54;
             myHint = 4;
-        myCoin = 5000;
-        //DB에서 가져오기
+            myCoin = 5000;
+            //DB에서 가져오기
     }
+
     public UserInfo(int _level, int _myExp, int _fullExp, int _myHint, int _myCoin)
     {
         // 원래는 DB객체에서 숫자를 가져올거임

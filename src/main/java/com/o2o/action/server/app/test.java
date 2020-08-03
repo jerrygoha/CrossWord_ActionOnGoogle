@@ -22,11 +22,14 @@ public class test extends DialogflowApp {
   Set<String> hintCloseTp;
 
   UserInfo user;
-
+  GameInfo gameinfo;
     private void setUp() {
     hintOpenTp = new HashSet<>();
-       hintOpenTp.addAll(Arrays.asList(new String[]{"hint", "hint open", "open hint", "give hint"}));
-       hintCloseTp.addAll(Arrays.asList(new String[]{"close hint","hint close","close","back"}));
+    hintCloseTp = new HashSet<>();
+
+    hintOpenTp.addAll(Arrays.asList(new String[]{"hint", "hint open", "open hint", "give hint"}));
+    hintCloseTp.addAll(Arrays.asList(new String[]{"close hint","hint close","close","back"}));
+    gameinfo = new GameInfo();
   }
 
   @ForIntent("Default Welcome Intent")
@@ -43,10 +46,12 @@ public class test extends DialogflowApp {
     if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
       response = "Inveractive Canvas가 지원되지 않는 기기예요.";
       return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
-    } else {
+    }
+    else {
       htmldata.put("command", "welcome");
       response = "welcome display";
-      System.out.println("Dialog response : " + response);
+      System.out.println(response);
+      //data.put("history","welcome");
       return rb.add(new SimpleResponse().setTextToSpeech(response))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
               .build();
@@ -71,7 +76,7 @@ public class test extends DialogflowApp {
     htmldata.put("myHint",user.getMyHint());
     htmldata.put("myCoin",user.getMyCoin());
 
-
+    //data.put("history","main");
     response = "main display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -89,6 +94,7 @@ public class test extends DialogflowApp {
 
     htmldata.put("command", "stageSelect");
 
+    data.put("history","stageSelect");
     response = "stageSelect display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -103,6 +109,7 @@ public class test extends DialogflowApp {
     HtmlResponse htmlResponse = new HtmlResponse();
 
     String response;
+
     /*
     //메인에서 왔는지,, 스테이지에서왔는지
       int stage;
@@ -116,27 +123,17 @@ public class test extends DialogflowApp {
      */
 
       //나중에 자료구조로 코딩
-      int winMoney1 =200 ;
-      int winMoney2 =400 ;
-      int winMoney3 =900 ;
-      int betMoney1 =100 ;
-      int betMoney2 =250 ;
-      int betMoney3 =500 ;
-      int timeLimit1 = 40;
-      int timeLimit2 = 35;
-      int timeLimit3 = 20;
-
 
     htmldata.put("command", "difficultySelect");
-    htmldata.put("winMoney1",winMoney1);
-    htmldata.put("winMoney2",winMoney2);
-    htmldata.put("winMoney3",winMoney3);
-    htmldata.put("betMoney1",betMoney1);
-    htmldata.put("betMoney2",betMoney2);
-    htmldata.put("betMoney3",betMoney3);
-    htmldata.put("timeLimit1",timeLimit1);
-    htmldata.put("timeLimit2",timeLimit2);
-    htmldata.put("timeLimit3",timeLimit3);
+    htmldata.put("winMoney1",gameinfo.getStage()[1].getWinMoney());
+    htmldata.put("winMoney2",gameinfo.getStage()[2].getWinMoney());
+    htmldata.put("winMoney3",gameinfo.getStage()[3].getWinMoney());
+    htmldata.put("betMoney1",gameinfo.getStage()[1].getBetMoney());
+    htmldata.put("betMoney2",gameinfo.getStage()[2].getBetMoney());
+    htmldata.put("betMoney3",gameinfo.getStage()[3].getBetMoney());
+    htmldata.put("timeLimit1",gameinfo.getStage()[1].getTimeLimit()[0]);
+    htmldata.put("timeLimit2",gameinfo.getStage()[2].getTimeLimit()[0]);
+    htmldata.put("timeLimit3",gameinfo.getStage()[3].getTimeLimit()[0]);
 
     /*
     htmldata.put("winMoney", DB.getWinMoney(stage));
@@ -144,6 +141,7 @@ public class test extends DialogflowApp {
     htmldata.put("timeLimit",DB.getTimeLimit(stage));
  */
 
+    data.put("history","difficultySelect");
     response = "difficultySelect display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -159,15 +157,19 @@ public class test extends DialogflowApp {
     HtmlResponse htmlResponse = new HtmlResponse();
 
     String response;
-    gameBoard = new GameBoard();
+    gameBoard = new GameBoard(GameBoard.Difficulty.easy,3);
+    //gameBoard = new GameBoard(data.difficulty,data.stage);
     char[][] board = gameBoard.getBoard();
     int timeLimit = 30;
+    //int timeLimit = gameBoard.getTimeLimit();
     int totalWord = 4;
+    //int timeLimit = gameBoard.getTotalWord();
     htmldata.put("command", "ingame");
     htmldata.put("board",board);
     htmldata.put("timeLimit",timeLimit);
     htmldata.put("totalWord",totalWord);
 
+    //data.put("history","ingame");
     response = "ingame display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -198,33 +200,14 @@ public class test extends DialogflowApp {
       if(gameBoard.tryAnswer(word)){
               htmldata.put("command","correct");
               response = "correct";
-          Result result=gameBoard.getResult();
-              if(result.isWin())
-              {
-                //성공 결과
-                  htmldata = new HashMap<>();
-                  htmlResponse = new HtmlResponse();
-                  List<String> correctList = new ArrayList<>();
-                  List<String> wrongList = new ArrayList<>();
-                  correctList.add("apple");
-                  correctList.add("happy");
-                  correctList.add("jump");
+               Result result=gameBoard.getResult();
 
-                  htmldata.put("level",user.getLevel());
-                  htmldata.put("myExp",user.getMyExp());
-                  htmldata.put("fullExp",user.getFullExp());
-                  htmldata.put("myHint",user.getMyHint());
-                  htmldata.put("myCoin",user.getMyCoin());
-                  htmldata.put("correctList",correctList);
-                  htmldata.put("wrongList",wrongList);
-                  htmldata.put("command", "result");
-                  htmldata.put("result","win");
-                  response = "result display";
-
-                  return rb.add(new SimpleResponse().setTextToSpeech(response))
-                          .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-                          .build();
+              if(result.isWin()) {
+                htmldata.put("finish", true);
+                rb.removeContext("ingameMessage");
               }
+              else
+                htmldata.put("finish",false);
       }
       else {
           htmldata.put("command", "wrong");
@@ -247,23 +230,27 @@ public class test extends DialogflowApp {
     String response;
 
     String result = "false";
-    List<String> correctList = new ArrayList<>();
+
+   /* List<String> correctList = new ArrayList<>();
     List<String> wrongList = new ArrayList<>();
+
     correctList.add("apple");
     correctList.add("happy");
-    wrongList.add("jump");
+    wrongList.add("jump");*/
 
+    Result results = gameBoard.getResult();
     htmldata.put("level",user.getLevel());
     htmldata.put("myExp",user.getMyExp());
     htmldata.put("fullExp",user.getFullExp());
     htmldata.put("myHint",user.getMyHint());
     htmldata.put("myCoin",user.getMyCoin());
-    htmldata.put("correctList",correctList);
-    htmldata.put("wrongList",wrongList);
+    htmldata.put("correctList",results.getAnser());
+    htmldata.put("wrongList",results.getRestWord());
 
     htmldata.put("command", "result");
     htmldata.put("result",result);
 
+    //data.put("history","result");
     response = "result display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
