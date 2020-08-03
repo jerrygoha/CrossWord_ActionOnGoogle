@@ -160,10 +160,8 @@ public class test extends DialogflowApp {
     gameBoard = new GameBoard(GameBoard.Difficulty.easy,3);
     //gameBoard = new GameBoard(data.difficulty,data.stage);
     char[][] board = gameBoard.getBoard();
-    int timeLimit = 30;
-    //int timeLimit = gameBoard.getTimeLimit();
-    int totalWord = 4;
-    //int timeLimit = gameBoard.getTotalWord();
+    int timeLimit = gameBoard.getTimeLimit();
+    int timeLimit = gameBoard.getTotalWord();
     htmldata.put("command", "ingame");
     htmldata.put("board",board);
     htmldata.put("timeLimit",timeLimit);
