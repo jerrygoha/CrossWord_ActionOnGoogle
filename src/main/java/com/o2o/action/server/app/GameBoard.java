@@ -72,15 +72,15 @@ public class GameBoard {
     private void loadAnswer()
     {
         answer = new AnswerWord[x];
-     /*   for (int i = 0; i<answercount; i++)
-        {*/
-            AnswerWord answerWord = new AnswerWord("aaa",new String[]{"힌트입니다."});
-        answer[0]=answerWord;
-        answerWord = new AnswerWord("ccc",new String[]{"힌트입니다."});
+
+            AnswerWord answerWord = new AnswerWord("aaa",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+            answer[0]=answerWord;
+        answerWord = new AnswerWord("ccc",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[1]=answerWord;
-        answerWord = new AnswerWord("ddd",new String[]{"힌트입니다."});
+        answerWord = new AnswerWord("ddd",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[2]=answerWord;
-        //}
+
+
     }
     // 보드판 만들기
     private void makeBoard(int _x, int _y, int _answercount)

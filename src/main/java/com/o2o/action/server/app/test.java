@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public class test extends DialogflowApp {
 
-  String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
+  String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
 
   GameBoard gameBoard;
 

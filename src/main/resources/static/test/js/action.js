@@ -9,7 +9,7 @@ function hideall() {
         elements[i].style.display = "none";
     }
 }
-
+//레벨에 맞는 스테이지만 클릭할 수 있도록 하는 함수
 function stageLocked(level) {
     let i;
     let a;
@@ -23,7 +23,11 @@ function stageLocked(level) {
     }
     return a;
 }
-
+/**
+ * 게임 실행 중 타이머
+ * 현재 문제 : 초만 변경되어야 하는데 초마다 새로운 박스가 생성됨
+ * @param time
+ */
 function timer(time){
     let element = document.getElementById("inGame");
     let x = setInterval(function () {
@@ -45,11 +49,13 @@ class Action {
      * @param {*} scene which serves as a container of all visual elements
      */
     constructor(scene) {
+        //공통화면을 위해 전역변수로 선언
         let level;
         let exp;
         let myHint;
         let myCoin;
 
+        //지역변수로 변환 예정
         let winMoney1;
         let winMoney2;
         let winMoney3;
@@ -62,6 +68,7 @@ class Action {
 
         let timeLimit;
 
+        //correct command가 왔을 때 변화를 위해 전역변수 선언
         let totalWord;
 
         this.canvas = window.interactiveCanvas;
