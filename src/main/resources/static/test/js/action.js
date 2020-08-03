@@ -4,42 +4,33 @@
 
 function hideall() {
     let elements = document.getElementsByClassName("testclass");
-
     for (let i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
     }
 }
-//레벨에 맞는 스테이지만 클릭할 수 있도록 하는 함수
 function stageLocked(level) {
     let i;
     let a;
-    for (i = 1; i <= 10; i++) {
-        //console.log(${level});
+    let element = document.getElementById("stage");
+    for (i = 0; i <= 9; i++) {
         if (level <= i) {
-            a += `<div style="margin: 20px"><button disabled>STAGE ${i}</button></div>`
+            element.innerHTML += `<div style="margin: 20px"><button disabled>STAGE ${i+1}</button></div>`
         } else {
-            a += `<div style="margin: 20px"><button>STAGE ${i}</button></div>`
+            element.innerHTML += `<div style="margin: 20px"><button>STAGE ${i+1}</button></div>`
         }
     }
     return a;
 }
-/**
- * 게임 실행 중 타이머
- * 현재 문제 : 초만 변경되어야 하는데 초마다 새로운 박스가 생성됨
- * @param time
- */
 function timer(time){
-    let element = document.getElementById("inGame");
+    let element = document.getElementById("timer");
     let x = setInterval(function () {
-        element.innerHTML += `<div style="margin: 20px"> ${time} + seconds </div>`;
+        element.innerHTML = time + " seconds";
         time--;
-        if(time < 0){
+        if (time < 0) {
             clearInterval(x);
-            element.innerHTML += `<div style="margin: 20px"> finished </div>`;
         }
     },1000);
 }
-
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
@@ -54,23 +45,8 @@ class Action {
         let exp;
         let myHint;
         let myCoin;
-
-        //지역변수로 변환 예정
-        let winMoney1;
-        let winMoney2;
-        let winMoney3;
-        let betMoney1;
-        let betMoney2;
-        let betMoney3;
-        let timeLimit1;
-        let timeLimit2;
-        let timeLimit3;
-
-        let timeLimit;
-
         //correct command가 왔을 때 변화를 위해 전역변수 선언
         let totalWord;
-
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -78,7 +54,7 @@ class Action {
                 console.log("실행 : welcome");
                 hideall();
                 document.getElementById("welcome").style.display = "block";
-                document.getElementById("welcome").innerHTML = `<BR><BR><BR><BR><BR><BR><button> STARTA </button>`;
+                document.getElementById("welcome").innerHTML = `<BR><BR><BR><BR><BR><BR>START`;
             },
             MAIN: function (data) {
                 console.log("실행 : main");
@@ -96,22 +72,22 @@ class Action {
                                 <div style="margin:20px">${exp}</div>
                             </span>
                             <span style="margin: 20px">
-                                <button>HINT</button> ${myHint}
+                                HINT ${myHint}
                             </span>
                             <span style="margin:20px">
-                                <button>COIN</button> ${myCoin}
+                                COIN ${myCoin}
                             </span>
                         </div>
                         <div style="margin:20px">
                             <span style="margin:20px">
-                                <button>KEEP GOING</button>
+                                KEEP GOING
                             </span>
                             <span style="margin:20px">
-                                <button>SELECT STAGE</button>
+                                SELECT STAGE
                             </span>
                         </div>
                         <div style="margin: 20px">
-                            <button>SETTING</button>
+                            SETTING
                         </div>`;
             },
             STAGESELECT: function (data) {
@@ -122,36 +98,35 @@ class Action {
                 document.getElementById("stage").style.display = "block";
                 document.getElementById("stage").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
-                        <div>s
+                        <div>
                             <span style="margin:20px">
                                 <div style="margin:20px">Lv.${level}</div>
                                 <div style="margin:20px">${exp}</div>
                             </span>
                             <span style="margin: 20px">
-                                <button>HINT</button> ${myHint}
+                                HINT ${myHint}
                             </span>
                             <span style="margin: 20px">
-                                <button>COIN</button> ${myCoin}
+                                COIN ${myCoin}
                             </span>
                         </div>`;
+                stageLocked(level);
                 document.getElementById("stage").innerHTML
-                    += stageLocked(3);
-                document.getElementById("stage").innerHTML
-                    += `<div style="margin: 20px"><button>SETTING</button></div>`;
+                    += `<div style="margin: 20px">SETTING</div>`;
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
                 hideall();
                 document.getElementById("difficulty").style.display = "block";
-                winMoney1 = data.winMoney1;
-                winMoney2 = data.winMoney2;
-                winMoney3 = data.winMoney3;
-                betMoney1 = data.betMoney1;
-                betMoney2 = data.betMoney2;
-                betMoney3 = data.betMoney3;
-                timeLimit1 = data.timeLimit1;
-                timeLimit2 = data.timeLimit2;
-                timeLimit3 = data.timeLimit3;
+                let winMoney1 = data.winMoney1;
+                let winMoney2 = data.winMoney2;
+                let winMoney3 = data.winMoney3;
+                let betMoney1 = data.betMoney1;
+                let betMoney2 = data.betMoney2;
+                let betMoney3 = data.betMoney3;
+                let timeLimit1 = data.timeLimit1;
+                let timeLimit2 = data.timeLimit2;
+                let timeLimit3 = data.timeLimit3;
                 document.getElementById("difficulty").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
                        <div style="margin:20px">
@@ -159,53 +134,54 @@ class Action {
                             <div style="margin: 20px">Lv.${level}</div>
                             <div style="margin: 20px">${exp}</div>
                         </span>
-                        <span style="margin: 20px"><button>HINT</button> ${myHint}</span>
-                        <span style="margin: 20px"><button>COIN</button> ${myCoin}</span>
+                        <span style="margin: 20px">HINT ${myHint}</span>
+                        <span style="margin: 20px">COIN ${myCoin}</span>
                        </div>
                        <div style="margin: 20px">
-                        <span style="margin: 20px"><button>BACK</button></span>
-                        <span  style="border : 1px; margin: 20px">
+                        <span style="margin: 20px">BACK</span>
+                        <span  style="border: 5px; margin: 20px">
                             <button>Easy<br>● winMoney : ${winMoney1}<br>● betMoney : ${betMoney1}<br>● timeLimit : ${timeLimit1}</button>
                         </span>
-                        <span style="border: 1px; margin: 20px">
-                            <button>Medium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
+                        <span style="border: 5px; margin: 20px">
+                            <button>edium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
                         </span>
-                        <span style="border: 1px; margin: 20px">
+                        <span style="border: 5px; margin: 20px">
                             <button>Hard<br>● winMoney : ${winMoney3}<br>● betMoney : ${betMoney3}<br>● timeLimit : ${timeLimit3}</button>
                          </span>
                         </div>
-                        <div style="margin: 20px"><button>SETTING</button></div>`;
+                        <div style="margin: 20px">SETTING</div>`;
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
                 let board = data.board;
-                let boardRow = data.board[0].length            //열
+                let boardRow = data.board[0].length;          //열
                 let boardCol = data.board.length;            //행
-                timeLimit = data.timeLimit;
+                let timeLimit = data.timeLimit;
                 totalWord = data.totalWord;
                 document.getElementById("inGame").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
             <span style="margin: 20px">
-                <div style="margin:20px"><button>HINT</button> ${myHint}</div>
-                <div style="margin: 20px">You have to find ${totalWord} words</div>
+                <div style="margin:20px">HINT ${myHint}</div>
+                <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
             </span>`;
                 for(let col = 0; col < boardCol; col++){
                     for(let row = 0; row< boardRow; row++){
                         document.getElementById("inGame").innerHTML+=` 
-                           <span style="margin: 20px">${board[col][row]}</span>
+                           <span style="margin: 20px; border: 1px">${board[col][row]}</span>
                         `;
                     }
                     document.getElementById("inGame").innerHTML+=` 
                            <br>
                         `;
                 }
-
                 document.getElementById("inGame").innerHTML
                     += `<span style="margin: 20px">
-                <div style="margin: 20px"><button>SETTING</button></div>
-            </span>`;
+                <div style="margin: 20px">SETTING</div>
+            </span>
+            <span id="timer" style="margin: 20px"></span>
+            <span id="correctOrWrong" style="margin: 20px"></span>`;
                 timer(timeLimit);
                 setTimeout(function () {
                     window.canvas.sendTextQuery('get result');
@@ -216,21 +192,20 @@ class Action {
                 hideall();
                 document.getElementById("inGame").style.display = "block";
                 let finish = data.finish;
-
                 totalWord--;
-                document.getElementById("inGame").innerHTML
-                    += `<span>CORRECT</span>
+                document.getElementById("correctOrWrong").innerHTML
+                    = `<span style="margin: 10px">CORRECT</span>`;
+                document.getElementById("totalWord").innerHTML
+                    = "You have to find "  + totalWord + " words";
                 if(finish)
                     window.canvas.sendTextQuery('get result');
-            <span>You have to find ${totalWord} words</span>
-            `;
             },
             WRONG: function (data) {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
-                document.getElementById("inGame").innerHTML
-                    += `<span>WRONG</span>
+                document.getElementById("correctOrWrong").innerHTML
+                    = `<span style="margin: 10px">WRONG</span>
             `;
             },
             OPENHINT: function (data) {
@@ -239,8 +214,8 @@ class Action {
                 document.getElementById("inGame").style.display = "block";
                 document.getElementById("inGame").innerHTML
                     += `<BR><BR><BR><BR><BR><BR>
-            <span>HINT</span>
-            `;
+                        <span>HINT</span>
+                        `;
             },
             CLOSEHINT: function (data) {
                 console.log("실행 : inGame");
@@ -256,31 +231,52 @@ class Action {
                 hideall();
                 document.getElementById("result").style.display = "block";
                 let result = data.result;
+                level = data.level;
+                exp = data.myExp + "/" + data.fullExp;
+                myCoin = data.myCoin;
+                myHint = data.myHint;
                 let correctList = data.correctList;
                 let wrongList = data.wrongList;
+                //힌트, 코인, 레벨, 경험치 등을 다시 받아서 화면을 구성할 것 (예정)
                 document.getElementById("result").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
-           <div style="margin: 20px">
-            <span style="margin: 20px">
-                <button>BACK</button>
-            </span>
-            <span style="margin: 20px">
-                <div style="margin: 20px">${result}</div>
-                <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                <div style="margin: 20px">CORRECT : ${correctList}, WRONG : ${wrongList}</div>
-            </span>
-            <span style="margin\: 20px">
-                <button>KEEP OR RETRY</button>
-            </span>
-           </div>
-            <span style="margin: 20px">
-                <button>SETTING</button>
-            </span>
-           </div>`;
+                        <div style="margin:20px">
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">Lv.${level}</div>
+                            <div style="margin: 20px">${exp}</div>
+                        </span>
+                        <span style="margin: 20px">HINT ${myHint}</span>
+                        <span style="margin: 20px">COIN ${myCoin}</span>
+                       </div>
+                       <div style="margin: 20px">
+                        <span style="margin: 20px">BACK</span>
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">${result}</div>
+                            <div style="margin: 20px">Lv.${level} ${exp}++</div>
+                            <div style="margin: 20px">CORRECT : ${correctList}, WRONG : ${wrongList}</div>
+                        </span>
+                        <span style="margin\: 20px">KEEP OR RETRY</span>
+                       </div>
+                        <span style="margin: 20px">SETTING</span>
+                       </div>`;
+            },
+            SETTING: function(data) {
+                console.log("실행 : setting");
+                hideall();
+                document.getElementById("setting").style.display = "block";
+            },
+            RANKING: function(data) {
+                console.log("실행 : ranking");
+                hideall();
+                document.getElementById("ranking").style.display = "block";
+            },
+            STORE: function(data) {
+                console.log("실행 : store");
+                hideall();
+                document.getElementById("store").style.display = "block";
             },
         };
     }
-
     /*
      * Register all callbacks used by Interactive Canvas
      * executed during scene creation time.
@@ -301,7 +297,6 @@ class Action {
                 }
             },
         };
-
         // called by the Interactive Canvas web app once web app has loaded to
         // register callbacks
         this.canvas.ready(callbacks);

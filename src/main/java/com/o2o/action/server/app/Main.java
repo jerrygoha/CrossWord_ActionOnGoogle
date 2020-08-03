@@ -12,9 +12,9 @@ import com.o2o.action.server.util.CommonUtil;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-public class test extends DialogflowApp {
+public class Main extends DialogflowApp {
 
-  String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
+  String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
 
   GameBoard gameBoard;
 
@@ -23,6 +23,7 @@ public class test extends DialogflowApp {
 
   UserInfo user;
   GameInfo gameinfo;
+  TTS tts;
     private void setUp() {
     hintOpenTp = new HashSet<>();
     hintCloseTp = new HashSet<>();
@@ -30,6 +31,7 @@ public class test extends DialogflowApp {
     hintOpenTp.addAll(Arrays.asList(new String[]{"hint", "hint open", "open hint", "give hint"}));
     hintCloseTp.addAll(Arrays.asList(new String[]{"close hint","hint close","close","back"}));
     gameinfo = new GameInfo();
+      tts = new TTS();
   }
 
   @ForIntent("Default Welcome Intent")
@@ -52,10 +54,18 @@ public class test extends DialogflowApp {
       response = "welcome display";
       System.out.println(response);
       //data.put("history","welcome");
-      return rb.add(new SimpleResponse().setTextToSpeech(response))
+      return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("welcome")))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
               .build();
     }
+  }
+  @ForIntent("mainFromWelcome")
+  public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
+      return main(request);
+  }
+  @ForIntent("mainFromStage")
+  public ActionResponse mainFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
+    return main(request);
   }
 
   @ForIntent("main")
@@ -77,14 +87,27 @@ public class test extends DialogflowApp {
     htmldata.put("myCoin",user.getMyCoin());
 
     //data.put("history","main");
-    response = "main display";
+    response = "mains display";
     return rb.add(new SimpleResponse().setTextToSpeech(response))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
               .build();
   }
 
-  @ForIntent("stageSelect")
+
+  @ForIntent("stageFromMain")
   public ActionResponse stageSelect(ActionRequest request) throws ExecutionException, InterruptedException {
+      return stage(request);
+  }
+  @ForIntent("stageFromDifficulty")
+  public ActionResponse stageFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
+    return stage(request);
+  }
+  @ForIntent("stageFromResult")
+  public ActionResponse stageFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
+    return stage(request);
+  }
+
+  public ActionResponse stage(ActionRequest request) throws ExecutionException, InterruptedException {
     ResponseBuilder rb = getResponseBuilder(request);
     Map<String, Object> data = rb.getConversationData();
     Map<String, Object> htmldata = new HashMap<>();
@@ -101,8 +124,16 @@ public class test extends DialogflowApp {
             .build();
   }
 
-  @ForIntent("difficultySelect")
+
+  @ForIntent("difficultyFromMain")
   public ActionResponse difficultySelect(ActionRequest request) throws ExecutionException, InterruptedException {
+      return difficulty(request);
+  }
+  @ForIntent("difficultyFromStage")
+  public ActionResponse difficultyFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
+    return difficulty(request);
+  }
+  public ActionResponse difficulty(ActionRequest request) throws ExecutionException, InterruptedException {
     ResponseBuilder rb = getResponseBuilder(request);
     Map<String, Object> data = rb.getConversationData();
     Map<String, Object> htmldata = new HashMap<>();
@@ -143,13 +174,21 @@ public class test extends DialogflowApp {
 
     data.put("history","difficultySelect");
     response = "difficultySelect display";
-    return rb.add(new SimpleResponse().setTextToSpeech(response))
+    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("difficultyselect")))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
 
   }
 
-  @ForIntent("ingame")
+  @ForIntent("ingameFromDifficulty")
+  public ActionResponse ingameFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
+      return ingame(request);
+  }
+  @ForIntent("ingameFromResult")
+  public ActionResponse ingameFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
+    return ingame(request);
+  }
+
   public ActionResponse ingame(ActionRequest request) throws ExecutionException, InterruptedException {
     ResponseBuilder rb = getResponseBuilder(request);
     Map<String, Object> data = rb.getConversationData();
@@ -161,7 +200,7 @@ public class test extends DialogflowApp {
     //gameBoard = new GameBoard(data.difficulty,data.stage);
     char[][] board = gameBoard.getBoard();
     int timeLimit = gameBoard.getTimeLimit();
-    int timeLimit = gameBoard.getTotalWord();
+    int totalWord = gameBoard.getTotalWord();
     htmldata.put("command", "ingame");
     htmldata.put("board",board);
     htmldata.put("timeLimit",timeLimit);
@@ -169,7 +208,7 @@ public class test extends DialogflowApp {
 
     //data.put("history","ingame");
     response = "ingame display";
-    return rb.add(new SimpleResponse().setTextToSpeech(response))
+    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("ingame")))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
   }
@@ -227,7 +266,8 @@ public class test extends DialogflowApp {
 
     String response;
 
-    String result = "false";
+
+    String result = CommonUtil.makeSafeString(request.getParameter("result"));
 
    /* List<String> correctList = new ArrayList<>();
     List<String> wrongList = new ArrayList<>();
@@ -250,7 +290,7 @@ public class test extends DialogflowApp {
 
     //data.put("history","result");
     response = "result display";
-    return rb.add(new SimpleResponse().setTextToSpeech(response))
+    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("win")))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
   }
