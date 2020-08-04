@@ -17,13 +17,10 @@ public class Main extends DialogflowApp {
   String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
 
   GameBoard gameBoard;
-
-  Set<String> hintOpenTp;
-  Set<String> hintCloseTp;
-
   UserInfo user;
   GameInfo gameinfo;
   TTS tts;
+
     private void setUp() {
     gameinfo = new GameInfo();
       tts = new TTS();
@@ -39,6 +36,7 @@ public class Main extends DialogflowApp {
     String response;
     data.clear();
     setUp();
+    data.put("history","welcome");
 
     if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
       response = "Inveractive Canvas가 지원되지 않는 기기예요.";
@@ -70,6 +68,7 @@ public class Main extends DialogflowApp {
     String response;
 
     user = new UserInfo();
+    data.put("history","main");
 
     htmldata.put("command", "main");
     htmldata.put("level",user.getLevel());
@@ -106,12 +105,11 @@ public class Main extends DialogflowApp {
     HtmlResponse htmlResponse = new HtmlResponse();
 
     String response;
-
+    data.put("history","stage");
     htmldata.put("command", "stageSelect");
 
-    data.put("history","stageSelect");
-    response = "stageSelect display";
-    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("stageselect")))
+    response = tts.getTtsmap().get("stageselect");
+    return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
   }
@@ -132,6 +130,7 @@ public class Main extends DialogflowApp {
     HtmlResponse htmlResponse = new HtmlResponse();
 
     String response;
+    data.put("history","difficulty");
 
     /*
     //메인에서 왔는지,, 스테이지에서왔는지
@@ -164,7 +163,6 @@ public class Main extends DialogflowApp {
     htmldata.put("timeLimit",DB.getTimeLimit(stage));
  */
 
-    data.put("history","difficultySelect");
     response = "difficultySelect display";
     return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("difficultyselect")))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -186,6 +184,7 @@ public class Main extends DialogflowApp {
     Map<String, Object> data = rb.getConversationData();
     Map<String, Object> htmldata = new HashMap<>();
     HtmlResponse htmlResponse = new HtmlResponse();
+    data.put("history","ingame");
 
     String response;
     gameBoard = new GameBoard(GameBoard.Difficulty.easy,3);
@@ -214,7 +213,7 @@ public class Main extends DialogflowApp {
 
     String response ="";
     String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
-    if(hint != null) {
+    if((hint.equals("open"))||(hint.equals("close"))) {
       if(hint.equals("open")){
         htmldata.put("command","openHint");
         htmldata.put("hint",gameBoard.getHintMessage());
@@ -257,6 +256,7 @@ public class Main extends DialogflowApp {
     Map<String, Object> data = rb.getConversationData();
     Map<String, Object> htmldata = new HashMap<>();
     HtmlResponse htmlResponse = new HtmlResponse();
+    data.put("history","result");
 
     String response;
 
@@ -275,11 +275,58 @@ public class Main extends DialogflowApp {
     htmldata.put("command", "result");
     htmldata.put("result",result);
 
-    //data.put("history","result");
-    response = "result display";
-    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("win")))
+    if(result.equals("success"))
+      response = tts.getTtsmap().get("win");
+    else
+      response ="lose";
+
+    return rb.add(new SimpleResponse().setTextToSpeech(response))
+              .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+              .build();
+
+  }
+
+  @ForIntent("setting")
+  public ActionResponse setting(ActionRequest request) throws ExecutionException, InterruptedException {
+    ResponseBuilder rb = getResponseBuilder(request);
+    Map<String, Object> data = rb.getConversationData();
+    Map<String, Object> htmldata = new HashMap<>();
+    HtmlResponse htmlResponse = new HtmlResponse();
+    htmldata.put("command", "setting");
+
+    String response = "setting";
+
+    return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
+  }
+
+  @ForIntent("ranking")
+  public ActionResponse ranking(ActionRequest request) throws ExecutionException, InterruptedException {
+    ResponseBuilder rb = getResponseBuilder(request);
+    Map<String, Object> data = rb.getConversationData();
+    Map<String, Object> htmldata = new HashMap<>();
+    HtmlResponse htmlResponse = new HtmlResponse();
+    htmldata.put("command", "ranking");
+
+    String response = "ranking";
+    return rb.add(new SimpleResponse().setTextToSpeech(response))
+            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+            .build();
+  }
+
+    @ForIntent("shop")
+    public ActionResponse shop(ActionRequest request) throws ExecutionException, InterruptedException {
+      ResponseBuilder rb = getResponseBuilder(request);
+      Map<String, Object> data = rb.getConversationData();
+      Map<String, Object> htmldata = new HashMap<>();
+      HtmlResponse htmlResponse = new HtmlResponse();
+      htmldata.put("command", "shop");
+
+      String response = "shop";
+      return rb.add(new SimpleResponse().setTextToSpeech(response))
+              .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+              .build();
   }
 
 }
