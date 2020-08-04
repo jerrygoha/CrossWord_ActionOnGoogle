@@ -323,6 +323,39 @@ public class Main extends DialogflowApp {
                 .build();
     }
 
+    @ForIntent("wing")
+    public ActionResponse wing(ActionRequest request) throws ExecutionException, InterruptedException {
+        ResponseBuilder rb = getResponseBuilder(request);
+        Map<String, Object> data = rb.getConversationData();
+        Map<String, Object> htmldata = new HashMap<>();
+        HtmlResponse htmlResponse = new HtmlResponse();
+
+        String response = "";
+        String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
+
+
+            if (gameBoard.tryAnswer("wing")) {
+                htmldata.put("command", "correct");
+                response = "correct";
+                Result result = gameBoard.getResult();
+
+                if (result.isWin()) {
+                    htmldata.put("finish", true);
+                    rb.removeContext("ingameMessage");
+                } else
+                    htmldata.put("finish", false);
+            } else {
+                htmldata.put("command", "wrong");
+                response = "wrong";
+
+        }
+
+        return rb.add(new SimpleResponse().setTextToSpeech(response))
+                .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                .build();
+
+    }
+
     @ForIntent("end")
     public ActionResponse end(ActionRequest request) throws ExecutionException, InterruptedException {
 
