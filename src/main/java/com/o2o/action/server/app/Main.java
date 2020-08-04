@@ -77,7 +77,6 @@ public class Main extends DialogflowApp {
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
 
-
         response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -267,14 +266,14 @@ public class Main extends DialogflowApp {
         htmldata.put("command", "result");
         htmldata.put("result", result);
 
-
-        if(result.equals("fail"))
-            response = "lose";
-        else
-            response = tts.getTtsmap().get("win");
-
+//        if(result.equals("fail"))
+////            response = "lose";
+////        else
+////            response = tts.getTtsmap().get("win");
+////
         rb.removeContext("ingame");
 
+        response = "result";
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
