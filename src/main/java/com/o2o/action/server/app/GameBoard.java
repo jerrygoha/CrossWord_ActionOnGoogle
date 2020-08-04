@@ -4,10 +4,11 @@ package com.o2o.action.server.app;
 import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class GameBoard {
     // 보드 배열
-    private char Board[][];
+    private BoardCell Board[][];
     // 정답변수
     private AnswerWord[] answer;
     // 맞춘 정답 리스트
@@ -42,13 +43,13 @@ public class GameBoard {
         // 보드판 생성
         makeBoard(stage+2,stage+2,3);
     }
-    private void printBoard(char[][]board,int x, int y)
+    private void printBoard(BoardCell[][]board,int x, int y)
     {
         for (int i = 0; i<y; i++)
         {
             for (int j = 0; j<x; j++)
             {
-                System.out.print(Board[i][j] + " ");
+                System.out.print(Board[i][j].cellchar + " ");
             }
             System.out.println();
         }
@@ -66,21 +67,61 @@ public class GameBoard {
     // 보드판 배열 가져오기
     public char[][] getBoard()
     {
-        return Board;
+        char board[][] = new char[y][x];
+        for (int i=0; i< y; i++)
+        {
+            for (int j=0; j< x; j++)
+            {
+                board[i][j] = Board[i][j].cellchar;
+            }
+
+        }
+        return board;
     }
     // 정답 DB에서 가져오기
     private void loadAnswer()
     {
         answer = new AnswerWord[x];
 
-            AnswerWord answerWord = new AnswerWord("aaa",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+            AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
             answer[0]=answerWord;
-        answerWord = new AnswerWord("ccc",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answerWord = new AnswerWord("dog",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[1]=answerWord;
-        answerWord = new AnswerWord("ddd",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answerWord = new AnswerWord("ant",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[2]=answerWord;
 
 
+    }
+    // 보드판 정답을 제외한 알파벳 구성
+    private void MakeUpBoardAlphabet()
+    {
+        Random random = new Random();
+        for (int i=0; i< y; i++)
+        {
+            for (int j=0; j< x; j++)
+            {
+                BoardCell cell = new BoardCell();
+                // 0~26까지 숫자 랜덤하게 받아서 알파벳으로 변환
+                int randomnum = random.nextInt(27);
+                cell.cellchar = (char)(randomnum+97);
+                Board[i][j] = cell;
+            }
+
+        }
+
+    }
+    // 보드판에 정답 알파벳 넣기
+    private void MakeUpBoardAnswer()
+    {
+        // 보드 구성(정답인 곳에 정답 넣기)
+        for (int i = 0; i<answercount; i++)
+        {
+            for (int j = 0; j<answer[i].getAnswerLength(); j++)
+            {
+                Board[i][j].cellchar = answer[i].getAnswerChar(j);
+                Board[i][j].isAnswer = true;
+            }
+        }
     }
     // 보드판 만들기
     private void makeBoard(int _x, int _y, int _answercount)
@@ -88,7 +129,8 @@ public class GameBoard {
         x = _x;
         y = _y;
         answercount = _answercount;
-        Board = new char[y][x];
+        Board = new BoardCell[y][x];
+
         answerlist = new ArrayList<AnswerWord>();
         restanswerlist = new ArrayList<AnswerWord>();
         // 정답 불러오기
@@ -98,23 +140,11 @@ public class GameBoard {
         {
             restanswerlist.add(answer[i]);
         }
-        // 보드 구성(정답이 아닌 곳은 b로 구성)
-        for (int i = 0; i<y; i++)
-        {
-            for (int j = 0; j<x; j++)
-            {
-                Board[i][j] = 'b';
-            }
-        }
-
-        // 보드 구성(정답인 곳에 정답 넣기)
-        for (int i = 0; i<answercount; i++)
-        {
-            for (int j = 0; j<answer[i].getAnswerLength(); j++)
-            {
-                Board[i][j] = answer[i].getAnswerChar(j);
-            }
-        }
+        //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+        MakeUpBoardAlphabet();
+        // 보드판에 정답 알파벳 넣기
+        MakeUpBoardAnswer();
+        //보드판 출력
         printBoard(Board,x,y);
     }
     // 해당 정답의 힌트 얻기
