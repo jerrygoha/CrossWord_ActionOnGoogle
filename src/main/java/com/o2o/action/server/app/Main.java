@@ -273,7 +273,7 @@ public class Main extends DialogflowApp {
 ////
         rb.removeContext("ingame");
 
-        response = "result";
+        response = tts.getTtsmap().get("result");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
@@ -303,7 +303,7 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
         htmldata.put("command", "ranking");
 
-        String response = "ranking";
+        String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
@@ -323,4 +323,46 @@ public class Main extends DialogflowApp {
                 .build();
     }
 
+    @ForIntent("end")
+    public ActionResponse end(ActionRequest request) throws ExecutionException, InterruptedException {
+
+        return getResponseBuilder(request).add("good bye").endConversation().build();
+    }
+    @ForIntent("go back")
+    public ActionResponse goback(ActionRequest request) throws ExecutionException, InterruptedException {
+        ResponseBuilder rb = getResponseBuilder(request);
+        Map<String, Object> data = rb.getConversationData();
+        Map<String, Object> htmldata = new HashMap<>();
+        HtmlResponse htmlResponse = new HtmlResponse();
+
+
+        String response;
+
+
+        data.put("history", "result");
+        Result results = gameBoard.getResult();
+        htmldata.put("level", user.getLevel());
+        htmldata.put("myExp", user.getMyExp());
+        htmldata.put("fullExp", user.getFullExp());
+        htmldata.put("myHint", user.getMyHint());
+        htmldata.put("myCoin", user.getMyCoin());
+        htmldata.put("correctList", results.getAnser());
+        htmldata.put("wrongList", results.getRestWord());
+
+        htmldata.put("command", "result");
+        htmldata.put("result", "success");
+
+//        if(result.equals("fail"))
+////            response = "lose";
+////        else
+////            response = tts.getTtsmap().get("win");
+////
+        rb.removeContext("ingame");
+
+        response = "result";
+        return rb.add(new SimpleResponse().setTextToSpeech(response))
+                .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                .build();
+
+    }
 }
