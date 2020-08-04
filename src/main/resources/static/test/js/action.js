@@ -60,7 +60,7 @@ class Action {
                 console.log("실행 : welcome");
                 hideall();
                 document.getElementById("welcome").style.display = "block";
-                document.getElementById("welcome").innerHTML = `<BR><BR><BR><BR><BR><BR>START`;
+                document.getElementById("welcome").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/welcome.png">`;
             },
             MAIN: function (data) {
                 console.log("실행 : main");
@@ -70,8 +70,9 @@ class Action {
                 exp = data.myExp + "/" + data.fullExp;
                 myHint = data.myHint;
                 myCoin = data.myCoin;
+                document.getElementById("main").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/main.png">`;
                 document.getElementById("main").innerHTML
-                    = `<BR><BR><BR><BR><BR><BR>
+                    += `<BR><BR><BR><BR><BR><BR>
                         <div style="margin:20px">
                             <span style="margin:20px">
                                 <div style="margin:20px">Lv.${level}</div>
@@ -102,8 +103,9 @@ class Action {
                 document.getElementById("stage").style.display = "block";
                 var stagenum = 1;
                 document.getElementById("stage").style.display = "block";
+                document.getElementById("stage").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/selectstage.png">`;
                 document.getElementById("stage").innerHTML
-                    = `<BR><BR><BR><BR><BR><BR>
+                    += `<BR><BR><BR><BR><BR><BR>
                         <div>
                             <span style="margin:20px">
                                 <div style="margin:20px">Lv.${level}</div>
@@ -133,8 +135,9 @@ class Action {
                 let timeLimit1 = data.timeLimit1;
                 let timeLimit2 = data.timeLimit2;
                 let timeLimit3 = data.timeLimit3;
+                document.getElementById("difficulty").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/selectdifficult.png">`;
                 document.getElementById("difficulty").innerHTML
-                    = `<BR><BR><BR><BR><BR><BR>
+                    += `<BR><BR><BR><BR><BR><BR>
                        <div style="margin:20px">
                         <span style="margin: 20px">
                             <div style="margin: 20px">Lv.${level}</div>
@@ -166,8 +169,9 @@ class Action {
                 let boardCol = data.board.length;            //행
                 let timeLimit = data.timeLimit;
                 totalWord = data.totalWord;
+                document.getElementById("inGame").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/ingame.png">`;
                 document.getElementById("inGame").innerHTML
-                    = `<BR><BR><BR><BR><BR><BR>
+                    += `<BR><BR><BR><BR><BR><BR>
             <span style="margin: 20px">
                 <div id="hint" style="margin:20px">HINT ${myHint}</div>
                 <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
@@ -243,8 +247,10 @@ class Action {
                 myHint = data.myHint;
                 let correctList = data.correctList;
                 let wrongList = data.wrongList;
-                document.getElementById("result").innerHTML
-                    = `<BR><BR><BR><BR><BR><BR>
+                if(result == lose){
+                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/result_fail.png">`;
+                    document.getElementById("result").innerHTML
+                        += `<BR><BR><BR><BR><BR><BR>
                         <div style="margin:20px">
                         <span style="margin: 20px">
                             <div style="margin: 20px">Lv.${level}</div>
@@ -264,24 +270,52 @@ class Action {
                        </div>
                         <span style="margin: 20px">SETTING</span>
                        </div>`;
+                }else{
+                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/result_success.png">`
+                    document.getElementById("result").innerHTML
+                        += `<BR><BR><BR><BR><BR><BR>
+                        <div style="margin:20px">
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">Lv.${level}</div>
+                            <div style="margin: 20px">${exp}</div>
+                        </span>
+                        <span style="margin: 20px">HINT ${myHint}</span>
+                        <span style="margin: 20px">COIN ${myCoin}</span>
+                       </div>
+                       <div style="margin: 20px">
+                        <span style="margin: 20px">BACK</span>
+                        <span style="margin: 20px">
+                            <div style="margin: 20px">${result}</div>
+                            <div style="margin: 20px">Lv.${level} ${exp}++</div>
+                            <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
+                        </span>
+                        <span style="margin\: 20px">KEEP OR RETRY</span>
+                       </div>
+                        <span style="margin: 20px">SETTING</span>
+                       </div>`;
+                }
+
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
                 hideall();
                 document.getElementById("setting").style.display = "block";
-                document.getElementById("setting").innerHTML ="image.jpg";
+                document.getElementById("setting").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/setting.png">`;
+                document.getElementById("setting").innerHTML +="image.jpg";
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
                 hideall();
                 document.getElementById("ranking").style.display = "block";
-                document.getElementById("ranking").innerHTML ="image.jpg";
+                document.getElementById("ranking").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/ranking.png">`;
+                document.getElementById("ranking").innerHTML +="image.jpg";
             },
-            STORE: function (data) {
-                console.log("실행 : store");
+            SHOP: function (data) {
+                console.log("실행 : shop");
                 hideall();
-                document.getElementById("store").style.display = "block";
-                document.getElementById("store").innerHTML ="image.jpg";
+                document.getElementById("shop").style.display = "block";
+                document.getElementById("shop").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/store.png">`;
+                document.getElementById("shop").innerHTML +="image.jpg";
             },
         };
     }
