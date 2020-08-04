@@ -228,7 +228,7 @@ class Action {
             WRONG: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                // document.getElementById("inGame").style.display = "block";
+                document.getElementById("inGame").style.display = "block";
                 // document.getElementById("correctOrWrong").innerHTML
                 //     = `<span style="margin: 10px">WRONG</span>
             // `;
