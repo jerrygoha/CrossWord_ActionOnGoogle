@@ -131,17 +131,17 @@ public class Main extends DialogflowApp {
     String response;
     data.put("history","difficulty");
 
-    /*
+
     //메인에서 왔는지,, 스테이지에서왔는지
       int stage;
-      if(data.get("history")=="main") {
+      if(data.get("history").equals("main")) {
           stage = user.getLevel();
       }
       else {
           stage = ((Double)request.getParameter("number")).intValue();
       }
     data.put("stage",stage);
-     */
+
 
     htmldata.put("command", "difficultySelect");
     htmldata.put("winMoney1",gameinfo.getStage()[1].getWinMoney());
@@ -155,7 +155,8 @@ public class Main extends DialogflowApp {
     htmldata.put("timeLimit3",gameinfo.getStage()[3].getTimeLimit()[0]);
 
     response = tts.getTtsmap().get("difficultyselect");
-    return rb.add(new SimpleResponse().setTextToSpeech(response))
+    //디버깅
+    return rb.add(new SimpleResponse().setTextToSpeech(response+stage))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
 
@@ -247,13 +248,13 @@ public class Main extends DialogflowApp {
     Map<String, Object> data = rb.getConversationData();
     Map<String, Object> htmldata = new HashMap<>();
     HtmlResponse htmlResponse = new HtmlResponse();
-    data.put("history","result");
+
 
     String response;
 
     String result = CommonUtil.makeSafeString(request.getParameter("result"));
 
-
+    data.put("history","result");
     Result results = gameBoard.getResult();
     htmldata.put("level",user.getLevel());
     htmldata.put("myExp",user.getMyExp());
