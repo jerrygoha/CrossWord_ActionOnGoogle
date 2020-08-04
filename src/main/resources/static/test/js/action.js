@@ -8,20 +8,22 @@ function hideall() {
         elements[i].style.display = "none";
     }
 }
+
 function stageLocked(level) {
     let i;
     let a;
     let element = document.getElementById("stage");
     for (i = 0; i <= 9; i++) {
         if (level <= i) {
-            element.innerHTML += `<div style="margin: 20px"><button disabled>STAGE ${i+1}</button></div>`
+            element.innerHTML += `<div style="margin: 20px"><button disabled>STAGE ${i + 1}</button></div>`
         } else {
-            element.innerHTML += `<div style="margin: 20px"><button>STAGE ${i+1}</button></div>`
+            element.innerHTML += `<div style="margin: 20px"><button>STAGE ${i + 1}</button></div>`
         }
     }
     return a;
 }
-function timer(time){
+
+function timer(time) {
     let element = document.getElementById("timer");
     let x = setInterval(function () {
         element.innerHTML = time + " seconds";
@@ -29,8 +31,9 @@ function timer(time){
         if (time < 0) {
             clearInterval(x);
         }
-    },1000);
+    }, 1000);
 }
+
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
@@ -47,6 +50,9 @@ class Action {
         let myCoin;
         //correct command가 왔을 때 변화를 위해 전역변수 선언
         let totalWord;
+
+        let hint;
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -163,16 +169,16 @@ class Action {
                 document.getElementById("inGame").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
             <span style="margin: 20px">
-                <div style="margin:20px">HINT ${myHint}</div>
+                <div id="hint" style="margin:20px">HINT ${myHint}</div>
                 <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
             </span>`;
-                for(let col = 0; col < boardCol; col++){
-                    for(let row = 0; row< boardRow; row++){
-                        document.getElementById("inGame").innerHTML+=` 
+                for (let col = 0; col < boardCol; col++) {
+                    for (let row = 0; row < boardRow; row++) {
+                        document.getElementById("inGame").innerHTML += ` 
                            <span style="margin: 20px; border: 1px">${board[col][row]}</span>
                         `;
                     }
-                    document.getElementById("inGame").innerHTML+=` 
+                    document.getElementById("inGame").innerHTML += ` 
                            <br>
                         `;
                 }
@@ -196,8 +202,8 @@ class Action {
                 document.getElementById("correctOrWrong").innerHTML
                     = `<span style="margin: 10px">CORRECT</span>`;
                 document.getElementById("totalWord").innerHTML
-                    = "You have to find "  + totalWord + " words";
-                if(finish)
+                    = "You have to find " + totalWord + " words";
+                if (finish)
                     window.canvas.sendTextQuery('get result');
             },
             WRONG: function (data) {
@@ -212,19 +218,19 @@ class Action {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
+                myHint--;
+                document.getElementById("hint").innerHTML = "HINT " + myHint;
+                hint = data.hint;
                 document.getElementById("inGame").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-                        <span>HINT</span>
-                        `;
+                    += `<span id="openHint" style="margin: 10px">${hint}</span>`;
             },
             CLOSEHINT: function (data) {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
+                document.getElementById("openHint").style.display = "none";
                 document.getElementById("inGame").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-            <span>USED HINT</span>
-            `;
+                    += `<span style="margin: 10px">${hint}</span>`;
             },
             RESULT: function (data) {
                 console.log("실행 : result");
@@ -237,7 +243,6 @@ class Action {
                 myHint = data.myHint;
                 let correctList = data.correctList;
                 let wrongList = data.wrongList;
-                //힌트, 코인, 레벨, 경험치 등을 다시 받아서 화면을 구성할 것 (예정)
                 document.getElementById("result").innerHTML
                     = `<BR><BR><BR><BR><BR><BR>
                         <div style="margin:20px">
@@ -253,30 +258,34 @@ class Action {
                         <span style="margin: 20px">
                             <div style="margin: 20px">${result}</div>
                             <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                            <div style="margin: 20px">CORRECT : ${correctList}, WRONG : ${wrongList}</div>
+                            <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
                         </span>
                         <span style="margin\: 20px">KEEP OR RETRY</span>
                        </div>
                         <span style="margin: 20px">SETTING</span>
                        </div>`;
             },
-            SETTING: function(data) {
+            SETTING: function (data) {
                 console.log("실행 : setting");
                 hideall();
                 document.getElementById("setting").style.display = "block";
+                document.getElementById("setting").innerHTML ="image.jpg";
             },
-            RANKING: function(data) {
+            RANKING: function (data) {
                 console.log("실행 : ranking");
                 hideall();
                 document.getElementById("ranking").style.display = "block";
+                document.getElementById("ranking").innerHTML ="image.jpg";
             },
-            STORE: function(data) {
+            STORE: function (data) {
                 console.log("실행 : store");
                 hideall();
                 document.getElementById("store").style.display = "block";
+                document.getElementById("store").innerHTML ="image.jpg";
             },
         };
     }
+
     /*
      * Register all callbacks used by Interactive Canvas
      * executed during scene creation time.
