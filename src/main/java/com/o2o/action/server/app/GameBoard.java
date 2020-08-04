@@ -41,7 +41,8 @@ public class GameBoard {
         stage = _stage;
         difficulty = _difficulty;
         // 보드판 생성
-        makeBoard(stage+2,stage+2,3);
+        // makeBoard(stage+2,stage+2,3);
+        makeBoard(10,10,3);
     }
     private void printBoard(BoardCell[][]board,int x, int y)
     {
@@ -57,7 +58,7 @@ public class GameBoard {
     // 타임시간 가져오기
     public int getTimeLimit()
     {
-        return 30;
+        return 9999;
     }
     // 총 단어 개수 가져오기
     public int getTotalWord()
@@ -83,11 +84,11 @@ public class GameBoard {
     {
         answer = new AnswerWord[x];
 
-            AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-            answer[0]=answerWord;
-        answerWord = new AnswerWord("dog",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answer[0]=answerWord;
+        answerWord = new AnswerWord("floor",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[1]=answerWord;
-        answerWord = new AnswerWord("ant",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answer[2]=answerWord;
 
 
