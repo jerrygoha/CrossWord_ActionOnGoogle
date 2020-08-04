@@ -55,6 +55,8 @@ class Action {
 
         let timerOver;
 
+        let cnt = 0;
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -171,7 +173,8 @@ class Action {
                 let boardCol = data.board.length;            //행
                 let timeLimit = data.timeLimit;
                 totalWord = data.totalWord;
-                document.getElementById("inGame").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame.png">`;
+                document.getElementById("inGame").innerHTML = `<div id="image"></div>`;
+                document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame0.png">`;
                 document.getElementById("inGame").innerHTML
                     += `<BR><BR><BR><BR><BR><BR>
                         <span style="margin: 20px">
@@ -205,6 +208,13 @@ class Action {
                 hideall();
                 document.getElementById("inGame").style.display = "block";
                 let finish = data.finish;
+                cnt++;
+                if(cnt == 1)
+                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame1.png">`;
+                else if(cnt == 2)
+                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame2.png ">`;
+                else if (cnt == 3)
+                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame3.png">`;
                 totalWord--;
                 document.getElementById("correctOrWrong").innerHTML
                     = `<span style="margin: 10px">CORRECT</span>`;
