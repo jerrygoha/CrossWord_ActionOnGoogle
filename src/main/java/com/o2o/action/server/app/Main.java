@@ -23,8 +23,8 @@ public class Main extends DialogflowApp {
 
     private void setUp() {
     gameinfo = new GameInfo();
-      tts = new TTS();
-  }
+    tts = new TTS();
+    }
 
   @ForIntent("Default Welcome Intent")
   public ActionResponse defaultWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
@@ -37,21 +37,20 @@ public class Main extends DialogflowApp {
     data.clear();
     setUp();
     data.put("history","welcome");
+    htmldata.put("command", "welcome");
 
     if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
       response = "Inveractive Canvas가 지원되지 않는 기기예요.";
       return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
     }
     else {
-      htmldata.put("command", "welcome");
-      response = "welcome display";
-      System.out.println(response);
-      //data.put("history","welcome");
-      return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("welcome")))
+      response = tts.getTtsmap().get("welcome");
+      return rb.add(new SimpleResponse().setTextToSpeech(response))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
               .build();
     }
   }
+
   @ForIntent("mainFromWelcome")
   public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
       return main(request);
@@ -77,8 +76,8 @@ public class Main extends DialogflowApp {
     htmldata.put("myHint",user.getMyHint());
     htmldata.put("myCoin",user.getMyCoin());
 
-    //data.put("history","main");
-    response = "mains display";
+
+    response = tts.getTtsmap().get("main");
     return rb.add(new SimpleResponse().setTextToSpeech(response))
               .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
               .build();
@@ -144,8 +143,6 @@ public class Main extends DialogflowApp {
     data.put("stage",stage);
      */
 
-      //나중에 자료구조로 코딩
-
     htmldata.put("command", "difficultySelect");
     htmldata.put("winMoney1",gameinfo.getStage()[1].getWinMoney());
     htmldata.put("winMoney2",gameinfo.getStage()[2].getWinMoney());
@@ -157,14 +154,8 @@ public class Main extends DialogflowApp {
     htmldata.put("timeLimit2",gameinfo.getStage()[2].getTimeLimit()[0]);
     htmldata.put("timeLimit3",gameinfo.getStage()[3].getTimeLimit()[0]);
 
-    /*
-    htmldata.put("winMoney", DB.getWinMoney(stage));
-    htmldata.put("betMoney",DB.getBetMoney(stage));
-    htmldata.put("timeLimit",DB.getTimeLimit(stage));
- */
-
-    response = "difficultySelect display";
-    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("difficultyselect")))
+    response = tts.getTtsmap().get("difficultyselect");
+    return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
 
