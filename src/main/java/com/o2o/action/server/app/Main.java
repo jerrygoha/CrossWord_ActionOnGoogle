@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Main extends DialogflowApp {
 
-    String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr1/test/index.html";
 
     GameBoard gameBoard;
     UserInfo user;
@@ -340,8 +340,24 @@ public class Main extends DialogflowApp {
                 Result result = gameBoard.getResult();
 
                 if (result.isWin()) {
+//                    htmldata.put("finish", true);
+//                    rb.removeContext("ingameMessage");
                     htmldata.put("finish", true);
+                    htmldata.put("command","result");
+                    htmldata.put("result","success");
+                    Result results = gameBoard.getResult();
+                    htmldata.put("level", user.getLevel());
+                    htmldata.put("myExp", user.getMyExp());
+                    htmldata.put("fullExp", user.getFullExp());
+                    htmldata.put("myHint", user.getMyHint());
+                    htmldata.put("myCoin", user.getMyCoin());
+                    htmldata.put("correctList", results.getAnser());
+                    htmldata.put("wrongList", results.getRestWord());
                     rb.removeContext("ingameMessage");
+                    response = tts.getTtsmap().get("result");
+                    return rb.add(new SimpleResponse().setTextToSpeech(response))
+                            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                            .build();
                 } else
                     htmldata.put("finish", false);
             } else {

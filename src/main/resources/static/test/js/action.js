@@ -198,32 +198,36 @@ class Action {
             // <span id="openHint" style="margin: 10px"></span>
             // <span id="timer" style="margin: 20px"></span>
             // <span id="correctOrWrong" style="margin: 20px"></span>`;
-                timer(timeLimit);
-                timerOver = setTimeout(function () {
-                    window.canvas.sendTextQuery('get fail result');
-                }, timeLimit * 1000);
+            //     timer(timeLimit);
+            //     timerOver = setTimeout(function () {
+            //         window.canvas.sendTextQuery('get fail result');
+            //     }, timeLimit * 1000);
             },
             CORRECT: function (data) {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
                 let finish = data.finish;
+                if(finish){
+                    scene.action.commands.RESULT(data);
+                }
                 cnt++;
                 if(cnt == 1)
-                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame1.png">`;
+                document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame1.png">`;
                 else if(cnt == 2)
                     document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame2.png ">`;
                 else if (cnt == 3)
                     document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame3.png">`;
-                totalWord--;
-                // document.getElementById("correctOrWrong").innerHTML
-                //     = `<span style="margin: 10px">CORRECT</span>`;
-                // document.getElementById("totalWord").innerHTML
-                //     = "You have to find " + totalWord + " words";
-                if (finish) {
-                    window.canvas.sendTextQuery('get success result');
-                    clearTimeout(timerOver);
-                }
+                // totalWord--;
+                // // document.getElementById("correctOrWrong").innerHTML
+                // //     = `<span style="margin: 10px">CORRECT</span>`;
+                // // document.getElementById("totalWord").innerHTML
+                // //     = "You have to find " + totalWord + " words";
+                // if (finish) {
+                //     window.canvas.sendTextQuery('get success result');
+                //     console.log("get success result");
+                //     // clearTimeout(timerOver);
+                // }
             },
             WRONG: function (data) {
                 console.log("실행 : inGame");
