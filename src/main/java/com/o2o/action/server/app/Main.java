@@ -111,7 +111,7 @@ public class Main extends DialogflowApp {
 
     data.put("history","stageSelect");
     response = "stageSelect display";
-    return rb.add(new SimpleResponse().setTextToSpeech(response))
+    return rb.add(new SimpleResponse().setTextToSpeech(tts.getTtsmap().get("stageselect")))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
   }
