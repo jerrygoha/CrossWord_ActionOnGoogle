@@ -175,29 +175,29 @@ class Action {
                 totalWord = data.totalWord;
                 document.getElementById("inGame").innerHTML = `<div id="image"></div>`;
                 document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame0.png">`;
-                document.getElementById("inGame").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-                        <span style="margin: 20px">
-                            <div id="hint" style="margin:20px">HINT ${myHint}</div>
-                            <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
-                        </span>`;
-                for (let col = 0; col < boardCol; col++) {
-                    for (let row = 0; row < boardRow; row++) {
-                        document.getElementById("inGame").innerHTML += ` 
-                           <span style="margin: 20px; border: 1px">${board[col][row]}</span>
-                        `;
-                    }
-                    document.getElementById("inGame").innerHTML += ` 
-                           <br>
-                        `;
-                }
-                document.getElementById("inGame").innerHTML
-                    += `<span style="margin: 20px">
-                <div style="margin: 20px">SETTING</div>
-            </span>
-            <span id="openHint" style="margin: 10px"></span>
-            <span id="timer" style="margin: 20px"></span>
-            <span id="correctOrWrong" style="margin: 20px"></span>`;
+                // document.getElementById("inGame").innerHTML
+                //     += `<BR><BR><BR><BR><BR><BR>
+                //         <span style="margin: 20px">
+                //             <div id="hint" style="margin:20px">HINT ${myHint}</div>
+                //             <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
+                //         </span>`;
+                // for (let col = 0; col < boardCol; col++) {
+                //     for (let row = 0; row < boardRow; row++) {
+                //         document.getElementById("inGame").innerHTML += `
+                //            <span style="margin: 20px; border: 1px">${board[col][row]}</span>
+                //         `;
+                //     }
+                //     document.getElementById("inGame").innerHTML += `
+                //            <br>
+                //         `;
+                // }
+            //     document.getElementById("inGame").innerHTML
+            //         += `<span style="margin: 20px">
+            //     <div style="margin: 20px">SETTING</div>
+            // </span>
+            // <span id="openHint" style="margin: 10px"></span>
+            // <span id="timer" style="margin: 20px"></span>
+            // <span id="correctOrWrong" style="margin: 20px"></span>`;
                 timer(timeLimit);
                 timerOver = setTimeout(function () {
                     window.canvas.sendTextQuery('get fail result');
@@ -216,10 +216,10 @@ class Action {
                 else if (cnt == 3)
                     document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame3.png">`;
                 totalWord--;
-                document.getElementById("correctOrWrong").innerHTML
-                    = `<span style="margin: 10px">CORRECT</span>`;
-                document.getElementById("totalWord").innerHTML
-                    = "You have to find " + totalWord + " words";
+                // document.getElementById("correctOrWrong").innerHTML
+                //     = `<span style="margin: 10px">CORRECT</span>`;
+                // document.getElementById("totalWord").innerHTML
+                //     = "You have to find " + totalWord + " words";
                 if (finish) {
                     window.canvas.sendTextQuery('get success result');
                     clearTimeout(timerOver);
@@ -228,10 +228,10 @@ class Action {
             WRONG: function (data) {
                 console.log("실행 : inGame");
                 hideall();
-                document.getElementById("inGame").style.display = "block";
-                document.getElementById("correctOrWrong").innerHTML
-                    = `<span style="margin: 10px">WRONG</span>
-            `;
+                // document.getElementById("inGame").style.display = "block";
+                // document.getElementById("correctOrWrong").innerHTML
+                //     = `<span style="margin: 10px">WRONG</span>
+            // `;
             },
             OPENHINT: function (data) {
                 console.log("실행 : inGame");
