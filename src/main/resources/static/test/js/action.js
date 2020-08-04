@@ -50,8 +50,10 @@ class Action {
         let myCoin;
         //correct command가 왔을 때 변화를 위해 전역변수 선언
         let totalWord;
-
+        //openHint & closeHint command를 위한 전역변수 선언
         let hint;
+
+        let timerOver;
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
@@ -60,7 +62,7 @@ class Action {
                 console.log("실행 : welcome");
                 hideall();
                 document.getElementById("welcome").style.display = "block";
-                document.getElementById("welcome").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/welcome.png">`;
+                document.getElementById("welcome").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/welcome.png">`;
             },
             MAIN: function (data) {
                 console.log("실행 : main");
@@ -70,32 +72,32 @@ class Action {
                 exp = data.myExp + "/" + data.fullExp;
                 myHint = data.myHint;
                 myCoin = data.myCoin;
-                document.getElementById("main").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/main.png">`;
-                document.getElementById("main").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-                        <div style="margin:20px">
-                            <span style="margin:20px">
-                                <div style="margin:20px">Lv.${level}</div>
-                                <div style="margin:20px">${exp}</div>
-                            </span>
-                            <span style="margin: 20px">
-                                HINT ${myHint}
-                            </span>
-                            <span style="margin:20px">
-                                COIN ${myCoin}
-                            </span>
-                        </div>
-                        <div style="margin:20px">
-                            <span style="margin:20px">
-                                KEEP GOING
-                            </span>
-                            <span style="margin:20px">
-                                SELECT STAGE
-                            </span>
-                        </div>
-                        <div style="margin: 20px">
-                            SETTING
-                        </div>`;
+                document.getElementById("main").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/main.png">`;
+                // document.getElementById("main").innerHTML
+                //     = `<BR><BR><BR><BR><BR><BR>
+                //         <div style="margin:20px">
+                //             <span style="margin:20px">
+                //                 <div style="margin:20px">Lv.${level}</div>
+                //                 <div style="margin:20px">${exp}</div>
+                //             </span>
+                //             <span style="margin: 20px">
+                //                 HINT ${myHint}
+                //             </span>
+                //             <span style="margin:20px">
+                //                 COIN ${myCoin}
+                //             </span>
+                //         </div>
+                //         <div style="margin:20px">
+                //             <span style="margin:20px">
+                //                 KEEP GOING
+                //             </span>
+                //             <span style="margin:20px">
+                //                 SELECT STAGE
+                //             </span>
+                //         </div>
+                //         <div style="margin: 20px">
+                //             SETTING
+                //         </div>`;
             },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
@@ -103,24 +105,24 @@ class Action {
                 document.getElementById("stage").style.display = "block";
                 var stagenum = 1;
                 document.getElementById("stage").style.display = "block";
-                document.getElementById("stage").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/selectstage.png">`;
-                document.getElementById("stage").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-                        <div>
-                            <span style="margin:20px">
-                                <div style="margin:20px">Lv.${level}</div>
-                                <div style="margin:20px">${exp}</div>
-                            </span>
-                            <span style="margin: 20px">
-                                HINT ${myHint}
-                            </span>
-                            <span style="margin: 20px">
-                                COIN ${myCoin}
-                            </span>
-                        </div>`;
-                stageLocked(level);
-                document.getElementById("stage").innerHTML
-                    += `<div style="margin: 20px">SETTING</div>`;
+                document.getElementById("stage").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/selectstage.png">`;
+                // document.getElementById("stage").innerHTML
+                //     = `<BR><BR><BR><BR><BR><BR>
+                //         <div>
+                //             <span style="margin:20px">
+                //                 <div style="margin:20px">Lv.${level}</div>
+                //                 <div style="margin:20px">${exp}</div>
+                //             </span>
+                //             <span style="margin: 20px">
+                //                 HINT ${myHint}
+                //             </span>
+                //             <span style="margin: 20px">
+                //                 COIN ${myCoin}
+                //             </span>
+                //         </div>`;
+                // stageLocked(level);
+                // document.getElementById("stage").innerHTML
+                //     += `<div style="margin: 20px">SETTING</div>`;
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
@@ -135,30 +137,30 @@ class Action {
                 let timeLimit1 = data.timeLimit1;
                 let timeLimit2 = data.timeLimit2;
                 let timeLimit3 = data.timeLimit3;
-                document.getElementById("difficulty").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/selectdifficult.png">`;
-                document.getElementById("difficulty").innerHTML
-                    += `<BR><BR><BR><BR><BR><BR>
-                       <div style="margin:20px">
-                        <span style="margin: 20px">
-                            <div style="margin: 20px">Lv.${level}</div>
-                            <div style="margin: 20px">${exp}</div>
-                        </span>
-                        <span style="margin: 20px">HINT ${myHint}</span>
-                        <span style="margin: 20px">COIN ${myCoin}</span>
-                       </div>
-                       <div style="margin: 20px">
-                        <span style="margin: 20px">BACK</span>
-                        <span  style="border: 5px; margin: 20px">
-                            <button>Easy<br>● winMoney : ${winMoney1}<br>● betMoney : ${betMoney1}<br>● timeLimit : ${timeLimit1}</button>
-                        </span>
-                        <span style="border: 5px; margin: 20px">
-                            <button>edium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
-                        </span>
-                        <span style="border: 5px; margin: 20px">
-                            <button>Hard<br>● winMoney : ${winMoney3}<br>● betMoney : ${betMoney3}<br>● timeLimit : ${timeLimit3}</button>
-                         </span>
-                        </div>
-                        <div style="margin: 20px">SETTING</div>`;
+                document.getElementById("difficulty").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/selectdifficult.png">`;
+                // document.getElementById("difficulty").innerHTML
+                //     = `<BR><BR><BR><BR><BR><BR>
+                //        <div style="margin:20px">
+                //         <span style="margin: 20px">
+                //             <div style="margin: 20px">Lv.${level}</div>
+                //             <div style="margin: 20px">${exp}</div>
+                //         </span>
+                //         <span style="margin: 20px">HINT ${myHint}</span>
+                //         <span style="margin: 20px">COIN ${myCoin}</span>
+                //        </div>
+                //        <div style="margin: 20px">
+                //         <span style="margin: 20px">BACK</span>
+                //         <span  style="border: 5px; margin: 20px">
+                //             <button>Easy<br>● winMoney : ${winMoney1}<br>● betMoney : ${betMoney1}<br>● timeLimit : ${timeLimit1}</button>
+                //         </span>
+                //         <span style="border: 5px; margin: 20px">
+                //             <button>edium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
+                //         </span>
+                //         <span style="border: 5px; margin: 20px">
+                //             <button>Hard<br>● winMoney : ${winMoney3}<br>● betMoney : ${betMoney3}<br>● timeLimit : ${timeLimit3}</button>
+                //          </span>
+                //         </div>
+                //         <div style="margin: 20px">SETTING</div>`;
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
@@ -169,13 +171,13 @@ class Action {
                 let boardCol = data.board.length;            //행
                 let timeLimit = data.timeLimit;
                 totalWord = data.totalWord;
-                document.getElementById("inGame").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/ingame.png">`;
+                document.getElementById("inGame").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame.png">`;
                 document.getElementById("inGame").innerHTML
                     += `<BR><BR><BR><BR><BR><BR>
-            <span style="margin: 20px">
-                <div id="hint" style="margin:20px">HINT ${myHint}</div>
-                <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
-            </span>`;
+                        <span style="margin: 20px">
+                            <div id="hint" style="margin:20px">HINT ${myHint}</div>
+                            <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
+                        </span>`;
                 for (let col = 0; col < boardCol; col++) {
                     for (let row = 0; row < boardRow; row++) {
                         document.getElementById("inGame").innerHTML += ` 
@@ -190,11 +192,12 @@ class Action {
                     += `<span style="margin: 20px">
                 <div style="margin: 20px">SETTING</div>
             </span>
+            <span id="openHint" style="margin: 10px"></span>
             <span id="timer" style="margin: 20px"></span>
             <span id="correctOrWrong" style="margin: 20px"></span>`;
                 timer(timeLimit);
-                setTimeout(function () {
-                    window.canvas.sendTextQuery('get result');
+                timerOver = setTimeout(function () {
+                    window.canvas.sendTextQuery('get fail result');
                 }, timeLimit * 1000);
             },
             CORRECT: function (data) {
@@ -207,8 +210,10 @@ class Action {
                     = `<span style="margin: 10px">CORRECT</span>`;
                 document.getElementById("totalWord").innerHTML
                     = "You have to find " + totalWord + " words";
-                if (finish)
-                    window.canvas.sendTextQuery('get result');
+                if (finish) {
+                    window.canvas.sendTextQuery('get success result');
+                    clearTimeout(timerOver);
+                }
             },
             WRONG: function (data) {
                 console.log("실행 : inGame");
@@ -225,8 +230,8 @@ class Action {
                 myHint--;
                 document.getElementById("hint").innerHTML = "HINT " + myHint;
                 hint = data.hint;
-                document.getElementById("inGame").innerHTML
-                    += `<span id="openHint" style="margin: 10px">${hint}</span>`;
+                document.getElementById("openHint").style.display = "block";
+                document.getElementById("openHint").innerHTML = hint;
             },
             CLOSEHINT: function (data) {
                 console.log("실행 : inGame");
@@ -247,8 +252,8 @@ class Action {
                 myHint = data.myHint;
                 let correctList = data.correctList;
                 let wrongList = data.wrongList;
-                if(result == lose){
-                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/result_fail.png">`;
+                if(result == "fail"){
+                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/result_fail.png">`;
                     document.getElementById("result").innerHTML
                         += `<BR><BR><BR><BR><BR><BR>
                         <div style="margin:20px">
@@ -270,8 +275,8 @@ class Action {
                        </div>
                         <span style="margin: 20px">SETTING</span>
                        </div>`;
-                }else{
-                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/result_success.png">`
+                }else {
+                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/result_success.png">`
                     document.getElementById("result").innerHTML
                         += `<BR><BR><BR><BR><BR><BR>
                         <div style="margin:20px">
@@ -294,28 +299,48 @@ class Action {
                         <span style="margin: 20px">SETTING</span>
                        </div>`;
                 }
-
+                // document.getElementById("result").innerHTML
+                //     = `<BR><BR><BR><BR><BR><BR>
+                //         <div style="margin:20px">
+                //         <span style="margin: 20px">
+                //             <div style="margin: 20px">Lv.${level}</div>
+                //             <div style="margin: 20px">${exp}</div>
+                //         </span>
+                //         <span style="margin: 20px">HINT ${myHint}</span>
+                //         <span style="margin: 20px">COIN ${myCoin}</span>
+                //        </div>
+                //        <div style="margin: 20px">
+                //         <span style="margin: 20px">BACK</span>
+                //         <span style="margin: 20px">
+                //             <div style="margin: 20px">${result}</div>
+                //             <div style="margin: 20px">Lv.${level} ${exp}++</div>
+                //             <div style="margin: 20px">
+                //                 <span style="color: blue">${correctList}</span>
+                //                 <span style="color: red">${wrongList}</span>
+                //             </div>
+                //         </span>
+                //         <span style="margin\: 20px">KEEP OR RETRY</span>
+                //        </div>
+                //         <span style="margin: 20px">SETTING</span>
+                //        </div>`;
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
                 hideall();
                 document.getElementById("setting").style.display = "block";
-                document.getElementById("setting").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/setting.png">`;
-                document.getElementById("setting").innerHTML +="image.jpg";
+                document.getElementById("setting").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/setting.png">`;
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
                 hideall();
                 document.getElementById("ranking").style.display = "block";
-                document.getElementById("ranking").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/ranking.png">`;
-                document.getElementById("ranking").innerHTML +="image.jpg";
+                document.getElementById("ranking").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ranking.png">`;
             },
             SHOP: function (data) {
                 console.log("실행 : shop");
                 hideall();
                 document.getElementById("shop").style.display = "block";
-                document.getElementById("shop").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/store.png">`;
-                document.getElementById("shop").innerHTML +="image.jpg";
+                document.getElementById("shop").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/shop.png">`;
             },
         };
     }
