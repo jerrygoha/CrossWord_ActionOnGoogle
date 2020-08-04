@@ -247,7 +247,7 @@ class Action {
                 myHint = data.myHint;
                 let correctList = data.correctList;
                 let wrongList = data.wrongList;
-                if(result == lose){
+                if(result == "fail"){
                     document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr5/image/result_fail.png">`;
                     document.getElementById("result").innerHTML
                         += `<BR><BR><BR><BR><BR><BR>
