@@ -25,11 +25,6 @@ public class Main extends DialogflowApp {
   GameInfo gameinfo;
   TTS tts;
     private void setUp() {
-    hintOpenTp = new HashSet<>();
-    hintCloseTp = new HashSet<>();
-
-    hintOpenTp.addAll(Arrays.asList(new String[]{"hint", "hint open", "open hint", "give hint"}));
-    hintCloseTp.addAll(Arrays.asList(new String[]{"close hint","hint close","close","back"}));
     gameinfo = new GameInfo();
       tts = new TTS();
   }
@@ -63,17 +58,14 @@ public class Main extends DialogflowApp {
   public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
       return main(request);
   }
-  @ForIntent("mainFromStage")
-  public ActionResponse mainFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
-    return main(request);
-  }
 
-  @ForIntent("main")
-  public ActionResponse main(ActionRequest request) throws ExecutionException, InterruptedException {
-    ResponseBuilder rb = getResponseBuilder(request);
-    Map<String, Object> data = rb.getConversationData();
-    Map<String, Object> htmldata = new HashMap<>();
-    HtmlResponse htmlResponse = new HtmlResponse();
+
+     @ForIntent("main")
+    public ActionResponse main(ActionRequest request) throws ExecutionException, InterruptedException {
+      ResponseBuilder rb = getResponseBuilder(request);
+      Map<String, Object> data = rb.getConversationData();
+      Map<String, Object> htmldata = new HashMap<>();
+      HtmlResponse htmlResponse = new HtmlResponse();
 
     String response;
 
@@ -221,36 +213,38 @@ public class Main extends DialogflowApp {
     HtmlResponse htmlResponse = new HtmlResponse();
 
     String response ="";
-
-    String word = CommonUtil.makeSafeString(request.getParameter("any"));
-
-    if(hintOpenTp.contains(word)) {
-      htmldata.put("command","openHint");
-      htmldata.put("hint",gameBoard.getHintMessage());
-      response = "open hint";
-    }
-    else if(hintCloseTp.contains(word)){
-      htmldata.put("command","closeHint");
+    String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
+    if(hint != null) {
+      if(hint.equals("open")){
+        htmldata.put("command","openHint");
+        htmldata.put("hint",gameBoard.getHintMessage());
+        response = "open hint";
+      }
+      else{
+        htmldata.put("command","closeHint");
         response = "close hint";
+      }
     }
     else {
+      String word = CommonUtil.makeSafeString(request.getParameter("any"));
       if(gameBoard.tryAnswer(word)){
-              htmldata.put("command","correct");
-              response = "correct";
-               Result result=gameBoard.getResult();
+        htmldata.put("command","correct");
+        response = "correct";
+        Result result=gameBoard.getResult();
 
-              if(result.isWin()) {
-                htmldata.put("finish", true);
-                rb.removeContext("ingameMessage");
-              }
-              else
-                htmldata.put("finish",false);
+        if(result.isWin()) {
+          htmldata.put("finish", true);
+          rb.removeContext("ingameMessage");
+        }
+        else
+          htmldata.put("finish",false);
       }
       else {
-          htmldata.put("command", "wrong");
-          response = "wrong";
+        htmldata.put("command", "wrong");
+        response = "wrong";
       }
     }
+
     return rb.add(new SimpleResponse().setTextToSpeech(response))
             .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
             .build();
@@ -266,15 +260,8 @@ public class Main extends DialogflowApp {
 
     String response;
 
-
     String result = CommonUtil.makeSafeString(request.getParameter("result"));
 
-   /* List<String> correctList = new ArrayList<>();
-    List<String> wrongList = new ArrayList<>();
-
-    correctList.add("apple");
-    correctList.add("happy");
-    wrongList.add("jump");*/
 
     Result results = gameBoard.getResult();
     htmldata.put("level",user.getLevel());
