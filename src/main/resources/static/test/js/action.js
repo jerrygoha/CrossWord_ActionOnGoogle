@@ -8,6 +8,14 @@ function hideall() {
         elements[i].style.display = "none";
     }
 }
+function sendTxQuery(query)
+{
+    //testcode
+    const http = new XMLHttpRequest()
+    http.open("GET", "https://actions.o2o.kr/devsvr7/test/canvasapp/"+query)
+    http.send()
+    http.onload = () => console.log(http.responseText)
+}
 
 function stageLocked(level) {
     let i;
@@ -207,10 +215,7 @@ class Action {
                 console.log("실행 : inGame");
                 hideall();
                 document.getElementById("inGame").style.display = "block";
-                let finish = data.finish;
-                if(finish){
-                    scene.action.commands.RESULT(data);
-                }
+                //let finish = data.finish;
                 cnt++;
                 if(cnt == 1)
                 document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame1.png">`;
@@ -259,6 +264,9 @@ class Action {
                 console.log("실행 : result");
                 hideall();
                 document.getElementById("result").style.display = "block";
+
+                //디버깅용 함수추가
+                clearTimeout(timerOver);
                 let result = data.result;
                 level = data.level;
                 exp = data.myExp + "/" + data.fullExp;

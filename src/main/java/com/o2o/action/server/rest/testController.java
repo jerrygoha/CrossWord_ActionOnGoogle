@@ -40,4 +40,13 @@ public class testController {
 
         return jsonResponse;
     }
+    @RequestMapping(value = "/test/canvasapp/{_parameter}", method = RequestMethod.GET)
+    public @ResponseBody
+    String CanvasParameter(@PathVariable String _parameter) {
+        System.out.println("recvquery from testController " + _parameter);
+        String parameter = _parameter;
+        Main main = new Main();
+        main.sendTxQuery(parameter);
+        return parameter;
+    }
 }
