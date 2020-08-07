@@ -63,8 +63,17 @@ public class Main extends DialogflowApp {
     @ForIntent("Default Fallback Intent")
     public ActionResponse fallback(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
+        Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
+        if (data.get("history").equals("ingame")) {
+            htmldata.put("command", "wrong");
+            String response = "wrong";
+            return rb.add(new SimpleResponse().setTextToSpeech(response))
+                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                    .build();
+        }
 
         String response = "Please say one more time";
         return rb.add(new SimpleResponse().setTextToSpeech(response))
@@ -354,7 +363,7 @@ public class Main extends DialogflowApp {
                 .build();
     }
 
-    @ForIntent("shop")
+    @ForIntent("store")
     public ActionResponse shop(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
         Map<String, Object> data = rb.getConversationData();
