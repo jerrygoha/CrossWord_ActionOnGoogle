@@ -18,7 +18,8 @@ public class TTS {
         ttsmap.put("stageselect","You can play CrossWord at any level you want. Say your desired level, as an example 'level1' or click the button.");
         ttsmap.put("difficultyselect","In CrossWord you can select the difficulty level. As the game level gets higher, the game gets more difficult, the bigger entry fee and the less time limit. However, if you win, you can earn additional coins and experience point. Select the difficulty level from Easy, medium or hard.");
         ttsmap.put("ingame","Find the word before the time limit ends! If you need help, you can say ‘hint’. Let's play! ");
-        ttsmap.put("result","Clear! Say 'again' if you want to play more games or 'end' if you want to quit the game or click the button.");
+        ttsmap.put("success","Clear! Say 'again' if you want to play more games or 'end' if you want to quit the game or click the button.");
+        ttsmap.put("fail","Fail.. Say 'again' if you want to play more games or 'end' if you want to quit the game or click the button.");
         ttsmap.put("ranking","These are the top rankers of CrossWord. Would you like to give it a try?");
         ttsmap.put("store","You can buy coins and hints. To buy hints and coins, say 'purchase hints' or 'purchase coins'. You can get free coins by saying 'get coins' and watch the ad. Say 'go back' if you want to go to the game");
     }
