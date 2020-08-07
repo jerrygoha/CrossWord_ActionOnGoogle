@@ -292,7 +292,6 @@ public class Main extends DialogflowApp {
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
-
     }
 
     @ForIntent("result")
