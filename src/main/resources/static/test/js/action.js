@@ -43,15 +43,15 @@ function stageLocked(level) {
  * @param time
  */
 function timer(time) {
-    const timer = document.getElementById("timer");
+    const innertimer = document.getElementById("timer");
     let element = document.createElement("p");
-    timer.appendChild(element);
-    const x = setInterval(function () {
+    innertimer.appendChild(element);
+    const interval = setInterval(function () {
         element.textContent = time;
-        timer.replaceChild(element, element);
+        innertimer.replaceChild(element, element);
         time--;
         if (time < 0) {
-            clearInterval(x);
+            clearInterval(interval);
         }
     }, 1000);
 }
@@ -81,7 +81,6 @@ class Action {
         let hint;
 
         let timerOver;
-
         let cnt = 0;
 
         //코드 간결화 변수
@@ -99,7 +98,6 @@ class Action {
                 welcomeImg.setAttribute("style", "max-width: 100%; height: auto");
                 welcomeImg.src = "https://actions.o2o.kr/devsvr1/image/welcome.png";
                 screen.appendChild(welcomeImg);
-
                 // const welcome = document.createElement("button");
                 // welcome.setAttribute("style", "margin:20px");
                 // welcome.textContent = "PLAY";
@@ -220,7 +218,6 @@ class Action {
 
                 screen.removeChild(screen.childNodes[0]);
                 const inGameImg = document.createElement("img");
-                inGameImg.setAttribute("id", "ingame");
                 inGameImg.setAttribute("style", "max-width: 100%; height: auto");
                 inGameImg.src = "https://actions.o2o.kr/devsvr1/image/ingame0.png";
                 screen.appendChild(inGameImg);
@@ -249,13 +246,14 @@ class Action {
                 // <span id="timer" style="margin: 20px"></span>
                 // <span id="correctOrWrong" style="margin: 20px"></span>`;
 
-                const innerTimer = document.createElement("div");
-                innerTimer.setAttribute("id", "timer");
-                screen.appendChild(innerTimer);
-                timer(timeLimit);
-                timerOver = setTimeout(function () {
-                    window.canvas.sendTextQuery("get fail result");
-                }, timeLimit * 1000);
+                // const innerTimer = document.createElement("div");
+                // innerTimer.setAttribute("id", "timer");
+                // screen.appendChild(innerTimer);
+                // timer(timeLimit);
+                // timerOver = setTimeout(function () {
+                //     window.canvas.sendTextQuery("get fail result");
+                // }, timeLimit * 1000);
+                // document.getElementById("timer").style.display = "none";
             },
             CORRECT: function (data) {
                 console.log("실행 : correct");
@@ -263,9 +261,9 @@ class Action {
                 // if (finish) {
                 //     scene.action.commands.RESULT(data);
                 // }
-
-                const iGimg = document.getElementById("ingame");
                 screen.removeChild(screen.childNodes[0]);
+                const iGimg = document.createElement("img");
+                iGimg.setAttribute("style", "max-width:100%; height: auto");
                 cnt++;
                 if (cnt == 1) {
                     iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame1.png";
@@ -276,6 +274,7 @@ class Action {
                 } else if (cnt == 3) {
                     iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame3.png";
                     screen.appendChild(iGimg);
+                    cnt = 0;
                 }
 
                 // totalWord--;
@@ -296,12 +295,22 @@ class Action {
             },
             OPENHINT: function (data) {
                 console.log("실행 : openhint");
-                myHint--;
-                document.getElementById("hint").innerHTML = "HINT " + myHint;
-                hint = data.hint;
+                screen.removeChild(screen.childNodes[0]);
+                const openHintImg = document.createElement("img");
+                openHintImg.setAttribute("style", "max-width: 100%; height: auto");
+                openHintImg.src = "https://actions.o2o.kr/devsvr1/image/openhint.png"
+                screen.appendChild(openHintImg);
+                // myHint--;
+                // document.getElementById("hint").innerHTML = "HINT " + myHint;
+                // hint = data.hint;
             },
-            CLOSEHINT: function(data) {
+            CLOSEHINT: function (data) {
                 console.log("실행: closehint");
+                screen.removeChild(screen.childNodes[0]);
+                const closeHintImg = document.createElement("img");
+                closeHintImg.setAttribute("style", "max-width: 100%; height: auto");
+                closeHintImg.src = "https://actions.o2o.kr/devsvr1/image/closehint.png";
+                screen.appendChild(closeHintImg);
             },
             RESULT: function (data) {
                 console.log("실행 : result");
