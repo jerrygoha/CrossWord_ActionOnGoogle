@@ -16,7 +16,7 @@ window.onload = () => {
 class Scene {
 	constructor() {
 		// 화면 크기를 콘솔에 출력
-		const view = document.getElementById('welcome');
+		const view = document.getElementById("screen");
 		this.radio = window.devicePixelRatio;
 		console.log("width : " + view.clientWidth + ", height : " + view.clientHeight);
 	}

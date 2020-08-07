@@ -8,33 +8,47 @@ function hideall() {
         elements[i].style.display = "none";
     }
 }
-// function sendTxQuery(query)
-// {
-//     //testcode
-//     const http = new XMLHttpRequest()
-//     http.open("GET", "https://actions.o2o.kr/devsvr7/test/canvasapp/"+query)
-//     http.send()
-//     http.onload = () => console.log(http.responseText)
-// }
 
+/**
+ * appendChild를 사용한 stageLocked
+ * 스테이지 선택할 때 level에 따라 선택할 수 있는 스테이지와 그렇지 않은 스테이지로 바뀜
+ * @param level
+ * @returns {*}
+ */
 function stageLocked(level) {
     let i;
     let a;
     let element = document.getElementById("stage");
     for (i = 0; i <= 9; i++) {
+        let newElement = document.createElement('button');
         if (level <= i) {
-            element.innerHTML += `<div style="margin: 20px"><button disabled>STAGE ${i + 1}</button></div>`
+            newElement.textContent = 'STAGE' + (i + 1);
+            newElement.setAttribute("disabled", true);
+            newElement.setAttribute("style", "margin: 10px");
+            element.appendChild(newElement);
         } else {
-            element.innerHTML += `<div style="margin: 20px"><button>STAGE ${i + 1}</button></div>`
+            newElement.textContent = 'STAGE' + (i + 1);
+            newElement.setAttribute("style", "margin: 10px");
+            element.appendChild(newElement);
         }
     }
     return a;
 }
 
+/**
+ * appendChild를 이용한 timer
+ * 인게임에서 사용할 타이머
+ * 함수의 현 문제 : 초가 바뀔 때마다 새로운 공간이 생성됨 -> replaceChild 사용해서 해결
+ * 다른 문제 발생 : 10, 8, 6, 4, 2, 0이면 스크롤 바가 생성됨 -> 이미지가 있을 때만 그런 것으로 이미지가 없으면 생성되지 않음
+ * @param time
+ */
 function timer(time) {
-    let element = document.getElementById("timer");
-    let x = setInterval(function () {
-        element.innerHTML = time + " seconds";
+    const timer = document.getElementById("timer");
+    let element = document.createElement("p");
+    timer.appendChild(element);
+    const x = setInterval(function () {
+        element.textContent = time;
+        timer.replaceChild(element, element);
         time--;
         if (time < 0) {
             clearInterval(x);
@@ -51,72 +65,92 @@ class Action {
      * @param {*} scene which serves as a container of all visual elements
      */
     constructor(scene) {
+        //index.html 안의 <div id="screen"></div>
+        const screen = document.getElementById("screen");
+        // screen.innerHTML = `<br><br><br><br><br><br><br>`;
         //공통화면을 위해 전역변수로 선언
         let level;
         let exp;
         let myHint;
         let myCoin;
+
         //correct command가 왔을 때 변화를 위해 전역변수 선언
         let totalWord;
+
         //openHint & closeHint command를 위한 전역변수 선언
         let hint;
 
         let timerOver;
 
-
         let cnt = 0;
+
+        //코드 간결화 변수
+// let welcome;
+// let main;
+// let stageSelect;
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
-                hideall();
-                document.getElementById("welcome").style.display = "block";
-                document.getElementById("welcome").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/welcome.png">`;
+
+                const welcomeImg = document.createElement("img");
+                welcomeImg.setAttribute("style", "max-width: 100%; height: auto");
+                welcomeImg.src = "https://actions.o2o.kr/devsvr1/image/welcome.png";
+                screen.appendChild(welcomeImg);
+
+                // const welcome = document.createElement("button");
+                // welcome.setAttribute("style", "margin:20px");
+                // welcome.textContent = "PLAY";
+                // screen.appendChild(welcome);
+
             },
             MAIN: function (data) {
                 console.log("실행 : main");
-                hideall();
-                document.getElementById("main").style.display = "block";
                 level = data.level;
                 exp = data.myExp + "/" + data.fullExp;
                 myHint = data.myHint;
                 myCoin = data.myCoin;
-                document.getElementById("main").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/main.png">`;
-                // document.getElementById("main").innerHTML
-                //     = `<BR><BR><BR><BR><BR><BR>
-                //         <div style="margin:20px">
-                //             <span style="margin:20px">
-                //                 <div style="margin:20px">Lv.${level}</div>
-                //                 <div style="margin:20px">${exp}</div>
-                //             </span>
-                //             <span style="margin: 20px">
-                //                 HINT ${myHint}
-                //             </span>
-                //             <span style="margin:20px">
-                //                 COIN ${myCoin}
-                //             </span>
-                //         </div>
-                //         <div style="margin:20px">
-                //             <span style="margin:20px">
-                //                 KEEP GOING
-                //             </span>
-                //             <span style="margin:20px">
-                //                 SELECT STAGE
-                //             </span>
-                //         </div>
-                //         <div style="margin: 20px">
-                //             SETTING
-                //         </div>`;
+
+                screen.removeChild(screen.childNodes[0]);
+
+                const img = document.createElement("img");
+                img.setAttribute("style", "max-width:100%; height: auto");
+                img.src = "https://actions.o2o.kr/devsvr1/image/main.png";
+                screen.appendChild(img);
+
+                //코드 간결화
+// main = document.createElement('span')
+// main.setAttribute("style","margin : 20px")
+// main.textContent = 'Lv.'+level
+// document.getElementById("view").replaceChild(main,welcome);
+//
+// const common = [exp,myHint,myCoin]
+// for(let i = 0; i < 3; i++){
+//     let common1 = document.createElement('span')
+//     common1.setAttribute("style","margin : 20px")
+//     common1.textContent = common[i];
+//     document.getElementById("view").appendChild(common1);
+// }
+//
+// const button = ['continue','view all','setting']
+// for(let i = 0; i < 3; i++){
+//     let button1 = document.createElement('div');
+//     button1.setAttribute("style","margin : 20px")
+//     button1.textContent = button[i];
+//     document.getElementById("view").appendChild(button1);
+// }
             },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
-                hideall();
-                document.getElementById("stage").style.display = "block";
-                var stagenum = 1;
-                document.getElementById("stage").style.display = "block";
-                document.getElementById("stage").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/selectstage.png">`;
+                screen.removeChild(screen.childNodes[0]);
+                const img = document.createElement("img");
+                img.setAttribute("style", "max-width:100%; height: auto");
+                img.src = "https://actions.o2o.kr/devsvr1/image/selectstage.png";
+                screen.appendChild(img);
+
+                // stageLocked(level);
                 // document.getElementById("stage").innerHTML
                 //     = `<BR><BR><BR><BR><BR><BR>
                 //         <div>
@@ -137,18 +171,21 @@ class Action {
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
-                hideall();
-                document.getElementById("difficulty").style.display = "block";
-                let winMoney1 = data.winMoney1;
-                let winMoney2 = data.winMoney2;
-                let winMoney3 = data.winMoney3;
-                let betMoney1 = data.betMoney1;
-                let betMoney2 = data.betMoney2;
-                let betMoney3 = data.betMoney3;
-                let timeLimit1 = data.timeLimit1;
-                let timeLimit2 = data.timeLimit2;
-                let timeLimit3 = data.timeLimit3;
-                document.getElementById("difficulty").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/selectdifficult.png">`;
+                // let winMoney1 = data.winMoney1;
+                // let winMoney2 = data.winMoney2;
+                // let winMoney3 = data.winMoney3;
+                // let betMoney1 = data.betMoney1;
+                // let betMoney2 = data.betMoney2;
+                // let betMoney3 = data.betMoney3;
+                // let timeLimit1 = data.timeLimit1;
+                // let timeLimit2 = data.timeLimit2;
+                // let timeLimit3 = data.timeLimit3;
+                screen.removeChild(screen.childNodes[0]);
+                const img = document.createElement("img");
+                img.setAttribute("style", "max-width:100%; height: auto");
+                img.src = "https://actions.o2o.kr/devsvr1/image/selectdifficult.png";
+                screen.appendChild(img);
+
                 // document.getElementById("difficulty").innerHTML
                 //     = `<BR><BR><BR><BR><BR><BR>
                 //        <div style="margin:20px">
@@ -175,15 +212,19 @@ class Action {
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
-                hideall();
-                document.getElementById("inGame").style.display = "block";
-                let board = data.board;
-                let boardRow = data.board[0].length;          //열
-                let boardCol = data.board.length;            //행
-                let timeLimit = data.timeLimit;
+                // const board = data.board;
+                // const boardRow = data.board[0].length;          //열
+                // const boardCol = data.board.length;            //행
+                const timeLimit = data.timeLimit;
                 totalWord = data.totalWord;
-                document.getElementById("inGame").innerHTML = `<div id="image"></div>`;
-                document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame0.png">`;
+
+                screen.removeChild(screen.childNodes[0]);
+                const inGameImg = document.createElement("img");
+                inGameImg.setAttribute("id", "ingame");
+                inGameImg.setAttribute("style", "max-width: 100%; height: auto");
+                inGameImg.src = "https://actions.o2o.kr/devsvr1/image/ingame0.png";
+                screen.appendChild(inGameImg);
+
                 // document.getElementById("inGame").innerHTML
                 //     += `<BR><BR><BR><BR><BR><BR>
                 //         <span style="margin: 20px">
@@ -200,172 +241,157 @@ class Action {
                 //            <br>
                 //         `;
                 // }
-            //     document.getElementById("inGame").innerHTML
-            //         += `<span style="margin: 20px">
-            //     <div style="margin: 20px">SETTING</div>
-            // </span>
-            // <span id="openHint" style="margin: 10px"></span>
-            // <span id="timer" style="margin: 20px"></span>
-            // <span id="correctOrWrong" style="margin: 20px"></span>`;
+                //     document.getElementById("inGame").innerHTML
+                //         += `<span style="margin: 20px">
+                //     <div style="margin: 20px">SETTING</div>
+                // </span>
+                // <span id="openHint" style="margin: 10px"></span>
+                // <span id="timer" style="margin: 20px"></span>
+                // <span id="correctOrWrong" style="margin: 20px"></span>`;
 
+                const innerTimer = document.createElement("div");
+                innerTimer.setAttribute("id", "timer");
+                screen.appendChild(innerTimer);
                 timer(timeLimit);
                 timerOver = setTimeout(function () {
-                    window.canvas.sendTextQuery('get fail result');
-                 }, timeLimit * 1000);
-        },
+                    window.canvas.sendTextQuery("get fail result");
+                }, timeLimit * 1000);
+            },
             CORRECT: function (data) {
-                console.log("실행 : inGame");
-                hideall();
-                document.getElementById("inGame").style.display = "block";
+                console.log("실행 : correct");
                 let finish = data.finish;
-                cnt++;
-                if(cnt == 1)
-                document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame1.png">`;
-                else if(cnt == 2)
-                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame2.png ">`;
-                else if (cnt == 3)
-                    document.getElementById("image").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ingame3.png">`;
-                // totalWord--;
-                // // document.getElementById("correctOrWrong").innerHTML
-                // //     = `<span style="margin: 10px">CORRECT</span>`;
-                // // document.getElementById("totalWord").innerHTML
-                // //     = "You have to find " + totalWord + " words";
+                // if (finish) {
+                //     scene.action.commands.RESULT(data);
+                // }
 
+                const iGimg = document.getElementById("ingame");
+                screen.removeChild(screen.childNodes[0]);
+                cnt++;
+                if (cnt == 1) {
+                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame1.png";
+                    screen.appendChild(iGimg);
+                } else if (cnt == 2) {
+                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame2.png";
+                    screen.appendChild(iGimg);
+                } else if (cnt == 3) {
+                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame3.png";
+                    screen.appendChild(iGimg);
+                }
+
+                // totalWord--;
+                // document.getElementById("correctOrWrong").innerHTML
+                //     = `<span style="margin: 10px">CORRECT</span>`;
+                // document.getElementById("totalWord").innerHTML
+                //     = "You have to find " + totalWord + " words";
                 if (finish) {
-                     setTimeout(function () {
-                        window.canvas.sendTextQuery('get success result');
+                    setTimeout(function () {
+                        window.canvas.sendTextQuery("get success result");
                     }, 1000);
                     console.log("get success result");
                     clearTimeout(timerOver);
                 }
             },
             WRONG: function (data) {
-                console.log("실행 : inGame");
-                hideall();
-                document.getElementById("inGame").style.display = "block";
-                // document.getElementById("correctOrWrong").innerHTML
-                //     = `<span style="margin: 10px">WRONG</span>
-            // `;
+                console.log("실행 : wrong");
             },
             OPENHINT: function (data) {
-                console.log("실행 : inGame");
-                hideall();
-                document.getElementById("inGame").style.display = "block";
+                console.log("실행 : openhint");
                 myHint--;
                 document.getElementById("hint").innerHTML = "HINT " + myHint;
                 hint = data.hint;
-                document.getElementById("openHint").style.display = "block";
-                document.getElementById("openHint").innerHTML = hint;
             },
-            CLOSEHINT: function (data) {
-                console.log("실행 : inGame");
-                hideall();
-                document.getElementById("inGame").style.display = "block";
-                document.getElementById("openHint").style.display = "none";
-                document.getElementById("inGame").innerHTML
-                    += `<span style="margin: 10px">${hint}</span>`;
+            CLOSEHINT: function(data) {
+                console.log("실행: closehint");
             },
             RESULT: function (data) {
                 console.log("실행 : result");
-                hideall();
-                document.getElementById("result").style.display = "block";
-
-                let result = data.result;
+                const result = data.result;
                 level = data.level;
                 exp = data.myExp + "/" + data.fullExp;
                 myCoin = data.myCoin;
                 myHint = data.myHint;
-                let correctList = data.correctList;
-                let wrongList = data.wrongList;
-                if(result == "fail"){
-                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/result_fail.png">`;
-                    document.getElementById("result").innerHTML
-                        += `<BR><BR><BR><BR><BR><BR>
-                        <div style="margin:20px">
-                        <span style="margin: 20px">
-                            <div style="margin: 20px">Lv.${level}</div>
-                            <div style="margin: 20px">${exp}</div>
-                        </span>
-                        <span style="margin: 20px">HINT ${myHint}</span>
-                        <span style="margin: 20px">COIN ${myCoin}</span>
-                       </div>
-                       <div style="margin: 20px">
-                        <span style="margin: 20px">BACK</span>
-                        <span style="margin: 20px">
-                            <div style="margin: 20px">${result}</div>
-                            <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                            <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
-                        </span>
-                        <span style="margin\: 20px">KEEP OR RETRY</span>
-                       </div>
-                        <span style="margin: 20px">SETTING</span>
-                       </div>`;
-                }else {
-                    document.getElementById("result").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/result_success.png">`
-                    document.getElementById("result").innerHTML
-                        += `<BR><BR><BR><BR><BR><BR>
-                        <div style="margin:20px">
-                        <span style="margin: 20px">
-                            <div style="margin: 20px">Lv.${level}</div>
-                            <div style="margin: 20px">${exp}</div>
-                        </span>
-                        <span style="margin: 20px">HINT ${myHint}</span>
-                        <span style="margin: 20px">COIN ${myCoin}</span>
-                       </div>
-                       <div style="margin: 20px">
-                        <span style="margin: 20px">BACK</span>
-                        <span style="margin: 20px">
-                            <div style="margin: 20px">${result}</div>
-                            <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                            <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
-                        </span>
-                        <span style="margin\: 20px">KEEP OR RETRY</span>
-                       </div>
-                        <span style="margin: 20px">SETTING</span>
-                       </div>`;
+                const correctList = data.correctList;
+                const wrongList = data.wrongList;
+                screen.removeChild(screen.childNodes[0]);
+                if (result == "fail") {
+                    let failImg = document.createElement("img");
+                    failImg.setAttribute("style", "max-width:100%; height: auto");
+                    failImg.src = "https://actions.o2o.kr/devsvr1/image/result_fail.png";
+                    screen.appendChild(failImg);
+
+                    // document.getElementById("result").innerHTML
+                    //     = `<BR><BR><BR><BR><BR><BR>
+                    //     <div style="margin:20px">
+                    //     <span style="margin: 20px">
+                    //         <div style="margin: 20px">Lv.${level}</div>
+                    //         <div style="margin: 20px">${exp}</div>
+                    //     </span>
+                    //     <span style="margin: 20px">HINT ${myHint}</span>
+                    //     <span style="margin: 20px">COIN ${myCoin}</span>
+                    //    </div>
+                    //    <div style="margin: 20px">
+                    //     <span style="margin: 20px">BACK</span>
+                    //     <span style="margin: 20px">
+                    //         <div style="margin: 20px">${result}</div>
+                    //         <div style="margin: 20px">Lv.${level} ${exp}++</div>
+                    //         <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
+                    //     </span>
+                    //     <span style="margin\: 20px">KEEP OR RETRY</span>
+                    //    </div>
+                    //     <span style="margin: 20px">SETTING</span>
+                    //    </div>`;
+                } else {
+                    let successImg = document.createElement("img");
+                    successImg.setAttribute("style", "max-width:100%; height: auto");
+                    successImg.src = "https://actions.o2o.kr/devsvr1/image/result_success.png";
+                    screen.appendChild(successImg);
+
+                    // document.getElementById("result").innerHTML
+                    //     = `<BR><BR><BR><BR><BR><BR>
+                    //     <div style="margin:20px">
+                    //     <span style="margin: 20px">
+                    //         <div style="margin: 20px">Lv.${level}</div>
+                    //         <div style="margin: 20px">${exp}</div>
+                    //     </span>
+                    //     <span style="margin: 20px">HINT ${myHint}</span>
+                    //     <span style="margin: 20px">COIN ${myCoin}</span>
+                    //    </div>
+                    //    <div style="margin: 20px">
+                    //     <span style="margin: 20px">BACK</span>
+                    //     <span style="margin: 20px">
+                    //         <div style="margin: 20px">${result}</div>
+                    //         <div style="margin: 20px">Lv.${level} ${exp}++</div>
+                    //         <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
+                    //     </span>
+                    //     <span style="margin\: 20px">KEEP OR RETRY</span>
+                    //    </div>
+                    //     <span style="margin: 20px">SETTING</span>
+                    //    </div>`;
                 }
-                // document.getElementById("result").innerHTML
-                //     = `<BR><BR><BR><BR><BR><BR>
-                //         <div style="margin:20px">
-                //         <span style="margin: 20px">
-                //             <div style="margin: 20px">Lv.${level}</div>
-                //             <div style="margin: 20px">${exp}</div>
-                //         </span>
-                //         <span style="margin: 20px">HINT ${myHint}</span>
-                //         <span style="margin: 20px">COIN ${myCoin}</span>
-                //        </div>
-                //        <div style="margin: 20px">
-                //         <span style="margin: 20px">BACK</span>
-                //         <span style="margin: 20px">
-                //             <div style="margin: 20px">${result}</div>
-                //             <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                //             <div style="margin: 20px">
-                //                 <span style="color: blue">${correctList}</span>
-                //                 <span style="color: red">${wrongList}</span>
-                //             </div>
-                //         </span>
-                //         <span style="margin\: 20px">KEEP OR RETRY</span>
-                //        </div>
-                //         <span style="margin: 20px">SETTING</span>
-                //        </div>`;
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
-                hideall();
-                document.getElementById("setting").style.display = "block";
-                document.getElementById("setting").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/setting.png">`;
+                screen.removeChild(screen.childNodes[0]);
+                const settingImg = document.createElement("img");
+                settingImg.setAttribute("style", "max-width: 100%; height: auto");
+                settingImg.src = "https://actions.o2o.kr/devsvr1/image/setting.png";
+                screen.appendChild(settingImg);
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
-                hideall();
-                document.getElementById("ranking").style.display = "block";
-                document.getElementById("ranking").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/ranking.png">`;
+                screen.removeChild(screen.childNodes[0]);
+                const rankingImg = document.createElement("img");
+                rankingImg.setAttribute("style", "max-width: 100%; height: auto");
+                rankingImg.src = "https://actions.o2o.kr/devsvr1/image/ranking.png";
+                screen.appendChild(rankingImg);
             },
             SHOP: function (data) {
                 console.log("실행 : shop");
-                hideall();
-                document.getElementById("shop").style.display = "block";
-                document.getElementById("shop").innerHTML = `<img style="max-width:100%; height:auto;" src="https://actions.o2o.kr/devsvr1/image/shop.png">`;
+                screen.removeChild(screen.childNodes[0]);
+                const shopImg = document.createElement("img");
+                shopImg.setAttribute("style", "max-width: 100%; height: auto");
+                shopImg.src = "https://actions.o2o.kr/devsvr1/image/shop.png";
+                screen.appendChild(shopImg);
             },
         };
     }
