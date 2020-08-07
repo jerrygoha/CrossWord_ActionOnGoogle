@@ -247,11 +247,20 @@ public class Main extends DialogflowApp {
         String response = "";
 
         String word = CommonUtil.makeSafeString(request.getParameter("word"));
+        String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
 
         if (word.isEmpty()) {
-            htmldata.put("command", "hint");
-            htmldata.put("hint", gameBoard.getHintMessage());
-            response = "hint";
+
+            if(hint.equals("open")) {
+                htmldata.put("command", "openhint");
+                htmldata.put("hint", gameBoard.getHintMessage());
+                response = "open hint";
+            }
+            else {
+                htmldata.put("command", "closehint");
+                response = "close hint";
+            }
+
         } else {
 
             if (gameBoard.tryAnswer(word)) {
@@ -261,28 +270,11 @@ public class Main extends DialogflowApp {
                 data.put("history", "result");
                 data.put("special case", false);
 
-                if (result.isWin()) {
+                if (result.isWin())
                     htmldata.put("finish", true);
-                    //htmldata.put("command","result");
-                    //htmldata.put("result","success");
-//                    Result results = gameBoard.getResult();
-//                    htmldata.put("level", user.getLevel());
-//                    htmldata.put("myExp", user.getMyExp());
-//                    htmldata.put("fullExp", user.getFullExp());
-//                    htmldata.put("myHint", user.getMyHint());
-//                    htmldata.put("myCoin", user.getMyCoin());
-//                    htmldata.put("correctList", results.getAnser());
-//                    htmldata.put("wrongList", results.getRestWord());
-
-//                               rb.removeContext("ingame");
-//                    rb.add(new ActionContext("result",5));
-
-//                    response = tts.getTtsmap().get("result");
-//                    return rb.add(new SimpleResponse().setTextToSpeech(response))
-//                            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-//                            .build();
-                } else
+                else
                     htmldata.put("finish", false);
+
             } else {
                 htmldata.put("command", "wrong");
                 response = "wrong";
