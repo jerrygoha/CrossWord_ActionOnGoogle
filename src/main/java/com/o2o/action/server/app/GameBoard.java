@@ -58,7 +58,7 @@ public class GameBoard {
     // 타임시간 가져오기
     public int getTimeLimit()
     {
-        return 30;
+        return 50;
     }
     // 총 단어 개수 가져오기
     public int getTotalWord()
