@@ -23,54 +23,50 @@ public class Main extends DialogflowApp {
         tts = new TTS();
     }
 
-    ActionRequest ingameRequest;
-
-
-    public ActionResponse sendTxQuery(String text) {
-
-        if(ingameRequest==null)
-        {System.out.println("ingamerequst null" + text);}
-        System.out.println(ingameRequest.getIntent() + text);
-        ResponseBuilder rb = getResponseBuilder(ingameRequest);
-        Map<String, Object> data = rb.getConversationData();
-        Map<String, Object> htmldata = new HashMap<>();
-        HtmlResponse htmlResponse = new HtmlResponse();
-        System.out.println("recv query from Mainjava before text.eqult fail");
-        if(text.equals("fail"))
-        {
-            System.out.println("recv query from Mainjava after text.eqult fail");
-            htmldata.put("command","result");
-            htmldata.put("result","success");
-            Result results = gameBoard.getResult();
-            htmldata.put("level", user.getLevel());
-            htmldata.put("myExp", user.getMyExp());
-            htmldata.put("fullExp", user.getFullExp());
-            htmldata.put("myHint", user.getMyHint());
-            htmldata.put("myCoin", user.getMyCoin());
-            htmldata.put("correctList", results.getAnser());
-            htmldata.put("wrongList", results.getRestWord());
-            rb.removeContext("ingame");
-            rb.add(new ActionContext("result",3));
-            String response ="";
-            response = tts.getTtsmap().get("result");
-            return rb.add(new SimpleResponse().setTextToSpeech(response))
-                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-                .build();
-      }
-        return rb.add(new SimpleResponse().setTextToSpeech("Loose!"))
-            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-            .build();
-    }
+//    ActionRequest ingameRequest;
+//    public ActionResponse sendTxQuery(String text) {
+//
+//        if(ingameRequest==null)
+//        {System.out.println("ingamerequst null" + text);}
+//        System.out.println(ingameRequest.getIntent() + text);
+//        ResponseBuilder rb = getResponseBuilder(ingameRequest);
+//        Map<String, Object> data = rb.getConversationData();
+//        Map<String, Object> htmldata = new HashMap<>();
+//        HtmlResponse htmlResponse = new HtmlResponse();
+//        System.out.println("recv query from Mainjava before text.eqult fail");
+//        if(text.equals("fail"))
+//        {
+//            System.out.println("recv query from Mainjava after text.eqult fail");
+//            htmldata.put("command","result");
+//            htmldata.put("result","success");
+//            Result results = gameBoard.getResult();
+//            htmldata.put("level", user.getLevel());
+//            htmldata.put("myExp", user.getMyExp());
+//            htmldata.put("fullExp", user.getFullExp());
+//            htmldata.put("myHint", user.getMyHint());
+//            htmldata.put("myCoin", user.getMyCoin());
+//            htmldata.put("correctList", results.getAnser());
+//            htmldata.put("wrongList", results.getRestWord());
+//            rb.removeContext("ingame");
+//            rb.add(new ActionContext("result",3));
+//            String response ="";
+//            response = tts.getTtsmap().get("result");
+//            return rb.add(new SimpleResponse().setTextToSpeech(response))
+//                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+//                .build();
+//      }
+//        return rb.add(new SimpleResponse().setTextToSpeech("Loose!"))
+//            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+//            .build();
+//    }
 
     @ForIntent("Default Fallback Intent")
     public ActionResponse fallback(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
-        Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
 
         String response = "Please say one more time";
-        htmldata.put("command", "fallback");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
@@ -87,6 +83,7 @@ public class Main extends DialogflowApp {
         data.clear();
         setUp();
         data.put("history", "welcome");
+        data.put("special case", false);
         htmldata.put("command", "welcome");
 
         user = new UserInfo();
@@ -102,9 +99,38 @@ public class Main extends DialogflowApp {
         }
     }
 
+
     @ForIntent("mainFromWelcome")
     public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
         return main(request);
+    }
+    @ForIntent("stageFromMain")
+    public ActionResponse stageSelect(ActionRequest request) throws ExecutionException, InterruptedException {
+        return stage(request);
+    }
+    @ForIntent("stageFromDifficulty")
+    public ActionResponse stageFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
+        return stage(request);
+    }
+    @ForIntent("stageFromResult")
+    public ActionResponse stageFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
+        return stage(request);
+    }
+    @ForIntent("difficultyFromMain")
+    public ActionResponse difficultySelect(ActionRequest request) throws ExecutionException, InterruptedException {
+        return difficulty(request);
+    }
+    @ForIntent("difficultyFromStage")
+    public ActionResponse difficultyFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
+        return difficulty(request);
+    }
+    @ForIntent("ingameFromDifficulty")
+    public ActionResponse ingameFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
+        return ingame(request);
+    }
+    @ForIntent("ingameFromResult")
+    public ActionResponse ingameFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
+        return ingame(request);
     }
 
 
@@ -115,10 +141,8 @@ public class Main extends DialogflowApp {
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
 
-        String response;
-
-
         data.put("history", "main");
+        data.put("special case", false);
 
         htmldata.put("command", "main");
         htmldata.put("level", user.getLevel());
@@ -127,27 +151,12 @@ public class Main extends DialogflowApp {
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
 
-        response = tts.getTtsmap().get("main");
+        String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
     }
 
-
-    @ForIntent("stageFromMain")
-    public ActionResponse stageSelect(ActionRequest request) throws ExecutionException, InterruptedException {
-        return stage(request);
-    }
-
-    @ForIntent("stageFromDifficulty")
-    public ActionResponse stageFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
-        return stage(request);
-    }
-
-    @ForIntent("stageFromResult")
-    public ActionResponse stageFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
-        return stage(request);
-    }
 
     public ActionResponse stage(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
@@ -155,36 +164,23 @@ public class Main extends DialogflowApp {
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
 
-        String response;
-        data.put("history", "stage");
+        data.put("history", "stageSelect");
+        data.put("special case", false);
+
         htmldata.put("command", "stageSelect");
 
-        response = tts.getTtsmap().get("stageselect");
+        String response = tts.getTtsmap().get("stageselect");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
     }
 
 
-    @ForIntent("difficultyFromMain")
-    public ActionResponse difficultySelect(ActionRequest request) throws ExecutionException, InterruptedException {
-        return difficulty(request);
-    }
-
-    @ForIntent("difficultyFromStage")
-    public ActionResponse difficultyFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
-        return difficulty(request);
-    }
-
     public ActionResponse difficulty(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
-        String response;
-
-
 
         //메인에서 왔는지,, 스테이지에서왔는지
         int stage;
@@ -193,8 +189,10 @@ public class Main extends DialogflowApp {
         } else {
             stage = ((Double) request.getParameter("number")).intValue();
         }
+
         data.put("stage", stage);
-        data.put("history", "difficulty");
+        data.put("history", "difficultySelect");
+        data.put("special case", false);
 
         htmldata.put("command", "difficultySelect");
         htmldata.put("winMoney1", gameinfo.getStage()[1].getWinMoney());
@@ -207,23 +205,12 @@ public class Main extends DialogflowApp {
         htmldata.put("timeLimit2", gameinfo.getStage()[2].getTimeLimit()[0]);
         htmldata.put("timeLimit3", gameinfo.getStage()[3].getTimeLimit()[0]);
 
-        response = tts.getTtsmap().get("difficultyselect");
-
+        String response = tts.getTtsmap().get("difficultyselect");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
-
     }
 
-    @ForIntent("ingameFromDifficulty")
-    public ActionResponse ingameFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
-        return ingame(request);
-    }
-
-    @ForIntent("ingameFromResult")
-    public ActionResponse ingameFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
-        return ingame(request);
-    }
 
     public ActionResponse ingame(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
@@ -231,6 +218,7 @@ public class Main extends DialogflowApp {
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
         data.put("history", "ingame");
+        data.put("special case", false);
 
         String response;
         gameBoard = new GameBoard(GameBoard.Difficulty.easy, 3);
@@ -257,43 +245,42 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
 
         String response = "";
-        String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
-        if ((hint.equals("open")) || (hint.equals("close"))) {
-            if (hint.equals("open")) {
-                htmldata.put("command", "openHint");
-                htmldata.put("hint", gameBoard.getHintMessage());
-                response = "open hint";
-            } else {
-                htmldata.put("command", "closeHint");
-                response = "close hint";
-            }
+
+        String word = CommonUtil.makeSafeString(request.getParameter("word"));
+
+        if (word.isEmpty()) {
+            htmldata.put("command", "hint");
+            htmldata.put("hint", gameBoard.getHintMessage());
+            response = "hint";
         } else {
-            String word = CommonUtil.makeSafeString(request.getParameter("word"));
+
             if (gameBoard.tryAnswer(word)) {
                 htmldata.put("command", "correct");
                 response = "correct";
                 Result result = gameBoard.getResult();
+                data.put("history", "result");
+                data.put("special case", false);
 
                 if (result.isWin()) {
                     htmldata.put("finish", true);
-                    htmldata.put("command","result");
-                    htmldata.put("result","success");
-                    Result results = gameBoard.getResult();
-                    htmldata.put("level", user.getLevel());
-                    htmldata.put("myExp", user.getMyExp());
-                    htmldata.put("fullExp", user.getFullExp());
-                    htmldata.put("myHint", user.getMyHint());
-                    htmldata.put("myCoin", user.getMyCoin());
-                    htmldata.put("correctList", results.getAnser());
-                    htmldata.put("wrongList", results.getRestWord());
+                    //htmldata.put("command","result");
+                    //htmldata.put("result","success");
+//                    Result results = gameBoard.getResult();
+//                    htmldata.put("level", user.getLevel());
+//                    htmldata.put("myExp", user.getMyExp());
+//                    htmldata.put("fullExp", user.getFullExp());
+//                    htmldata.put("myHint", user.getMyHint());
+//                    htmldata.put("myCoin", user.getMyCoin());
+//                    htmldata.put("correctList", results.getAnser());
+//                    htmldata.put("wrongList", results.getRestWord());
 
-                    rb.removeContext("ingame");
-                    rb.add(new ActionContext("result",3));
+//                               rb.removeContext("ingame");
+//                    rb.add(new ActionContext("result",5));
 
-                    response = tts.getTtsmap().get("result");
-                    return rb.add(new SimpleResponse().setTextToSpeech(response))
-                            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-                            .build();
+//                    response = tts.getTtsmap().get("result");
+//                    return rb.add(new SimpleResponse().setTextToSpeech(response))
+//                            .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+//                            .build();
                 } else
                     htmldata.put("finish", false);
             } else {
@@ -315,36 +302,31 @@ public class Main extends DialogflowApp {
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
 
-
-        String response;
-
         String result = CommonUtil.makeSafeString(request.getParameter("result"));
 
         data.put("history", "result");
-        Result results = gameBoard.getResult();
+        data.put("special case", false);
+
+        htmldata.put("command", "result");
+        htmldata.put("result", result);
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
         htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
+        Result results = gameBoard.getResult();
         htmldata.put("correctList", results.getAnser());
         htmldata.put("wrongList", results.getRestWord());
 
-        htmldata.put("command", "result");
-        htmldata.put("result", result);
+        String response="";
+        if(result.equals("success"))
+            response = tts.getTtsmap().get("success");
+        else
+            response = tts.getTtsmap().get("fail");
 
-//        if(result.equals("fail"))
-////            response = "lose";
-////        else
-////            response = tts.getTtsmap().get("win");
-
-        rb.removeContext("ingame");
-
-        response = tts.getTtsmap().get("result");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
-
     }
 
 
@@ -354,9 +336,11 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
+        data.put("special case", true);
         htmldata.put("command", "setting");
 
-        String response = "setting";
+        String response = tts.getTtsmap().get("setting");
 
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -369,6 +353,8 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
+        data.put("special case", true);
         htmldata.put("command", "ranking");
 
         String response = tts.getTtsmap().get("ranking");
@@ -383,13 +369,40 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
+        data.put("special case", true);
         htmldata.put("command", "shop");
 
-        String response = "shop";
+        String response = tts.getTtsmap().get("store");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
     }
 
+    @ForIntent("return")
+    public ActionResponse returnback(ActionRequest request) throws ExecutionException, InterruptedException {
 
+        ResponseBuilder rb = getResponseBuilder(request);
+        Map<String, Object> data = rb.getConversationData();
+        Map<String, Object> htmldata = new HashMap<>();
+        HtmlResponse htmlResponse = new HtmlResponse();
+
+        String history = CommonUtil.makeSafeString(data.get("history"));
+        Boolean isSpecial = (Boolean)(data.get("special case"));
+
+        if(isSpecial) {
+            htmldata.put("command", history);
+            data.put("special case",false);
+
+            String response = "return";
+            return rb.add(new SimpleResponse().setTextToSpeech(response))
+                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                    .build();
+        }
+
+        String response = "can't return";
+        return rb.add(new SimpleResponse().setTextToSpeech(response))
+                .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                .build();
+    }
 }

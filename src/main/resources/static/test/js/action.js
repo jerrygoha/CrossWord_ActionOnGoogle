@@ -8,14 +8,14 @@ function hideall() {
         elements[i].style.display = "none";
     }
 }
-function sendTxQuery(query)
-{
-    //testcode
-    const http = new XMLHttpRequest()
-    http.open("GET", "https://actions.o2o.kr/devsvr7/test/canvasapp/"+query)
-    http.send()
-    http.onload = () => console.log(http.responseText)
-}
+// function sendTxQuery(query)
+// {
+//     //testcode
+//     const http = new XMLHttpRequest()
+//     http.open("GET", "https://actions.o2o.kr/devsvr7/test/canvasapp/"+query)
+//     http.send()
+//     http.onload = () => console.log(http.responseText)
+// }
 
 function stageLocked(level) {
     let i;
