@@ -60,6 +60,7 @@ public class Main extends DialogflowApp {
 //            .build();
 //    }
 
+
     @ForIntent("Default Fallback Intent")
     public ActionResponse fallback(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
@@ -108,7 +109,10 @@ public class Main extends DialogflowApp {
         }
     }
 
-
+    @ForIntent("home")
+    public ActionResponse home(ActionRequest request) throws ExecutionException, InterruptedException {
+        return main(request);
+    }
     @ForIntent("mainFromWelcome")
     public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
         return main(request);
@@ -276,14 +280,10 @@ public class Main extends DialogflowApp {
                 htmldata.put("command", "correct");
                 response = "correct";
                 Result result = gameBoard.getResult();
-                data.put("history", "result");
-                data.put("special case", false);
-
                 if (result.isWin())
                     htmldata.put("finish", true);
                 else
                     htmldata.put("finish", false);
-
             } else {
                 htmldata.put("command", "wrong");
                 response = "wrong";
