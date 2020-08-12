@@ -11,6 +11,25 @@ import java.util.concurrent.ExecutionException;
 
 public class Main extends DialogflowApp {
 
+    public static void main(String[] args) {
+         BoardCell[][] Board = new BoardCell[6][6];
+        int answercount = 5;
+       AnswerWord[] answers = new AnswerWord[answercount];
+
+        AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answers[0]=answerWord;
+        answerWord = new AnswerWord("dog",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answers[1]=answerWord;
+        answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answers[2]=answerWord;
+        answerWord = new AnswerWord("pig",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answers[3]=answerWord;
+        answerWord = new AnswerWord("apple",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answers[4]=answerWord;
+        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(5,5,Board,answers);
+      //  boardAlgorithm.MakeUpBoardAlphabet();
+        boardAlgorithm.MakeUpBoardAnswer();
+    }
     String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
 
     GameBoard gameBoard;
