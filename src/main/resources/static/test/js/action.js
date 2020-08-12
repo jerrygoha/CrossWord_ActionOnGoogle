@@ -8,83 +8,159 @@ function stageLock(level) {
     let index;
     let element = document.getElementById("main");
     for (index = 0; index <= 9; index++) {
-        let newElement = document.createElement('button');
+        let newElement = document.createElement("button");
         if (level <= index) {
-            newElement.textContent = 'STAGE' + (index + 1);
+            newElement.textContent = "STEP " + (index + 1);
             newElement.setAttribute("disabled", true);
-            newElement.setAttribute("style", "margin: 10px");
+            newElement.setAttribute("class", "margin");
             element.appendChild(newElement);
         } else {
-            newElement.textContent = 'STAGE' + (index + 1);
-            newElement.setAttribute("style", "margin: 10px");
+            newElement.textContent = "STEP " + (index + 1);
+            newElement.setAttribute("class", "margin");
             element.appendChild(newElement);
         }
     }
 }
 
-/**
- * appendChild를 이용한 timer
- * 인게임에서 사용할 타이머
- * 함수의 현 문제 : 초가 바뀔 때마다 새로운 공간이 생성됨 -> replaceChild 사용해서 해결
- * 다른 문제 발생 : 10, 8, 6, 4, 2, 0이면 스크롤 바가 생성됨 -> 이미지가 있을 때만 그런 것으로 이미지가 없으면 생성되지 않음
- * @param time
- */
-function timer(time) {
-    const innertimer = document.getElementById("timer");
-    let element = document.createElement("p");
-    innertimer.appendChild(element);
-    const interval = setInterval(function () {
-        element.textContent = time;
-        innertimer.replaceChild(element, element);
-        time--;
-        if (time < 0) {
-            clearInterval(interval);
+// const Timer = (function() {
+//     let id;
+//     let intervalId = null;
+//     let timer = 0;
+//     let el;
+//
+//     function setTimer(time) {
+//         timer = time;
+//     }
+//     function initTimer() {
+//         id = el_id;
+//         if(id === undefined) {
+//             throw "Provide a valid Id!";
+//         }
+//         el = document.getElementById("mainTimer");
+//
+//         if(el === null) {
+//             throw "Element does not exists!";
+//         }
+//     }
+//     function update() {
+//         //console.log(timer);
+//         timer -= 1;
+//     }
+//     function startTimer() {
+//         if(intervalId !== null) {
+//             throw "Timer is already running!";
+//         }
+//         intervalId = setInterval(update, 1000);
+//     }
+//     function stopTimer() {
+//         if(intervalId === null) {
+//             throw "Timer is not running!";
+//         }
+//         clearInterval(intervalId);
+//         intervalId = null;
+//     }
+//     function resumeTimer() {
+//         if (intervalId !== null) {
+//             throw "Timer is already running";
+//         }
+//         intervalId = setInterval(update, 1000);
+//     }
+//     return {
+//         'setter',setTimer,
+//         'init':initTimer,
+//         'start': startTimer,
+//         'stop': stopTimer,
+//         'resume': resumeTimer
+//     };
+// })();
+
+let interval = 0;
+let timerTime = 0;
+let startFlag = false;
+
+function startTimer(timeLimit) {
+    timerTime = timeLimit;
+    const mainTimer = document.getElementById("mainTimer");
+    // let element = document.createElement("p");
+    // mainTimer.appendChild(element);
+
+    interval = setInterval(function () {
+
+        if (!startFlag) {
+            mainTimer.textContent = timerTime;
+            timerTime--;
+        }
+
+        if (timerTime < 0) {
+            pauseTimer();
+            window.canvas.sendTextQuery("get fail result");
         }
     }, 1000);
 }
+
+function pauseTimer() {
+    clearInterval(interval);
+    startFlag = true;
+}
+
+function resumeTimer(timeLimit) {
+    startFlag = false;
+    startTimer(timeLimit);
+}
+
+function resetTimer() {
+    clearInterval(interval);
+}
+
 
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
  */
 class Action {
+
     /**
      * @param {*} scene which serves as a container of all visual elements
      */
     constructor(scene) {
+
+
         //index.html 안의 <div id="screen"></div>
         const screen = document.getElementById("screen"); // container
         screen.setAttribute("class", "container");
+
         const header = document.createElement("header");
         screen.appendChild(header); //screen.[0]
+
         const section = document.createElement("section");
-        section.setAttribute("class","content")
+        section.setAttribute("class", "content");
         screen.appendChild(section); //screen.[1]
+
             const nav = document.createElement("nav");
             section.appendChild(nav); //section.[0]
             const main = document.createElement("main");
-            main.setAttribute("id", "main")
+            main.setAttribute("id", "main");
             section.appendChild(main); //section.[1]
-            const aside = document.createElement("aside")
+            const aside = document.createElement("aside");
             section.appendChild(aside); //section.[2]
+        
         const footer = document.createElement("footer"); //welcome에서 사용한 후 제거할 것
         screen.appendChild(footer); // screen.[2]
 
 
         //main, stageselect, difficultyselect에서 사용
-        let level;
-        let exp;
-        let myHint;
-        let myCoin;
+        let level = 0;
+        let exp = 0;
+        let myHint = 0;
+        let myCoin = 0;
 
         //ingame, correct에서 사용
-        let totalWord;
+        let remainingWord = 0;
+        let gameTimer = 0;
 
         //openHint, closeHint에서 사용
-        let hint;
+        let hint = "";
 
-        let timerOver;
-        let cnt = 0; //이미지 표시를 위함 (삭제 예정)
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
@@ -106,44 +182,45 @@ class Action {
                  * 레벨, 경험치, 힌트, 코인
                  */
                 level = data.level;
-                exp = data.myExp + "/" + data.fullExp; // "34/50"
+                exp = data.myExp + "/" + data.fullExp; // "31/54"
                 myHint = data.myHint;
                 myCoin = data.myCoin;
 
-                const navImage = document.createElement("div")
-                navImage.setAttribute("class","margin")
-                navImage.textContent = '레벨 icon'
-                nav.appendChild(navImage)//nav.[0]
+                const navIcon = document.createElement("div");
+                navIcon.setAttribute("class", "margin");
+                navIcon.textContent = "사용자 icon";
+                nav.appendChild(navIcon); //nav.[0]
                 const navLevel = document.createElement("div");
-                navLevel.setAttribute("class","margin");
+                navLevel.setAttribute("class", "margin");
                 navLevel.textContent = "Lv." + level;
                 nav.appendChild(navLevel); //nav.[1]
-                const navExp =  document.createElement("div");
+                const navExp = document.createElement("div");
                 navExp.setAttribute("class", "margin");
                 navExp.textContent = exp;
                 nav.appendChild(navExp); //nav.[2]
 
                 const asideCommon = [myHint, myCoin, "ranking", "setting"]; //aside.[0], aside.[2], aside.[4], aside.[6]
-                const textbutton = ['힌트','코인','랭킹','세팅'] //aside.[1], aside.[3], aside.[5], aside.[7]
-                for(let i = 0; i < 4; i++){
+                const buttonText = ["힌트", "코인", "랭킹", "설정"]; //aside.[1], aside.[3], aside.[5], aside.[7]
+                for (let i = 0; i < 4; i++) {
                     //버튼 형식의 icon
-                    let commonElement = document.createElement("button")
-                    commonElement.setAttribute("class","margin")
+                    let commonElement = document.createElement("button");
+                    commonElement.setAttribute("class", "margin");
                     commonElement.textContent = asideCommon[i];
                     aside.appendChild(commonElement);
                     //text
-                    let text = document.createElement("p")
-                    text.textContent = textbutton[i];
+                    let text = document.createElement("p");
+                    text.setAttribute("class", "margin");
+                    text.textContent = buttonText[i];
                     aside.appendChild(text);
                 }
 
-                const continueButton = document.createElement('button')
-                continueButton.setAttribute("class","margin");
+                const continueButton = document.createElement("button");
+                continueButton.setAttribute("class", "margin");
                 continueButton.textContent = 'continue';
-                main.replaceChild(continueButton,main.childNodes[0]); //main.[0]
+                main.replaceChild(continueButton, main.childNodes[0]); //main.[0]
 
-                const viewallbutton = document.createElement('button')
-                viewallbutton.setAttribute("class","margin");
+                const viewallbutton = document.createElement("button");
+                viewallbutton.setAttribute("class", "margin");
                 viewallbutton.textContent = 'view all';
                 main.appendChild(viewallbutton); //main.[1]
 
@@ -151,21 +228,28 @@ class Action {
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
 
-                const back = document.createElement('button')
-                back.setAttribute("class","margin")
-                back.textContent = 'back 아이콘'
-                nav.appendChild(back); //nav.[3]
+                const backButton = document.createElement("button");
+                backButton.setAttribute("class", "margin");
+                backButton.textContent = "back 아이콘";
+                nav.appendChild(backButton); //nav.[3]
 
-                main.removeChild(main.childNodes[1])
-                main.removeChild(main.childNodes[0])
-                stageLock(level);
+                const backText = document.createElement("text");
+                backText.setAttribute("class", "margin");
+                backText.textContent = "뒤로";
+                nav.appendChild(backText); //nav.[4]
 
-                aside.childNodes[4].style.visibility= "hidden";
-                aside.childNodes[5].style.visibility = "hidden";
+                //main에 존재하는 이어하기 버튼, 단계 선택 버튼 제거
+                while (main.hasChildNodes()) {
+                    main.removeChild(main.firstChild);
+                }
+                stageLock(level); //스테이지 버튼 생성(10개)
+
+                aside.childNodes[4].style.visibility = "hidden"; //랭킹 아이콘 가림
+                aside.childNodes[5].style.visibility = "hidden"; //랭킹 텍스트 가림
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
-                
+
                 /**
                  * 배팅머니, 획득머니, 시간제한 등을 fulfillment에서 가져옴
                  * 변동사항이 있으면 안되므로 상수 선언
@@ -180,163 +264,228 @@ class Action {
                 const timeLimit2 = data.timeLimit2;
                 const timeLimit3 = data.timeLimit3;
 
-                //screen에 생성된 selectstage를 제거함
-                screen.removeChild(screen.childNodes[0]);
-                
-                //변동사항이 있으면 안되므로 상수 선언
-                const img = document.createElement("img");
-                img.setAttribute("style", "max-width:100%; height: auto");
-                img.src = "https://actions.o2o.kr/devsvr1/image/selectdifficult.png";
-                screen.appendChild(img);
+                //view all을 거치지 않고 바로 continue를 선택했을 경우
+                if (nav.childNodes[3] == null) {
+                    const backButton = document.createElement("button");
+                    backButton.setAttribute("class", "margin");
+                    backButton.textContent = "back 아이콘";
+                    nav.appendChild(backButton); //nav.[3]
 
-                // document.getElementById("difficulty").innerHTML
-                //     = `<BR><BR><BR><BR><BR><BR>
-                //        <div style="margin:20px">
-                //         <span style="margin: 20px">
-                //             <div style="margin: 20px">Lv.${level}</div>
-                //             <div style="margin: 20px">${exp}</div>
-                //         </span>
-                //         <span style="margin: 20px">HINT ${myHint}</span>
-                //         <span style="margin: 20px">COIN ${myCoin}</span>
-                //        </div>
-                //        <div style="margin: 20px">
-                //         <span style="margin: 20px">BACK</span>
-                //         <span  style="border: 5px; margin: 20px">
-                //             <button>Easy<br>● winMoney : ${winMoney1}<br>● betMoney : ${betMoney1}<br>● timeLimit : ${timeLimit1}</button>
-                //         </span>
-                //         <span style="border: 5px; margin: 20px">
-                //             <button>edium<br>● winMoney : ${winMoney2}<br>● betMoney : ${betMoney2}<br>● timeLimit : ${timeLimit2}</button>
-                //         </span>
-                //         <span style="border: 5px; margin: 20px">
-                //             <button>Hard<br>● winMoney : ${winMoney3}<br>● betMoney : ${betMoney3}<br>● timeLimit : ${timeLimit3}</button>
-                //          </span>
-                //         </div>
-                //         <div style="margin: 20px">SETTING</div>`;
+                    const backText = document.createElement("text");
+                    backText.setAttribute("class", "margin");
+                    backText.textContent = "뒤로";
+                    nav.appendChild(backText); //nav.[4]
+
+                    aside.childNodes[4].style.visibility = "hidden"; //랭킹 아이콘 가림
+                    aside.childNodes[5].style.visibility = "hidden"; //랭킹 텍스트 가림
+                }
+
+                //main에 있던 모든 자식 요소 제거
+                while (main.hasChildNodes()) {
+                    main.removeChild(main.firstChild);
+                }
+
+                /**
+                 * 몇 단계를 선택했는지 표시 -> fulfillment에서 가져와야 함
+                 */
+
+                const easyBox = document.createElement("button");
+                easyBox.setAttribute("class", "margin");
+                easyBox.textContent = "Easy \n● winMoney : " + winMoney1 + " \n● betMoney : " + betMoney1 + " \n● timeLimit : " + timeLimit1;
+                main.appendChild(easyBox);
+
+                const mediumBox = document.createElement("button");
+                mediumBox.setAttribute("class", "margin");
+                easyBox.textContent = "Medium \n● winMoney : " + winMoney2 + " \n● betMoney : " + betMoney2 + " \n● timeLimit : " + timeLimit2;
+                main.appendChild(mediumBox);
+
+                const hardBox = document.createElement("button");
+                hardBox.setAttribute("class", "margin");
+                hardBox.textContent = "Hard \n● winMoney : " + winMoney3 + " \n● betMoney : " + betMoney3 + " \n● timeLimit : " + timeLimit3;
+                main.appendChild(hardBox);
+
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
 
                 /**
-                 * 게임판, 게임판 행과 열, 시간제한은 변경되면 안 되서 상수 선언
+                 * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
                  */
                 const board = data.board;
-                const boardRow = data.board[0].length;          //열
-                const boardCol = data.board.length;            //행
+                const boardRow = data.board[0].length; //열
+                const boardCol = data.board.length; //행
                 const timeLimit = data.timeLimit;
-                totalWord = data.totalWord;
+                const totalWord = data.totalWord;
+                remainingWord = data.totalWord; //처음에는 남은 단어 수 = 맞춰야 할 모든 단어 수
 
-                // 앞에 생성된 difficultyselect 제거
-                screen.removeChild(screen.childNodes[0]);
-                
-                //ingame 이미지 생성 및 추가
-                const inGameImg = document.createElement("img");
-                inGameImg.setAttribute("style", "max-width: 100%; height: auto");
-                inGameImg.src = "https://actions.o2o.kr/devsvr1/image/ingame0.png";
-                screen.appendChild(inGameImg);
+                //난이도 선택 버튼 제거 -> main에 존재하는 자식 요소 모두 제거
+                while (main.hasChildNodes()) {
+                    main.removeChild(main.firstChild);
+                }
 
-                // document.getElementById("inGame").innerHTML
-                //     += `<BR><BR><BR><BR><BR><BR>
-                //         <span style="margin: 20px">
-                //             <div id="hint" style="margin:20px">HINT ${myHint}</div>
-                //             <div id="totalWord" style="margin: 20px">You have to find ${totalWord} words</div>
-                //         </span>`;
-                // for (let col = 0; col < boardCol; col++) {
-                //     for (let row = 0; row < boardRow; row++) {
-                //         document.getElementById("inGame").innerHTML += `
-                //            <span style="margin: 20px; border: 1px">${board[col][row]}</span>
-                //         `;
-                //     }
-                //     document.getElementById("inGame").innerHTML += `
-                //            <br>
-                //         `;
-                // }
-                //     document.getElementById("inGame").innerHTML
-                //         += `<span style="margin: 20px">
-                //     <div style="margin: 20px">SETTING</div>
-                // </span>
-                // <span id="openHint" style="margin: 10px"></span>
-                // <span id="timer" style="margin: 20px"></span>
-                // <span id="correctOrWrong" style="margin: 20px"></span>`;
+                //사용자 아이콘, 레벨, 경험치, 뒤로 제거 -> nav의 모든 요소 제거
+                while (nav.hasChildNodes()) {
+                    nav.removeChild(nav.firstChild);
+                }
 
-                // const innerTimer = document.createElement("div");
-                // innerTimer.setAttribute("id", "timer");
-                // screen.appendChild(innerTimer);
-                // timer(timeLimit);
+                aside.childNodes[2].style.visibility = "hidden"; //코인 아이콘 가림
+                aside.childNodes[3].style.visibility = "hidden"; //코인 텍스트 가림
+                aside.childNodes[4].style.visibility = "hidden"; //랭킹 아이콘 가림
+                aside.childNodes[5].style.visibility = "hidden"; //랭킹 텍스트 가림
+
+                //사용한 힌트가 게임판 좌측에 나타나도록 함
+                const usedHint = document.createElement("div");
+                usedHint.setAttribute("class", "margin");
+                usedHint.setAttribute("id", "inGameHint");
+                nav.appendChild(usedHint); //nav.[0]
+
+                //게임판 왼쪽 "하단"에 현재 진행상황 보여줌
+                const progress = document.createElement("div");
+                progress.setAttribute("class", "margin");
+                progress.setAttribute("id", "progress");
+                progress.textContent = remainingWord + "/" + totalWord;
+                nav.appendChild(progress); //nav.[1]
+
+
+                //main에 게임판 띄움
+                const gameBoard = document.createElement("div");
+                gameBoard.setAttribute("class", "margin");
+                gameBoard.setAttribute("id", "gameBoard");
+                main.appendChild(gameBoard);
+
+                //게임판 안에 넣을 n x n 배열
+                for (let col = 0; col < boardCol; col++) {
+                    for (let row = 0; row < boardRow; row++) {
+                        const alphabet = document.createElement("span");
+                        alphabet.setAttribute("class", "margin");
+                        alphabet.textContent = board[col][row];
+                        gameBoard.appendChild(alphabet);
+                    }
+                    const lineSpacing = document.createElement("br");
+                    gameBoard.appendChild(lineSpacing);
+                }
+
+                //main의 게임판 우측에 타이머 배치
+                const mainTimer = document.createElement("div");
+                mainTimer.setAttribute("class", "margin");
+                mainTimer.setAttribute("id", "mainTimer");
+                main.appendChild(mainTimer);
+                startTimer(timeLimit);
+
+                // //제한 시간이 지나면 fulfillment쪽으로 textQuery를 전송
                 // timerOver = setTimeout(function () {
                 //     window.canvas.sendTextQuery("get fail result");
                 // }, timeLimit * 1000);
-                // document.getElementById("timer").style.display = "none";
+
             },
             CORRECT: function (data) {
                 console.log("실행 : correct");
-                
+
                 // 게임 종료 여부를 받아옴, 변경되면 안되므로 상수 선언
                 const finish = data.finish;
-                // if (finish) {
-                //     scene.action.commands.RESULT(data);
-                // }
-                
-                
-                screen.removeChild(screen.childNodes[0]);
-                const iGimg = document.createElement("img");
-                iGimg.setAttribute("style", "max-width:100%; height: auto");
-                cnt++;
-                if (cnt == 1) {
-                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame1.png";
-                    screen.appendChild(iGimg);
-                } else if (cnt == 2) {
-                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame2.png";
-                    screen.appendChild(iGimg);
-                } else if (cnt == 3) {
-                    iGimg.src = "https://actions.o2o.kr/devsvr1/image/ingame3.png";
-                    screen.appendChild(iGimg);
-                    cnt = 0;
-                }
 
-                // totalWord--;
-                // document.getElementById("correctOrWrong").innerHTML
-                //     = `<span style="margin: 10px">CORRECT</span>`;
-                // document.getElementById("totalWord").innerHTML
-                //     = "You have to find " + totalWord + " words";
+                //남은 단어 수 보여줌 -> 진행 상황 박스에
+                remainingWord--;
+                const remain = document.getElementById("progress");
+                remain.textContent = remainingWord;
+
+                //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
                     setTimeout(function () {
                         window.canvas.sendTextQuery("get success result");
                     }, 1000);
+                    resetTimer();
                     console.log("get success result");
-                    clearTimeout(timerOver);
                 }
             },
             WRONG: function (data) {
                 console.log("실행 : wrong");
 
                 /**
-                 * 틀렸다는 팝업창, 한 1초 후에 창이 닫히고 다시 인게임 화면을 보임
+                 * 틀렸다는 팝업창보다는 소리가 나도록 하거나 게임판을 좌우로 흔드는 쪽으로 -> 한 번만 흔들림, 소리 재생되지 않음
                  */
+
+                let wrongAudio = new Audio("https://o2o.actions.kr/devsvr1/audio/sound_button_wrong.wav");
+                wrongAudio.play();
+
+                const gameBoard = document.getElementById("gameBoard");
+                gameBoard.classList.remove("shake");
+                gameBoard.setAttribute("class", "shake");
+
             },
             OPENHINT: function (data) {
-                console.log("실행 : openhint");
+                console.log("실행 : openHint");
 
-                screen.removeChild(screen.childNodes[0]);
+                /**
+                 * hint = data.hint -> fulfillment에서 보내주는 hint
+                 * 게임판을 가리고 힌트를 보여줌
+                 * 타이머가 잠시 멈춤
+                 */
 
-                const openHintImg = document.createElement("img");
-                openHintImg.setAttribute("style", "max-width: 100%; height: auto");
-                openHintImg.src = "https://actions.o2o.kr/devsvr1/image/openhint.png"
-                screen.appendChild(openHintImg);
+                //힌트를 열면 타이머를 잠시 멈춤
+                pauseTimer();
 
-                // myHint--;
-                // document.getElementById("hint").innerHTML = "HINT " + myHint;
-                // hint = data.hint;
+                //사용자의 남은 힌트를 보여줌
+                const remainingHint = aside.childNodes[0];
+                remainingHint.setAttribute("id", "myHint");
+                myHint--;
+                remainingHint.textContent = myHint;
+
+                hint = data.hint;
+                // if(hint == "noHint") {
+                //
+                // }
+
+                const backgroundModal = document.createElement("div");
+                backgroundModal.setAttribute("class", "backgroundModal");
+                backgroundModal.setAttribute("id", "backgroundModal");
+                main.appendChild(backgroundModal);
+
+                const contentModal = document.createElement("div");
+                contentModal.setAttribute("class", "contentModal");
+                backgroundModal.appendChild(contentModal);
+
+                const close = document.createElement("span");
+                close.setAttribute("class", "close");
+                close.textContent = "X";
+                contentModal.appendChild(close);
+
+                const hintModal = document.createElement("p");
+                hintModal.textContent = hint;
+                contentModal.appendChild(hintModal);
+
+                backgroundModal.style.display = "block";
+
+                close.onclick = function() {
+                    window.canvas.sendTextQuery("close hint");
+                    backgroundModal.style.display = "none";
+
+                }
+
+                window.onclick = function(event) {
+                    if(event.target == backgroundModal) {
+                        window.canvas.sendTextQuery("close hint");
+                        backgroundModal.style.display = "none";
+                    }
+                }
+
             },
             CLOSEHINT: function (data) {
-                console.log("실행: closehint");
+                console.log("실행: closeHint");
+                /**
+                 * 가렸던 게임판을 다시 보여줌
+                 * 타이머 다시 시작
+                 */
 
-                screen.removeChild(screen.childNodes[0]);
+                resumeTimer(timerTime);
 
-                const closeHintImg = document.createElement("img");
-                closeHintImg.setAttribute("style", "max-width: 100%; height: auto");
-                closeHintImg.src = "https://actions.o2o.kr/devsvr1/image/closehint.png";
-                screen.appendChild(closeHintImg);
+                const backgroundModal = document.getElementById("backgroundModal");
+                backgroundModal.style.display = "none";
+
+                const usedHint = document.getElementById("inGameHint");
+                usedHint.textContent = hint;
+
             },
             RESULT: function (data) {
                 console.log("실행 : result");
@@ -350,72 +499,85 @@ class Action {
                 exp = data.myExp + "/" + data.fullExp;
                 myCoin = data.myCoin;
                 myHint = data.myHint;
-                const correctList = data.correctList;
-                const wrongList = data.wrongList;
+                const matchedList = data.correctList;
+                const unmatchedList = data.wrongList;
 
-                screen.removeChild(screen.childNodes[0]);
-
-                //게임 결과 실패일 때
-                if (result == "fail") {
-                    const failImg = document.createElement("img");
-                    failImg.setAttribute("style", "max-width:100%; height: auto");
-                    failImg.src = "https://actions.o2o.kr/devsvr1/image/result_fail.png";
-                    screen.appendChild(failImg);
-
-                    // document.getElementById("result").innerHTML
-                    //     = `<BR><BR><BR><BR><BR><BR>
-                    //     <div style="margin:20px">
-                    //     <span style="margin: 20px">
-                    //         <div style="margin: 20px">Lv.${level}</div>
-                    //         <div style="margin: 20px">${exp}</div>
-                    //     </span>
-                    //     <span style="margin: 20px">HINT ${myHint}</span>
-                    //     <span style="margin: 20px">COIN ${myCoin}</span>
-                    //    </div>
-                    //    <div style="margin: 20px">
-                    //     <span style="margin: 20px">BACK</span>
-                    //     <span style="margin: 20px">
-                    //         <div style="margin: 20px">${result}</div>
-                    //         <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                    //         <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
-                    //     </span>
-                    //     <span style="margin\: 20px">KEEP OR RETRY</span>
-                    //    </div>
-                    //     <span style="margin: 20px">SETTING</span>
-                    //    </div>`;
-                } else { //게임 결과가 성공일 때
-                    const successImg = document.createElement("img");
-                    successImg.setAttribute("style", "max-width:100%; height: auto");
-                    successImg.src = "https://actions.o2o.kr/devsvr1/image/result_success.png";
-                    screen.appendChild(successImg);
-
-                    // document.getElementById("result").innerHTML
-                    //     = `<BR><BR><BR><BR><BR><BR>
-                    //     <div style="margin:20px">
-                    //     <span style="margin: 20px">
-                    //         <div style="margin: 20px">Lv.${level}</div>
-                    //         <div style="margin: 20px">${exp}</div>
-                    //     </span>
-                    //     <span style="margin: 20px">HINT ${myHint}</span>
-                    //     <span style="margin: 20px">COIN ${myCoin}</span>
-                    //    </div>
-                    //    <div style="margin: 20px">
-                    //     <span style="margin: 20px">BACK</span>
-                    //     <span style="margin: 20px">
-                    //         <div style="margin: 20px">${result}</div>
-                    //         <div style="margin: 20px">Lv.${level} ${exp}++</div>
-                    //         <div style="margin: 20px">MATCHED : ${correctList}, UNMATCHED : ${wrongList}</div>
-                    //     </span>
-                    //     <span style="margin\: 20px">KEEP OR RETRY</span>
-                    //    </div>
-                    //     <span style="margin: 20px">SETTING</span>
-                    //    </div>`;
+                //게임판과 타이머 제거 -> main의 자식 요소 모두 제거
+                while (main.hasChildNodes()) {
+                    main.removeChild(main.firstChild);
                 }
+
+                //게임 진행 상황과 사용한 힌트 제거 -> nav의 자식 요소 모두 제거
+                while (nav.hasChildNodes()) {
+                    nav.removeChild(nav.firstChild);
+                }
+
+                const backButton = document.createElement("button");
+                backButton.setAttribute("class", "margin");
+                backButton.textContent = "back 아이콘";
+                nav.appendChild(backButton); //nav.[0]
+
+                const backText = document.createElement("text");
+                backText.setAttribute("class", "margin");
+                backText.textContent = "뒤로";
+                nav.appendChild(backText); //nav.[1]
+
+                //성공인지 실패인지 텍스트의 형태로 보여줌
+                const mainResult = document.createElement("h1");
+                mainResult.setAttribute("calss", "margin");
+                mainResult.textContent = result;
+                main.appendChild(mainResult);
+
+                const userIcon = document.createElement("div");
+                userIcon.setAttribute("class", "margin");
+                userIcon.textContent = "사용자 icon";
+                main.appendChild(userIcon);
+
+                const resultLevel = document.createElement("div");
+                resultLevel.setAttribute("class", "margin");
+                resultLevel.textContent = "Lv." + level;
+                main.appendChild(resultLevel);
+
+                const resultExp = document.createElement("div");
+                resultExp.setAttribute("class", "margin");
+                resultExp.textContent = exp;
+                main.appendChild(resultExp);
+
+                const resultCoin = document.createElement("div");
+                resultCoin.setAttribute("class", "margin");
+                resultCoin.textContent = myCoin;
+                main.appendChild(resultCoin);
+
+                const matched = document.createElement("span");
+                matched.setAttribute("class", "margin");
+                matched.textContent = matchedList;
+                main.appendChild(matched);
+
+                const unmatched = document.createElement("span");
+                unmatched.setAttribute("class", "margin");
+                unmatched.setAttribute("id", "unmatched");
+                unmatched.textContent = unmatchedList;
+                main.appendChild(unmatched);
+
+                const keepOrContinue = document.createElement("button");
+                keepOrContinue.setAttribute("class", "margin");
+                if (result == "success") {
+                    keepOrContinue.textContent = "이어하기";
+                } else if (result == "fail") {
+                    keepOrContinue.textContent = "재도전";
+                }
+
+                //힌트 아이콘 사라지게 함
+                aside.childNodes[0].style.visibility = "hidden";
+                aside.childNodes[1].style.visibility = "hidden";
+
+                //랭킹 아이콘 보이게 함
+                aside.childNodes[4].style.visibility = "visible";
+                aside.childNodes[5].style.visibility = "visible";
+
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
-
-                screen.removeChild(screen.childNodes[0]);
 
                 /**
                  * 설정 화면은
@@ -425,15 +587,9 @@ class Action {
                  * 배경음 on/off
                  * 초기화 여부
                  */
-                const settingImg = document.createElement("img");
-                settingImg.setAttribute("style", "max-width: 100%; height: auto");
-                settingImg.src = "https://actions.o2o.kr/devsvr1/image/setting.png";
-                screen.appendChild(settingImg);
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
-
-                screen.removeChild(screen.childNodes[0]);
 
                 /**
                  * 랭킹 화면은
@@ -442,15 +598,9 @@ class Action {
                  * 1위부터 ...
                  */
 
-                const rankingImg = document.createElement("img");
-                rankingImg.setAttribute("style", "max-width: 100%; height: auto");
-                rankingImg.src = "https://actions.o2o.kr/devsvr1/image/ranking.png";
-                screen.appendChild(rankingImg);
             },
             SHOP: function (data) {
                 console.log("실행 : shop");
-
-                screen.removeChild(screen.childNodes[0]);
 
                 /**
                  * 상점은
@@ -460,10 +610,6 @@ class Action {
                  * 힌트 충전
                  */
 
-                const shopImg = document.createElement("img");
-                shopImg.setAttribute("style", "max-width: 100%; height: auto");
-                shopImg.src = "https://actions.o2o.kr/devsvr1/image/shop.png";
-                screen.appendChild(shopImg);
             },
         };
     }
