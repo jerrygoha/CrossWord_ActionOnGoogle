@@ -5,6 +5,7 @@ public class BoardCell {
     public boolean isAnswer;
     public BoardCell()
     {
+        cellchar = '*';
         isAnswer = false;
     }
 }

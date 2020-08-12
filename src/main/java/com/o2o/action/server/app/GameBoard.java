@@ -10,7 +10,7 @@ public class GameBoard {
     // 보드 배열
     private BoardCell Board[][];
     // 정답변수
-    private AnswerWord[] answer;
+    private AnswerWord[] answers;
     // 맞춘 정답 리스트
     private  ArrayList<AnswerWord> answerlist;
     // 맞춰야 할 정답 리스트
@@ -18,9 +18,9 @@ public class GameBoard {
     //정답 개수
     private  int answercount;
     // 보드판 가로길이
-    private  int x;
+    private  int col;
     // 보드판 세로길이
-    private int y;
+    private int row;
     // 유저정보
     private UserInfo userinfo;
     // 난이도
@@ -42,7 +42,7 @@ public class GameBoard {
         difficulty = _difficulty;
         // 보드판 생성
         // makeBoard(stage+2,stage+2,3);
-        makeBoard(10,10,3);
+        makeBoard(5,5,3);
     }
     private void printBoard(BoardCell[][]board,int x, int y)
     {
@@ -68,10 +68,10 @@ public class GameBoard {
     // 보드판 배열 가져오기
     public char[][] getBoard()
     {
-        char board[][] = new char[y][x];
-        for (int i=0; i< y; i++)
+        char board[][] = new char[row][col];
+        for (int i=0; i< row; i++)
         {
-            for (int j=0; j< x; j++)
+            for (int j=0; j< col; j++)
             {
                 board[i][j] = Board[i][j].cellchar;
             }
@@ -82,55 +82,25 @@ public class GameBoard {
     // 정답 DB에서 가져오기
     private void loadAnswer()
     {
-        answer = new AnswerWord[x];
+        answers = new AnswerWord[answercount];
 
         AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answer[0]=answerWord;
+        answers[0]=answerWord;
         answerWord = new AnswerWord("floor",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answer[1]=answerWord;
+        answers[1]=answerWord;
         answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answer[2]=answerWord;
+        answers[2]=answerWord;
 
 
     }
-    // 보드판 정답을 제외한 알파벳 구성
-    private void MakeUpBoardAlphabet()
-    {
-        Random random = new Random();
-        for (int i=0; i< y; i++)
-        {
-            for (int j=0; j< x; j++)
-            {
-                BoardCell cell = new BoardCell();
-                // 0~26까지 숫자 랜덤하게 받아서 알파벳으로 변환
-                int randomnum = random.nextInt(27);
-                cell.cellchar = (char)(randomnum+97);
-                Board[i][j] = cell;
-            }
 
-        }
-
-    }
-    // 보드판에 정답 알파벳 넣기
-    private void MakeUpBoardAnswer()
-    {
-        // 보드 구성(정답인 곳에 정답 넣기)
-        for (int i = 0; i<answercount; i++)
-        {
-            for (int j = 0; j<answer[i].getAnswerLength(); j++)
-            {
-                Board[i][j].cellchar = answer[i].getAnswerChar(j);
-                Board[i][j].isAnswer = true;
-            }
-        }
-    }
     // 보드판 만들기
-    private void makeBoard(int _x, int _y, int _answercount)
+    private void makeBoard(int _col, int _row, int _answercount)
     {
-        x = _x;
-        y = _y;
+        col = _col;
+        row = _row;
         answercount = _answercount;
-        Board = new BoardCell[y][x];
+        Board = new BoardCell[row][col];
 
         answerlist = new ArrayList<AnswerWord>();
         restanswerlist = new ArrayList<AnswerWord>();
@@ -139,14 +109,18 @@ public class GameBoard {
         // 채워야할 정답 리스트에 모든 정답 넣기
         for (int i=0; i<_answercount; i++)
         {
-            restanswerlist.add(answer[i]);
+            restanswerlist.add(answers[i]);
         }
+        // 보드판 알고리즘 클래스 인스턴스 생성
+        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(col,row,Board,answers);
         //보드판에서 정답아닌곳에 랜덤 알파벳 구성
-        MakeUpBoardAlphabet();
+        boardAlgorithm.MakeUpBoardAlphabet();
         // 보드판에 정답 알파벳 넣기
-        MakeUpBoardAnswer();
+        boardAlgorithm.MakeUpBoardAnswer();
+        // 성공보드 저장하기
+        Board = boardAlgorithm.Successboard;
         //보드판 출력
-        printBoard(Board,x,y);
+        printBoard(Board,col,row);
     }
     // 해당 정답의 힌트 얻기
     private String getHint(AnswerWord _answerWord)
@@ -167,12 +141,12 @@ public class GameBoard {
         // 정답맞았는지 체크
         for (int i = 0; i<answercount; i++)
         {
-            if(answer[i].getAnswer().equals(_answer))
+            if(answers[i].getAnswer().equals(_answer))
             {
                 // 정답 맞았으면 정답리스트에 추가하고 맞춰야할 리스트에서 제거
-                answerlist.add(answer[i]);
+                answerlist.add(answers[i]);
                 if(restanswerlist.size()>0)
-                    restanswerlist.remove(answer[i]);
+                    restanswerlist.remove(answers[i]);
                 return  true;
             }
         }
