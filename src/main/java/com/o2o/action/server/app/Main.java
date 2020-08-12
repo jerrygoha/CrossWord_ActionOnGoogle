@@ -3,7 +3,6 @@ package com.o2o.action.server.app;
 import com.google.actions.api.*;
 import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.*;
-import com.google.api.services.dialogflow_fulfillment.v2.model.WebhookRequest;
 import com.o2o.action.server.util.CommonUtil;
 
 import java.util.*;
@@ -79,7 +78,6 @@ public class Main extends DialogflowApp {
 //            .build();
 //    }
 
-
     @ForIntent("Default Fallback Intent")
     public ActionResponse fallback(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
@@ -87,7 +85,7 @@ public class Main extends DialogflowApp {
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
 
-        if (data.get("history").equals("ingame")) {
+        if (data.get("history") != null && data.get("history").equals("ingame")) {
             htmldata.put("command", "wrong");
             String response = "wrong";
             return rb.add(new SimpleResponse().setTextToSpeech(response))
@@ -115,13 +113,14 @@ public class Main extends DialogflowApp {
         data.put("special case", false);
         htmldata.put("command", "welcome");
 
+        //db 연결
         user = new UserInfo();
 
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
         } else {
-            response = tts.getTtsmap().get("welcome") ;
+            response = tts.getTtsmap().get("welcome");
             return rb.add(new SimpleResponse().setTextToSpeech(response))
                     .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                     .build();
@@ -132,34 +131,42 @@ public class Main extends DialogflowApp {
     public ActionResponse home(ActionRequest request) throws ExecutionException, InterruptedException {
         return main(request);
     }
+
     @ForIntent("mainFromWelcome")
     public ActionResponse mainFromWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
         return main(request);
     }
+
     @ForIntent("stageFromMain")
     public ActionResponse stageSelect(ActionRequest request) throws ExecutionException, InterruptedException {
         return stage(request);
     }
+
     @ForIntent("stageFromDifficulty")
     public ActionResponse stageFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
         return stage(request);
     }
+
     @ForIntent("stageFromResult")
     public ActionResponse stageFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
         return stage(request);
     }
+
     @ForIntent("difficultyFromMain")
     public ActionResponse difficultySelect(ActionRequest request) throws ExecutionException, InterruptedException {
         return difficulty(request);
     }
+
     @ForIntent("difficultyFromStage")
     public ActionResponse difficultyFromStage(ActionRequest request) throws ExecutionException, InterruptedException {
         return difficulty(request);
     }
+
     @ForIntent("ingameFromDifficulty")
     public ActionResponse ingameFromDifficulty(ActionRequest request) throws ExecutionException, InterruptedException {
         return ingame(request);
     }
+
     @ForIntent("ingameFromResult")
     public ActionResponse ingameFromResult(ActionRequest request) throws ExecutionException, InterruptedException {
         return ingame(request);
@@ -222,9 +229,9 @@ public class Main extends DialogflowApp {
             stage = ((Double) request.getParameter("number")).intValue();
         }
 
-        data.put("stage", stage);
         data.put("history", "difficultySelect");
         data.put("special case", false);
+        data.put("stage", stage);
 
         htmldata.put("command", "difficultySelect");
         htmldata.put("winMoney1", gameinfo.getStage()[1].getWinMoney());
@@ -249,8 +256,19 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
+        //난이도에서 왔는지, 결과에서왔는지
+        String difficulty;
+        if (data.get("history").equals("result")) {
+            difficulty = CommonUtil.makeSafeString(data.get("difficulty"));
+        } else {
+            difficulty = CommonUtil.makeSafeString(request.getParameter("difficulty"));
+        }
+
         data.put("history", "ingame");
         data.put("special case", false);
+        data.put("difficulty",difficulty);
+
 
         String response;
         gameBoard = new GameBoard(GameBoard.Difficulty.easy, 3);
@@ -283,12 +301,12 @@ public class Main extends DialogflowApp {
 
         if (word.isEmpty()) {
 
-            if(hint.equals("open")) {
+            if (hint.equals("open")) {
                 htmldata.put("command", "openhint");
                 htmldata.put("hint", gameBoard.getHintMessage());
                 response = "open hint";
-            }
-            else {
+                //user.setMyHint();
+            } else {
                 htmldata.put("command", "closehint");
                 response = "close hint";
             }
@@ -326,22 +344,28 @@ public class Main extends DialogflowApp {
         data.put("history", "result");
         data.put("special case", false);
 
+        //(user,stage,difficulty,result);
+        //결과, stage, difficulty에 따라 user의 level, exp, coin 정보를 조정한다.
+        String response = "";
+        if (result.equals("success"))
+            response = tts.getTtsmap().get("success");
+        else
+            response = tts.getTtsmap().get("fail");
+
+
         htmldata.put("command", "result");
         htmldata.put("result", result);
+
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
         htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
+
         Result results = gameBoard.getResult();
         htmldata.put("correctList", results.getAnser());
         htmldata.put("wrongList", results.getRestWord());
 
-        String response="";
-        if(result.equals("success"))
-            response = tts.getTtsmap().get("success");
-        else
-            response = tts.getTtsmap().get("fail");
 
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -407,11 +431,11 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
 
         String history = CommonUtil.makeSafeString(data.get("history"));
-        Boolean isSpecial = (Boolean)(data.get("special case"));
+        Boolean isSpecial = (Boolean) (data.get("special case"));
 
-        if(isSpecial) {
+        if (isSpecial) {
             htmldata.put("command", history);
-            data.put("special case",false);
+            data.put("special case", false);
 
             String response = "return";
             return rb.add(new SimpleResponse().setTextToSpeech(response))
