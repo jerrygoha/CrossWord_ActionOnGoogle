@@ -4,16 +4,21 @@ body {
 }
 
 button {
-    font-size: 130%;
+    background-color: cornflowerblue;
+    color : white;
+    font-size : 130%; //후에 지워야함
 }
 
 /*화면 전체*/
 .container {
-    background-color:aliceblue;
+    background: #000046;
+    background: -webkit-linear-gradient(to bottom, #000046, #1cb5e0);
+    background: linear-gradient(to bottom, #000046, #1cb5e0);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color : white;
 }
 
 /*처음 화면*/
@@ -23,16 +28,30 @@ button {
     align-items:center;
 }
 
+#title{
+    margin : 6rem;
+}
+
+#playbutton{
+    background-color: #668dd2;
+    height: 5rem;
+    width : 17rem;
+    font-size : 3rem;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 1rem;
+    border-color : white;
+}
+
 #copyright{
     position: absolute;
     bottom: 0%;
-    left: 0%
+    left: 8%
 }
 
 #o2ologo {
     position: absolute;
     bottom: 0%;
-    right: 0%
+    right: 6%
 }
 
 /*메인 화면*/
@@ -74,7 +93,6 @@ button {
     bottom:0%;
     right:2%;
 }
-
 #backBox {
     display: flex;
     flex-direction: column;
@@ -86,8 +104,8 @@ button {
 /*단계 선택 화면*/
 #stepBox {
     flex-direction: column;
+    margin : 10rem;
 }
-
 
 /*난이도 선택 화면*/
 #difficultyBox {
@@ -156,6 +174,132 @@ button {
     left: 22%;
     bottom: 20%;
 }
+/*setting*/
+#UserBox{
+    position : absolute;
+    top: 35%;
+}
+
+#UserIcon, #UserID{
+    margin : 1rem;
+}
+
+#UserIDDetail{
+    margin : 20rem;
+    margin-right : 5rem;
+}
+
+#SoundEffectBox{
+    position : absolute;
+    top: 45%;
+    margin-right : 6rem;
+}
+
+#SoundEffectIcon, #SoundEffect{
+    margin: 1rem;
+}
+
+#SoundEffectON{
+    margin-left: 8rem;
+}
+
+#BackGroundBox{
+    position : absolute;
+    top: 55%;
+    margin-right : 6rem;
+}
+
+#BackIcon, #BackGroundEffect{
+    margin: 1rem;
+}
+
+#BackGroundON{
+    margin-left: 8rem;
+}
+
+#ResetBox{
+    position : absolute;
+    top: 25%;
+}
+
+#ResetIcon, #Reset{
+    margin : 1rem;
+}
+
+#ResetButton{
+    margin : 20rem;
+    margin-right : 5rem;
+}
+/*setting*/
+
+/*ranking*/
+#UserRankBox{
+    position : absolute;
+    top: 35%;
+    margin-right : 6rem;
+}
+
+#RankBox{
+    position : absolute;
+    top: 55%;
+    margin-right : 6rem;
+}
+
+#UserRank,UserImage{
+    margin : 1rem;
+}
+
+#Username{
+    margin-left: 8rem;
+}
+
+#firstRank, firstrankImage{
+    margin : 1rem;
+}
+
+#firstRankName{
+    margin-left: 8rem;
+}
+/*ranking*/
+
+/*shop*/
+#HintBox1{
+    position : absolute;
+    top: 30%;
+    margin-right : 50rem;
+}
+#HintBox2{
+    position : absolute;
+    top: 30%;
+    margin-right : 20rem;
+}
+#HintBox3{
+    position : absolute;
+    top: 30%;
+    margin-left: 10rem;
+}
+#CoinBox1{
+    position : absolute;
+    top: 50%;
+    margin-right : 50rem;
+}
+#CoinBox2{
+    position : absolute;
+    top: 50%;
+    margin-right : 20rem;
+}
+#CoinBox3{
+    position : absolute;
+    top: 50%;
+    margin-left: 10rem;
+}
+
+#blueBox{
+    position : absolute;
+    top : 20rem;
+    margin-left : 50rem;
+}
+/*shop*/
 
 .backgroundModal {
     display: none; /* Hidden by default */
