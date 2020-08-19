@@ -5,40 +5,98 @@ import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.*;
 import com.o2o.action.server.util.CommonUtil;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Main extends DialogflowApp {
 
     public static void main(String[] args) {
-         BoardCell[][] Board = new BoardCell[6][6];
-        int answercount = 5;
+         BoardCell[][] Board = new BoardCell[4][4];
+        int answercount = 3;
        AnswerWord[] answers = new AnswerWord[answercount];
 
-        AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        AnswerWord answerWord = new AnswerWord("back",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[0]=answerWord;
         answerWord = new AnswerWord("dog",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[1]=answerWord;
         answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[2]=answerWord;
-        answerWord = new AnswerWord("pig",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+    /*    answerWord = new AnswerWord("comes",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[3]=answerWord;
         answerWord = new AnswerWord("apple",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[4]=answerWord;
-        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(5,5,Board,answers);
-      //  boardAlgorithm.MakeUpBoardAlphabet();
-        boardAlgorithm.MakeUpBoardAnswer();
+        answers[4]=answerWord;*/
+        Arrays.sort(answers);
+        boolean issucess = false;
+        ArrayList dirarray1 = new ArrayList(Arrays.asList(2,4));
+
+        ArrayList dirarray2 = new ArrayList(Arrays.asList(2,3,4));
+
+        ArrayList dirarray3 = new ArrayList(Arrays.asList(0,1,2,3,4,5,6,7));
+
+        // 보드판 알고리즘 클래스 인스턴스 생성
+        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(4,4,Board,answers);
+        // 보드판에 정답 알파벳 넣기
+        boardAlgorithm.MakeUpBoardAnswer(dirarray3);
+        //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+        boardAlgorithm.MakeUpBoardAlphabet();
+        issucess = boardAlgorithm.isBoardSuccess;
+        // 보드판 알고리즘이 성공할때까지 계속 시도
+        while(!issucess)
+        {
+            System.out.println("보드생성 실패!");
+            boardAlgorithm = new BoardAlgorithm(4,4,Board,answers);
+            // 보드판에 정답 알파벳 넣기
+            boardAlgorithm.MakeUpBoardAnswer(dirarray3);
+            //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+            boardAlgorithm.MakeUpBoardAlphabet();
+            issucess = boardAlgorithm.isBoardSuccess;
+
+        }
+        Board = boardAlgorithm.Successboard;
+        for (int i = 0; i<4; i++)
+        {
+            for (int j = 0; j<4; j++)
+            {
+                System.out.print(Board[i][j].cellchar + " ");
+            }
+            System.out.println();
+        }
+
+
+        try
+        {
+
+            StagePropertyInfo stagePropertyInfo = new StagePropertyInfo();
+            UserInfo userinfo =new UserInfo(1,0,3,5000,stagePropertyInfo);
+            userinfo.HintPurchaseChange();
+            System.out.println(userinfo.getLevel()+" "+userinfo.getMyCoin()+" "+userinfo.getMyExp()+" "+userinfo.getMyHint());
+
+        }catch(FileNotFoundException e)
+        {
+            e.getStackTrace();
+        }
+
+
     }
     String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
-
     GameBoard gameBoard;
     UserInfo user;
-    GameInfo gameinfo;
+    StagePropertyInfo stageinfo;
     TTS tts;
 
     private void setUp() {
-        gameinfo = new GameInfo();
         tts = new TTS();
+        try{
+            stageinfo = new StagePropertyInfo();
+        }catch(FileNotFoundException e)
+        {
+            e.getStackTrace();
+        }
+
     }
 
 //    ActionRequest ingameRequest;
@@ -114,8 +172,9 @@ public class Main extends DialogflowApp {
         htmldata.put("command", "welcome");
 
         //db 연결
-        user = new UserInfo();
-
+        user = new UserInfo(1,0,3,5000,stageinfo);
+        user.GameStartChange(1,"hard");
+        user.UserStageClearChange(1,"hard");
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
@@ -186,7 +245,6 @@ public class Main extends DialogflowApp {
         htmldata.put("command", "main");
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
-        htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
 
@@ -234,15 +292,15 @@ public class Main extends DialogflowApp {
         data.put("stage", stage);
 
         htmldata.put("command", "difficultySelect");
-        htmldata.put("winMoney1", gameinfo.getStage()[1].getWinMoney());
-        htmldata.put("winMoney2", gameinfo.getStage()[2].getWinMoney());
-        htmldata.put("winMoney3", gameinfo.getStage()[3].getWinMoney());
-        htmldata.put("betMoney1", gameinfo.getStage()[1].getBetMoney());
-        htmldata.put("betMoney2", gameinfo.getStage()[2].getBetMoney());
-        htmldata.put("betMoney3", gameinfo.getStage()[3].getBetMoney());
-        htmldata.put("timeLimit1", gameinfo.getStage()[1].getTimeLimit()[0]);
-        htmldata.put("timeLimit2", gameinfo.getStage()[2].getTimeLimit()[0]);
-        htmldata.put("timeLimit3", gameinfo.getStage()[3].getTimeLimit()[0]);
+        htmldata.put("winMoney1", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("winMoney2", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("winMoney3", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("betMoney1", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("betMoney2", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("betMoney3", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("timeLimit1", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("timeLimit2", stageinfo.Stages[0].getBetCoin().get("easy").toString());
+        htmldata.put("timeLimit3", stageinfo.Stages[0].getBetCoin().get("easy").toString());
 
         String response = tts.getTtsmap().get("difficultyselect");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
@@ -271,7 +329,7 @@ public class Main extends DialogflowApp {
 
 
         String response;
-        gameBoard = new GameBoard(GameBoard.Difficulty.easy, 3);
+        gameBoard = new GameBoard(difficulty, 3,stageinfo);
         //gameBoard = new GameBoard(data.difficulty,data.stage);
         char[][] board = gameBoard.getBoard();
         int timeLimit = gameBoard.getTimeLimit();
@@ -358,7 +416,6 @@ public class Main extends DialogflowApp {
 
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
-        htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
 
