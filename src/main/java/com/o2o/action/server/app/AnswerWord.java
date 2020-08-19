@@ -1,14 +1,19 @@
 package com.o2o.action.server.app;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.Stack;
 // 정답 클래스
-public class AnswerWord {
+public class AnswerWord implements Comparable{
     // 정답 문자
     private  String Answer;
     // 정답의 힌트 배열
     private  String[] Hints;
     // 정답의 힌트사용 카운트를 위한 힌트 스택
     private  Stack<String> HintsStack;
+    // 정답 알파벳의 좌표 배열
+    private int[] AnswerPoint;
     public AnswerWord(String _word, String[] _hints)
     {
         Answer = _word;
@@ -18,6 +23,24 @@ public class AnswerWord {
         {
             HintsStack.push(st);
         }
+        // row좌표 col좌표 이므로 *2의 배열 자리 선정
+        AnswerPoint = new int[Answer.length()*2];
+    }
+    // 해당 정답의 알파벳 위치 기록
+    public void SetAlphabetPoint(int _alphabetindex, int _row, int _col)
+    {
+        if(_alphabetindex>=Answer.length())
+        {
+            System.out.println("인덱스가 단어의 길이를 벗어났습니다.");
+            return;
+        }
+        AnswerPoint[_alphabetindex*2] = _row;
+        AnswerPoint[_alphabetindex*2+1] = _col;
+    }
+    // 정답의 알파벳 위치 배열 반환
+    public int[] GetAlphabetPoint()
+    {
+        return AnswerPoint;
     }
     // 해당 힌트스택에서 힌트 뺴기
     public String useHint()
@@ -44,4 +67,17 @@ public class AnswerWord {
         return Answer;
     }
 
+
+
+    @Override
+    public int compareTo(@NotNull Object _answerWord) {
+        AnswerWord answerWord = (AnswerWord)_answerWord;
+        if (this.getAnswerLength() < answerWord.getAnswerLength()) {
+            return 1;
+        } else if (this.getAnswerLength() == answerWord.getAnswerLength()) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
 }
