@@ -1,12 +1,11 @@
 body {
     margin: 0;
-    font-size : 200%;
+    font-size : 150%;
 }
 
 button {
     background-color: cornflowerblue;
     color : white;
-    font-size : 130%; //후에 지워야함
 }
 
 /*화면 전체*/
@@ -29,84 +28,106 @@ button {
 }
 
 #title{
-    margin : 6rem;
+    margin : 6em;
 }
 
 #playbutton{
     background-color: #668dd2;
-    height: 5rem;
-    width : 17rem;
-    font-size : 3rem;
+    height: 3em;
+    width : 10em;
+    font-size : 95%;
     background-color: rgba(255,255,255,0.3);
-    border-radius: 1rem;
+    border-radius: 1em;
     border-color : white;
 }
-
 #copyright{
     position: absolute;
-    bottom: 0%;
-    left: 8%
+    bottom: 0em;
+    left: 1em;
+    font-size: 75%;
 }
-
 #o2ologo {
     position: absolute;
-    bottom: 0%;
-    right: 6%
+    bottom: 0em;
+    right: 1em;
+    font-size: 75%;
 }
 
 /*메인 화면*/
 #levelBox {
     position: absolute;
-    left: 2%;
-    top: 15%;
+    left: 2em;
+    top: 7em;
 }
 
 #continueNviewallButton{
     display : flex;
     flex-direction : column;
+    position : absolute;
+    bottom : 6em;
 }
 
-.continue-viewallMargin {
-    margin-bottom: 3rem;
+#continueButton{
+    background-color: #668dd2;
+    height: 3em;
+    width : 9em;
+    font-size : 150%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+}
+
+#viewallButton{
+    margin-top : 20%;
+    background-color: #668dd2;
+    height: 3em;
+    width : 9em;
+    font-size : 150%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
 }
 
 #hint-coin {
     display: flex;
     position: absolute;
-    right: 2%;
-    top: 15%;
+    right: 2em;
+    top: 7em;
 }
 
-#hintBox, #coin{
-    display: flex;
-    flex-direction: row;
-    margin-left: 5%;
+#hintBox, #coinBox{
+    margin : 1em;
 }
 
-#ranking, #setting, #main {
+#ranking, #setting, #main, #welcomeback {
     display: flex;
     flex-direction: column;
+    margin : 1rem;
 }
 
-#bottom {
+#bottomCommon {
     position: absolute;
-    bottom:0%;
-    right:2%;
-}
-#backBox {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    bottom: 0%;
-    left: 2%;
+    right : 2em;
+    bottom : 2em;
 }
 
 /*단계 선택 화면*/
 #stepBox {
     flex-direction: column;
-    margin : 10rem;
+    position :absolute;
+    bottom : 2em;
 }
-
+.stepbutton{
+    margin-right: 3em;
+    margin-bottom : 5em;
+    background-color: #668dd2;
+    height: 2em;
+    width : 6em;
+    font-size : 100%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+}
 /*난이도 선택 화면*/
 #difficultyBox {
     white-space: pre;

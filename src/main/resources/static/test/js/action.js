@@ -12,10 +12,15 @@ function stepLock(level) {
         if (level <= index) {
             newElement.textContent = "STEP " + (index + 1);
             newElement.setAttribute("disabled", true);
+            newElement.setAttribute("class","stepbutton");
             element.appendChild(newElement);
         } else {
             newElement.textContent = "STEP " + (index + 1);
+            newElement.setAttribute("class","stepbutton");
             element.appendChild(newElement);
+        }
+        if(index %5 == 4){
+            element.appendChild(document.createElement("BR"));
         }
     }
 }
@@ -111,6 +116,37 @@ function resetTimer() {
     startFlag = true;
 }
 
+function main() {
+    window.canvas.sendTextQuery("play");
+}
+
+// //main에서 back 해서 welcome화면으로 가는 함수
+// function backwelcome(){
+//     window.canvas.sendTextQuery("select stage");
+// }
+
+//상점으로 가는 함수
+function shop() {
+    window.canvas.sendTextQuery("store");
+}
+//setting으로 가는 함수
+function setting() {
+    window.canvas.sendTextQuery("setting");
+}
+
+//ranking으로 가는 함수
+function ranking() {
+    window.canvas.sendTextQuery("ranking");
+}
+//main에서 continue눌렀을 때
+function conTinueButton(){
+    window.canvas.sendTextQuery("continue");
+}
+//main에서 viewall 눌렀을 때
+function viewallButton() {
+    window.canvas.sendTextQuery("view all");
+}
+
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
@@ -124,14 +160,16 @@ class Action {
 
         // index.html 안의 <div id="screen"></div>
         const container = document.getElementById("screen"); // container
+        const headerheight = async () => {
+            return await window.interactiveCanvas.getHeaderHeightPx();
+        };
+        headerheight().then(function (result) {
+            console.log(result);
+            container.setAttribute("style", "margin-top: " + result + "px; " + "height:" + (window.innerHeight - result) + "px; width: " + window.innerWidth + "px");
+            console.log(window.innerHeight - result);
+            console.log(window.innerWidth);
+        });
         container.setAttribute("class", "container");
-        container.setAttribute("style", "height:" + window.screen.availHeight + "px");
-
-        // function screenSize(){
-        //     container.height = window.innerHeight;
-        //     container.width = window.innerWidth;
-        // }
-        // window.addEventListener('resize',screenSize)
 
         //main, stageselect, difficultyselect에서 사용
         let level = 0;
@@ -154,8 +192,6 @@ class Action {
 
         //openHint, closeHint에서 사용
         let hint = "";
-
-
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -173,6 +209,7 @@ class Action {
 
                 const playButton = document.createElement("button");
                 playButton.setAttribute("id", "playbutton");
+                playButton.onclick = main;
                 playButton.textContent = "PLAY";
                 welcomeBox.appendChild(playButton);
 
@@ -204,8 +241,8 @@ class Action {
                 if(data.level != null){
                     level = data.level;
                 }
-                if((data.myExp != null)&&(data.fullExp)){
-                    exp = data.myExp + "/" + data.fullExp; // "31/54"
+                if(data.myExp != null){
+                    exp = data.myExp; // "31/54"
                 }
                 if(data.myHint != null){
                     myHint = data.myHint;
@@ -222,36 +259,18 @@ class Action {
                 levelBox.setAttribute("id", "levelBox");
                 container.appendChild(levelBox);
 
-                const navIcon = document.createElement("div");
-                navIcon.setAttribute("class", "common");
-                navIcon.textContent = "user icon";
-                levelBox.appendChild(navIcon);
                 const navLevel = document.createElement("div");
-                navLevel.setAttribute("class", "common");
                 navLevel.textContent = "Lv." + level;
                 levelBox.appendChild(navLevel);
-                const navExp = document.createElement("div");
-                navExp.setAttribute("class", "common");
-                navExp.textContent = exp;
+
+                const navIcon = document.createElement("div");
+                navIcon.textContent = "O2O.gmail.com";
+                levelBox.appendChild(navIcon);
+
+                const navExp = document.createElement("progress");
+                navExp.setAttribute("value",exp);
+                navExp.setAttribute("max","1000");
                 levelBox.appendChild(navExp);
-
-                /**
-                 * 좌측 하단에
-                 * 뒤로가기 버튼
-                 * @type {HTMLButtonElement}
-                 */
-
-                const backBox = document.createElement("div");
-                backBox.setAttribute("id", "backBox");
-                container.appendChild(backBox);
-
-                const backButton = document.createElement("button");
-                backButton.textContent = "back icon";
-                backBox.appendChild(backButton);
-
-                const backText = document.createElement("text");
-                backText.textContent = "뒤로";
-                backBox.appendChild(backText);
 
                 /**
                  * 중앙에 이어하기, 단계 선택 버튼
@@ -262,15 +281,16 @@ class Action {
                 container.appendChild(continueNviewallButton);
 
                 const continueButton = document.createElement("button");
-                continueButton.setAttribute("class", "continue-viewallMargin");
+                continueButton.setAttribute("id","continueButton");
+                continueButton.onclick = conTinueButton;
                 continueButton.textContent = "continue";
-                continueNviewallButton.appendChild(continueButton); //main.[0]
+                continueNviewallButton.appendChild(continueButton);
 
                 const viewAllButton = document.createElement("button");
-                viewAllButton.setAttribute("class", "continue-viewallMargin");
+                viewAllButton.setAttribute("id","viewallButton");
+                viewAllButton.onclick = viewallButton;
                 viewAllButton.textContent = "view all";
                 continueNviewallButton.appendChild(viewAllButton);
-
                 /**
                  * 우측 상단에
                  * 힌트와 코인
@@ -280,30 +300,23 @@ class Action {
                 hintNcoin.setAttribute("id", "hint-coin");
                 container.appendChild(hintNcoin);
 
-                const hintBox = document.createElement("span");
-                hintBox.setAttribute("class", "common");
+                const hintBox = document.createElement("i");
+                hintBox.setAttribute("class","fa fa-neuter");
                 hintBox.setAttribute("id", "hintBox");
+                hintBox.onclick = shop;
                 hintNcoin.appendChild(hintBox);
 
-                const hintButton = document.createElement("button");
-                hintButton.textContent = "hint";
-                hintBox.appendChild(hintButton);
-
-                const hintText = document.createElement("p");
-                hintText.setAttribute("id", "hintText");
+                const hintText = document.createElement("span");
                 hintText.textContent = myHint;
                 hintBox.appendChild(hintText);
 
-                const coinBox = document.createElement("span");
-                coinBox.setAttribute("class", "common");
-                coinBox.setAttribute("id", "coin");
+                const coinBox = document.createElement("i");
+                coinBox.setAttribute("class", "fa fa-eur");
+                coinBox.setAttribute("id", "coinBox");
+                coinBox.onclick = shop;
                 hintNcoin.appendChild(coinBox);
 
-                const coinButton = document.createElement("button");
-                coinButton.textContent = "coin";
-                coinBox.appendChild(coinButton);
-
-                const coinText = document.createElement("p");
+                const coinText = document.createElement("span");
                 coinText.textContent = myCoin;
                 coinBox.appendChild(coinText);
 
@@ -313,66 +326,39 @@ class Action {
                  * @type {HTMLDivElement}
                  */
                 const bottomCommon = document.createElement("div");
-                bottomCommon.setAttribute("id", "bottom");
+                bottomCommon.setAttribute("id", "bottomCommon");
                 container.appendChild(bottomCommon);
 
-                const mainBox = document.createElement("div");
-                mainBox.setAttribute("id", "mainBox");
-                bottomCommon.appendChild(mainBox);
+                const mainButton = document.createElement("i");
+                mainButton.setAttribute("class","fa fa-home");
+                mainButton.setAttribute("id","main");
+                mainButton.onclick = main;
+                bottomCommon.appendChild(mainButton);
 
-                const mainButton = document.createElement("button");
-                mainButton.textContent = "main";
-                mainBox.appendChild(mainButton);
+                const welcomeback = document.createElement("i");
+                welcomeback.setAttribute("class","fa fa-reply");
+                welcomeback.setAttribute("id","welcomeback");
+                // welcomeback.onclick = backwelcome;
+                bottomCommon.appendChild(welcomeback);
 
-                const mainText = document.createElement("p");
-                mainText.textContent = "main";
-                mainBox.appendChild(mainText);
+                const rankingButton = document.createElement("i");
+                rankingButton.setAttribute("class","fa fa-star");
+                rankingButton.setAttribute("id","ranking");
+                rankingButton.onclick = ranking;
+                bottomCommon.appendChild(rankingButton);
 
-                const rankingBox = document.createElement("div");
-                rankingBox.setAttribute("class", "common bottom");
-                rankingBox.setAttribute("id", "ranking");
-                bottomCommon.appendChild(rankingBox);
-                
-                const rankingButton = document.createElement("button");
-                rankingButton.textContent = "ranking";
-                rankingBox.appendChild(rankingButton);
-
-                const rankingText = document.createElement("p");
-                rankingText.textContent = "ranking";
-                rankingBox.appendChild(rankingText);
-
-                const settingBox = document.createElement("div");
-                settingBox.setAttribute("class", "common bottom");
-                settingBox.setAttribute("id", "setting");
-                bottomCommon.appendChild(settingBox);
-
-                const settingButton = document.createElement("input");
-                settingButton.textContent = "setting";
-                // settingButton.setAttribute("class","fa fa-address-book")
-                settingBox.appendChild(settingButton);
-
-                // let icon = `<i class="fa fa-address-book" aria-hidden="true"></i>`;
-                // settingBox.appendChild(icon);
-
-                const settingText = document.createElement("p");
-                settingText.textContent = "setting";
-                settingBox.appendChild(settingText);
+                const settingButton = document.createElement("i");
+                settingButton.setAttribute("class", "fa fa-cog");
+                settingButton.setAttribute("id","setting");
+                settingButton.onclick = setting;
+                bottomCommon.appendChild(settingButton);
 
                 //메인 화면에서 메인 버튼, 뒤로가기가 보이지 않도록 함
-                document.getElementById("mainBox").style.visibility = "hidden";
-                document.getElementById("backBox").style.visibility = "hidden";
-
-
+                // document.getElementById("welcomeBox").style.visibility = "hidden";
+                // document.getElementById("backBox").style.visibility = "hidden";
             },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
-
-                /**
-                 * 좌측 하단에
-                 * 뒤로가기 버튼 보이게 하기
-                 */
-                document.getElementById("backBox").style.visibility = "visible";
-
                 /**
                  * 메인 화면, 중앙에 생성했던
                  * continue, view all 버튼 제거
@@ -390,9 +376,6 @@ class Action {
                 container.appendChild(stepBox);
 
                 stepLock(level); //단계 버튼 생성(10개)
-
-                //단계 선택에서는 랭킹 버튼이 보이지 않도록 함
-                document.getElementById("ranking").style.visibility = "hidden";
 
             },
             DIFFICULTYSELECT: function (data) {
@@ -750,7 +733,7 @@ class Action {
                  * @type {HTMLHeadingElement}
                  */
 
-                //성공인지 실패인지 텍스트의 형태로 보여줌
+                    //성공인지 실패인지 텍스트의 형태로 보여줌
                 const resultText = document.createElement("h1");
                 resultText.textContent = result;
                 container.appendChild(resultText);
@@ -1019,21 +1002,21 @@ class Action {
                 RankBox.setAttribute("id","RankBox");
                 container.appendChild(RankBox);
 
-                    const firstRank = document.createElement("span");
-                    firstRank.setAttribute("id","firstRank");
-                    firstRank.textContent = 'ranking';
-                    RankBox.appendChild(firstRank);
+                const firstRank = document.createElement("span");
+                firstRank.setAttribute("id","firstRank");
+                firstRank.textContent = 'ranking';
+                RankBox.appendChild(firstRank);
 
-                    const firstrankImage = document.createElement("span");
-                    firstrankImage.setAttribute("id","firstrankImage");
-                    firstrankImage.textContent = "1등유저이미지";
-                    RankBox.appendChild(firstrankImage);
+                const firstrankImage = document.createElement("span");
+                firstrankImage.setAttribute("id","firstrankImage");
+                firstrankImage.textContent = "1등유저이미지";
+                RankBox.appendChild(firstrankImage);
 
-                    const firstRankName = document.createElement("span")
-                    firstRankName.setAttribute("id","firstRankName");
-                    firstRankName.textContent = "jun.com";
-                    RankBox.appendChild(firstRankName);
-                    RankBox.style.top += 10;
+                const firstRankName = document.createElement("span")
+                firstRankName.setAttribute("id","firstRankName");
+                firstRankName.textContent = "jun.com";
+                RankBox.appendChild(firstRankName);
+                RankBox.style.top += 10;
 
             },
             SHOP: function (data) {
@@ -1047,105 +1030,105 @@ class Action {
                  * 힌트 충전
                  */
 
-                document.getElementById("backBox").style.visibility = "visible";
-                document.getElementById("mainBox").style.visibility = "hidden"
-                document.getElementById("continueNviewallButton").style.visibility = "hidden"
-                document.getElementById("levelBox").style.visibility = "hidden";
-                document.getElementById("hint-coin").style.visibility = "hidden";
-                document.getElementById("bottom").style.visibility = "hidden";
+                // document.getElementById("setting").style.visibility = "visible";
+                // document.getElementById("mainBox").style.visibility = "hidden"
+                // document.getElementById("continueNviewallButton").style.visibility = "hidden"
+                // document.getElementById("levelBox").style.visibility = "hidden";
+                // document.getElementById("hint-coin").style.visibility = "hidden";
+                // document.getElementById("bottom").style.visibility = "hidden";
+                //
+                // if(document.getElementById("stepBox") != null){
+                //     document.getElementById("stepBox").style.visibility = "hidden"
+                // }
+                // if(document.getElementById("difficultyBox") != null){
+                //     document.getElementById("difficultyBox").style.visibility = "hidden"
+                // }
 
-                if(document.getElementById("stepBox") != null){
-                    document.getElementById("stepBox").style.visibility = "hidden"
-                }
-                if(document.getElementById("difficultyBox") != null){
-                    document.getElementById("difficultyBox").style.visibility = "hidden"
-                }
-
-                //힌트
-                const HintBox1 = document.createElement("div");
-                HintBox1.setAttribute("id","HintBox1");
-                container.appendChild(HintBox1);
-
-                const Hinticon1 = document.createElement("div");
-                Hinticon1.setAttribute("id","Hinticon1");
-                Hinticon1.textContent = 'HintIcon';
-                HintBox1.appendChild(Hinticon1);
-
-                const Hintprice1 = document.createElement("div");
-                Hintprice1.setAttribute("id","Hintprice1");
-                Hintprice1.textContent = "$0.99";
-                HintBox1.appendChild(Hintprice1);
-
-                const HintBox2 = document.createElement("div");
-                HintBox2.setAttribute("id","HintBox2");
-                container.appendChild(HintBox2);
-
-                const Hinticon2 = document.createElement("div");
-                Hinticon2.setAttribute("id","Hinticon2");
-                Hinticon2.textContent = 'HintIcon';
-                HintBox2.appendChild(Hinticon2);
-
-                const Hintprice2 = document.createElement("div");
-                Hintprice2.setAttribute("id","Hintprice2");
-                Hintprice2.textContent = "$3.99";
-                HintBox2.appendChild(Hintprice2);
-
-                const HintBox3 = document.createElement("div");
-                HintBox3.setAttribute("id","HintBox3");
-                container.appendChild(HintBox3);
-
-                const Hinticon3 = document.createElement("div");
-                Hinticon3.setAttribute("id","Hinticon3");
-                Hinticon3.textContent = 'HintIcon';
-                HintBox3.appendChild(Hinticon3);
-
-                const Hintprice3 = document.createElement("div");
-                Hintprice3.setAttribute("id","Hintprice3");
-                Hintprice3.textContent = "$6.99";
-                HintBox3.appendChild(Hintprice3);
-
-                //코인
-                const CoinBox1 = document.createElement("div");
-                CoinBox1.setAttribute("id","CoinBox1");
-                container.appendChild(CoinBox1);
-
-                const Coinicon1 = document.createElement("div");
-                Coinicon1.setAttribute("id","Coinicon1");
-                Coinicon1.textContent = 'CoinIcon';
-                CoinBox1.appendChild(Coinicon1);
-
-                const Coinprice1 = document.createElement("div");
-                Coinprice1.setAttribute("id","Coinprice1");
-                Coinprice1.textContent = "$0.99";
-                CoinBox1.appendChild(Coinprice1);
-
-                const CoinBox2 = document.createElement("div");
-                CoinBox2.setAttribute("id","CoinBox2");
-                container.appendChild(CoinBox2);
-
-                const Coinicon2 = document.createElement("div");
-                Coinicon2.setAttribute("id","Coinicon2");
-                Coinicon2.textContent = 'CoinIcon';
-                CoinBox2.appendChild(Coinicon2);
-
-                const Coinprice2 = document.createElement("div");
-                Coinprice2.setAttribute("id","Coinprice2");
-                Coinprice2.textContent = "$3.99";
-                CoinBox2.appendChild(Coinprice2);
-
-                const CoinBox3 = document.createElement("div");
-                CoinBox3.setAttribute("id","CoinBox3");
-                container.appendChild(CoinBox3);
-
-                const Coinicon3 = document.createElement("div");
-                Coinicon3.setAttribute("id","Coinicon3");
-                Coinicon3.textContent = 'CoinIcon';
-                CoinBox3.appendChild(Coinicon3);
-
-                const Coinprice3 = document.createElement("div");
-                Coinprice3.setAttribute("id","Coinprice3");
-                Coinprice3.textContent = "$6.99";
-                CoinBox3.appendChild(Coinprice3);
+                // //힌트
+                // const HintBox1 = document.createElement("div");
+                // HintBox1.setAttribute("id","HintBox1");
+                // container.appendChild(HintBox1);
+                //
+                // const Hinticon1 = document.createElement("div");
+                // Hinticon1.setAttribute("id","Hinticon1");
+                // Hinticon1.textContent = 'HintIcon';
+                // HintBox1.appendChild(Hinticon1);
+                //
+                // const Hintprice1 = document.createElement("div");
+                // Hintprice1.setAttribute("id","Hintprice1");
+                // Hintprice1.textContent = "$0.99";
+                // HintBox1.appendChild(Hintprice1);
+                //
+                // const HintBox2 = document.createElement("div");
+                // HintBox2.setAttribute("id","HintBox2");
+                // container.appendChild(HintBox2);
+                //
+                // const Hinticon2 = document.createElement("div");
+                // Hinticon2.setAttribute("id","Hinticon2");
+                // Hinticon2.textContent = 'HintIcon';
+                // HintBox2.appendChild(Hinticon2);
+                //
+                // const Hintprice2 = document.createElement("div");
+                // Hintprice2.setAttribute("id","Hintprice2");
+                // Hintprice2.textContent = "$3.99";
+                // HintBox2.appendChild(Hintprice2);
+                //
+                // const HintBox3 = document.createElement("div");
+                // HintBox3.setAttribute("id","HintBox3");
+                // container.appendChild(HintBox3);
+                //
+                // const Hinticon3 = document.createElement("div");
+                // Hinticon3.setAttribute("id","Hinticon3");
+                // Hinticon3.textContent = 'HintIcon';
+                // HintBox3.appendChild(Hinticon3);
+                //
+                // const Hintprice3 = document.createElement("div");
+                // Hintprice3.setAttribute("id","Hintprice3");
+                // Hintprice3.textContent = "$6.99";
+                // HintBox3.appendChild(Hintprice3);
+                //
+                // //코인
+                // const CoinBox1 = document.createElement("div");
+                // CoinBox1.setAttribute("id","CoinBox1");
+                // container.appendChild(CoinBox1);
+                //
+                // const Coinicon1 = document.createElement("div");
+                // Coinicon1.setAttribute("id","Coinicon1");
+                // Coinicon1.textContent = 'CoinIcon';
+                // CoinBox1.appendChild(Coinicon1);
+                //
+                // const Coinprice1 = document.createElement("div");
+                // Coinprice1.setAttribute("id","Coinprice1");
+                // Coinprice1.textContent = "$0.99";
+                // CoinBox1.appendChild(Coinprice1);
+                //
+                // const CoinBox2 = document.createElement("div");
+                // CoinBox2.setAttribute("id","CoinBox2");
+                // container.appendChild(CoinBox2);
+                //
+                // const Coinicon2 = document.createElement("div");
+                // Coinicon2.setAttribute("id","Coinicon2");
+                // Coinicon2.textContent = 'CoinIcon';
+                // CoinBox2.appendChild(Coinicon2);
+                //
+                // const Coinprice2 = document.createElement("div");
+                // Coinprice2.setAttribute("id","Coinprice2");
+                // Coinprice2.textContent = "$3.99";
+                // CoinBox2.appendChild(Coinprice2);
+                //
+                // const CoinBox3 = document.createElement("div");
+                // CoinBox3.setAttribute("id","CoinBox3");
+                // container.appendChild(CoinBox3);
+                //
+                // const Coinicon3 = document.createElement("div");
+                // Coinicon3.setAttribute("id","Coinicon3");
+                // Coinicon3.textContent = 'CoinIcon';
+                // CoinBox3.appendChild(Coinicon3);
+                //
+                // const Coinprice3 = document.createElement("div");
+                // Coinprice3.setAttribute("id","Coinprice3");
+                // Coinprice3.textContent = "$6.99";
+                // CoinBox3.appendChild(Coinprice3);
 
                 //파란 박스
                 const blueBox = document.createElement("div");
