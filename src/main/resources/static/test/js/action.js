@@ -88,12 +88,13 @@ function stepLock(level) {
 
 let interval = 0;
 let timerTime = 0;
+let timerHeight = 0;
 let startFlag = false;
 
-function startTimer(timeLimit) {
+function startTimer(timeLimit, height) {
     timerTime = timeLimit;
     const mainTimer = document.getElementById("remainTime");
-    let timerHeight = document.getElementById("gameTimer").clientHeight;
+    timerHeight = height;
     const minusHeight = timerHeight / timeLimit;
     interval = setInterval(function () {
         if (!startFlag) {
@@ -116,7 +117,7 @@ function pauseTimer() {
 
 function resumeTimer(timeLimit) {
     startFlag = false;
-    startTimer(timeLimit);
+    startTimer(timeLimit, timerHeight);
 }
 
 function resetTimer() {
@@ -213,7 +214,7 @@ class Action {
         let timeLimit3 = 0;
 
         //ingame, correct에서 사용
-        let remainingWord = 0;
+        let cnt = 0;
 
         //openHint, closeHint에서 사용
         let hint = "";
@@ -222,6 +223,10 @@ class Action {
         this.commands = {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
+
+                while(container.hasChildNodes()) {
+                    container.removeChild(container.firstChild);
+                }
 
                 const welcomeBox = document.createElement("div");
                 welcomeBox.setAttribute("id", "welcomeBox");
@@ -477,16 +482,15 @@ class Action {
                 easyBox.appendChild(easyDetail);
                 const mediumBox = document.createElement("div");
                 mediumBox.setAttribute("class", "difficultyBoxMargin");
+                mediumBox.onclick = mediumGame;
                 difficultyBox.appendChild(mediumBox);
                 const mediumText = document.createElement("div");
                 mediumText.setAttribute("class", "difficultyText");
                 mediumText.textContent = "MEDIUM";
-                mediumText.onclick = mediumGame;
                 mediumBox.appendChild(mediumText);
                 const mediumDetail = document.createElement("div");
                 mediumDetail.setAttribute("class", "difficultyDetail");
                 mediumDetail.textContent = "★★ \r\nSUCCESS : " + winMoney2 + "c GET \r\nFAIL : " + betMoney2 + "c CUT \r\nTime Limit : " + timeLimit2 + "s \r\n---------------------\r\n EXP x2";
-                mediumDetail.onclick = mediumGame;
                 mediumBox.appendChild(mediumDetail);
                 const hardBox = document.createElement("div");
                 hardBox.setAttribute("class", "difficultyBoxMargin");
@@ -508,20 +512,20 @@ class Action {
                  * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
                  */
-                    // const board = data.board;
-                    // const boardRow = data.board[0].length; //열
-                    // const boardCol = data.board.length; //행
-                    // const timeLimit = data.timeLimit;
-                    // const totalWord = data.totalWord;
+                    const board = data.board;
+                    const boardRow = data.board[0].length; //열
+                    const boardCol = data.board.length; //행
+                    const timeLimit = data.timeLimit;
+                    const totalWord = data.totalWord;
                     // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
-                const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
-                console.log(board[0][0]);
-                const boardRow = board[0].length;
-                console.log(boardRow);
-                const boardCol = board.length;
-                console.log(boardCol);
-                const timeLimit = 100;
-                const totalWord = 5;
+                // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
+                // console.log(board[0][0]);
+                // const boardRow = board[0].length;
+                // console.log(boardRow);
+                // const boardCol = board.length;
+                // console.log(boardCol);
+                // const timeLimit = 100;
+                // const totalWord = 5;
                 /**
                  * 좌측 중앙에
                  * 사용자가 사용한 힌트가 보임
@@ -604,7 +608,8 @@ class Action {
                 const gameTimerText = document.createElement("div");
                 gameTimerText.setAttribute("id", "gameTimerText");
                 gameTimerBox.appendChild(gameTimerText);
-                startTimer(timeLimit);
+                const remainHeight = document.getElementById("gameTimer").clientHeight;
+                startTimer(timeLimit, remainHeight);
                 // //제한 시간이 지나면 fulfillment쪽으로 textQuery를 전송 -> 혹시의 오류를 감안하여 남겨둠
                 // timerOver = setTimeout(function () {
                 //     window.canvas.sendTextQuery("get fail result");
@@ -750,7 +755,7 @@ class Action {
                 const progressbar = document.createElement("progress");
                 progressbar.setAttribute("id","resultprogress");
                 progressbar.setAttribute("value",data.myExp);
-                progressbar.setAttribute("max",data.fullExp);
+                progressbar.setAttribute("max",fullExp);
                 levelBox.appendChild(progressbar);
 
                 if(result == "success"){
