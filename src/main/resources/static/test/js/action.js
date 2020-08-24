@@ -138,6 +138,7 @@ function main() {
 function shop() {
     window.canvas.sendTextQuery("store");
 }
+
 //setting으로 가는 함수
 function setting() {
     window.canvas.sendTextQuery("setting");
@@ -147,31 +148,39 @@ function setting() {
 function ranking() {
     window.canvas.sendTextQuery("ranking");
 }
+
 //main에서 continue눌렀을 때
-function continuebutton(){
+function continuebutton() {
     window.canvas.sendTextQuery("continue");
 }
+
 //main에서 viewall 눌렀을 때
 function viewallButton() {
     window.canvas.sendTextQuery("view all");
 }
+
 //result화면에서 retry눌렀을 때
 function retry() {
     window.canvas.sendTextQuery("retry");
 }
+
 //result화면에서 next 눌렀을 때
 function next() {
     window.canvas.sendTextQuery("retry");
 }
+
 function easyGame() {
     window.canvas.sendTextQuery("easy");
 }
+
 function mediumGame() {
     window.canvas.sendTextQuery("medium");
 }
+
 function hardGame() {
     window.canvas.sendTextQuery("hard");
 }
+
 /**
  * This class is used as a wrapper for Google Assistant Canvas Action class
  * along with its callbacks.
@@ -224,7 +233,7 @@ class Action {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
 
-                while(container.hasChildNodes()) {
+                while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
                 }
 
@@ -261,7 +270,7 @@ class Action {
             MAIN: function (data) {
                 console.log("실행 : main");
 
-                while(container.hasChildNodes()){
+                while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
                 }
 
@@ -269,19 +278,19 @@ class Action {
                  * 메인 화면에서 보여줄 사용자의
                  * 레벨, 경험치, 힌트, 코인
                  */
-                if(data.level != null){
+                if (data.level != null) {
                     level = data.level;
                 }
-                if(data.myExp != null){
+                if (data.myExp != null) {
                     exp = data.myExp;
                 }
-                if(data.myHint != null){
+                if (data.myHint != null) {
                     myHint = data.myHint;
                 }
-                if(data.myCoin != null){
+                if (data.myCoin != null) {
                     myCoin = data.myCoin;
                 }
-                if(data.fullExp != null){
+                if (data.fullExp != null) {
                     fullExp = data.fullExp;
                 }
 
@@ -302,9 +311,9 @@ class Action {
                 levelBox.appendChild(navIcon);
 
                 const navExp = document.createElement("progress");
-                navExp.setAttribute("id","progress");
-                navExp.setAttribute("value",exp);
-                navExp.setAttribute("max",fullExp);
+                navExp.setAttribute("id", "progress");
+                navExp.setAttribute("value", exp);
+                navExp.setAttribute("max", fullExp);
                 levelBox.appendChild(navExp);
 
                 /**
@@ -312,17 +321,17 @@ class Action {
                  * @type {HTMLDivElement}
                  */
                 const continueNviewallButton = document.createElement("div")
-                continueNviewallButton.setAttribute("id","continueNviewallButton")
+                continueNviewallButton.setAttribute("id", "continueNviewallButton")
                 container.appendChild(continueNviewallButton);
 
                 const continueButton = document.createElement("button");
-                continueButton.setAttribute("id","continueButton");
+                continueButton.setAttribute("id", "continueButton");
                 continueButton.onclick = continuebutton;
                 continueButton.textContent = "CONTINUE";
                 continueNviewallButton.appendChild(continueButton);
 
                 const viewAllButton = document.createElement("button");
-                viewAllButton.setAttribute("id","viewallButton");
+                viewAllButton.setAttribute("id", "viewallButton");
                 viewAllButton.onclick = viewallButton;
                 viewAllButton.textContent = "SELECT STAGE";
                 continueNviewallButton.appendChild(viewAllButton);
@@ -336,12 +345,13 @@ class Action {
                 container.appendChild(hintNcoin);
 
                 const hintBox = document.createElement("i");
-                hintBox.setAttribute("class","fa fa-neuter");
+                hintBox.setAttribute("class", "fa fa-neuter");
                 hintBox.setAttribute("id", "hintBox");
                 hintBox.onclick = shop;
                 hintNcoin.appendChild(hintBox);
 
                 const hintText = document.createElement("span");
+                hintText.setAttribute("id", "hintText");
                 hintText.textContent = myHint;
                 hintBox.appendChild(hintText);
 
@@ -365,29 +375,29 @@ class Action {
                 container.appendChild(bottomCommon);
 
                 const mainButton = document.createElement("i");
-                mainButton.setAttribute("class","fa fa-home");
-                mainButton.setAttribute("id","main");
+                mainButton.setAttribute("class", "fa fa-home");
+                mainButton.setAttribute("id", "main");
                 mainButton.onclick = main;
                 bottomCommon.appendChild(mainButton);
 
                 const welcomeback = document.createElement("i");
-                welcomeback.setAttribute("class","fa fa-reply");
-                welcomeback.setAttribute("id","welcomeback");
+                welcomeback.setAttribute("class", "fa fa-reply");
+                welcomeback.setAttribute("id", "welcomeback");
                 bottomCommon.appendChild(welcomeback);
 
                 const rankingButton = document.createElement("i");
-                rankingButton.setAttribute("class","fa fa-star");
-                rankingButton.setAttribute("id","ranking");
+                rankingButton.setAttribute("class", "fa fa-star");
+                rankingButton.setAttribute("id", "ranking");
                 rankingButton.onclick = ranking;
                 bottomCommon.appendChild(rankingButton);
 
                 const settingButton = document.createElement("i");
                 settingButton.setAttribute("class", "fa fa-cog");
-                settingButton.setAttribute("id","setting");
+                settingButton.setAttribute("id", "setting");
                 settingButton.onclick = setting;
                 bottomCommon.appendChild(settingButton);
 
-          },
+            },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
                 /**
@@ -423,7 +433,7 @@ class Action {
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if(document.getElementById("continueNviewallButton")!= null){
+                if (document.getElementById("continueNviewallButton") != null) {
                     container.removeChild(document.getElementById("continueNviewallButton"));
                 }
                 /**
@@ -512,12 +522,12 @@ class Action {
                  * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
                  */
-                    const board = data.board;
-                    const boardRow = data.board[0].length; //열
-                    const boardCol = data.board.length; //행
-                    const timeLimit = data.timeLimit;
-                    const totalWord = data.totalWord;
-                    // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
+                const board = data.board;
+                const boardRow = data.board[0].length; //열
+                const boardCol = data.board.length; //행
+                const timeLimit = data.timeLimit;
+                const totalWord = data.totalWord;
+                // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
                 // const boardRow = board[0].length;
@@ -575,7 +585,7 @@ class Action {
                     gameBoard.appendChild(rowBox);
                     for (let row = 0; row < boardRow; row++) {
                         const alphabet = document.createElement("div");
-                        alphabet.setAttribute("id", row + "," + col);
+                        alphabet.setAttribute("id", col + "," + row);
                         alphabet.setAttribute("class", "gameBoardMargin");
                         alphabet.style.height = gameBoardHeight / boardRow + "px";
                         alphabet.style.width = gameBoardWidth / boardCol + "px";
@@ -623,6 +633,15 @@ class Action {
                 const correctOne = document.getElementById("progress" + cnt);
                 correctOne.style.backgroundColor = "white";
                 cnt++;
+
+                const matchedWord = "0,1";
+                // for(let cnt = 0; cnt < matchedWord.length; cnt++) {
+                //     document.getElementById(matchedWord[cnt]).style.backgroundColor = "white";
+                //     document.getElementById(matchedWord[cnt]).style.color = "black";
+                // }
+                    document.getElementById(matchedWord).style.backgroundColor = "white";
+                    document.getElementById(matchedWord).style.color = "black";
+
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
                     setTimeout(function () {
@@ -673,27 +692,40 @@ class Action {
 
                 const contentModal = document.createElement("div");
                 contentModal.setAttribute("class", "contentModal");
+                contentModal.style.height = document.getElementById("gameBoard").clientHeight + "px";
+                contentModal.style.width = document.getElementById("gameBoard").clientWidth + "px";
                 backgroundModal.appendChild(contentModal);
 
-                const close = document.createElement("span");
-                close.setAttribute("class", "close");
-                close.textContent = "X";
-                contentModal.appendChild(close);
+                // const close = document.createElement("span");
+                // close.setAttribute("class", "close");
+                // close.textContent = "X";
+                // contentModal.appendChild(close);
+                const hintModalText = document.createElement("p");
+                hintModalText.textContent = "HINT";
+                contentModal.appendChild(hintModalText);
+                contentModal.appendChild(document.createElement("br"));
+                contentModal.appendChild(document.createElement("hr"));
+                contentModal.appendChild(document.createElement("br"));
 
                 const hintModal = document.createElement("p");
-                hintModal.textContent = hint;
-                contentModal.appendChild(hintModal);
+                if (hint != "noHint") {
+                    hintModal.textContent = hint;
+                    contentModal.appendChild(hintModal);
+                } else if (hint == "noHint") {
+                    hintModal.textContent = "Please charge your hint";
+                    contentModal.appendChild(hintModal);
+                }
 
                 backgroundModal.style.display = "block";
 
-                close.onclick = function() {
-                    window.canvas.sendTextQuery("close hint");
-                    backgroundModal.style.display = "none";
+                // close.onclick = function () {
+                //     window.canvas.sendTextQuery("close hint");
+                //     backgroundModal.style.display = "none";
+                //
+                // }
 
-                }
-
-                window.onclick = function(event) {
-                    if(event.target == backgroundModal) {
+                window.onclick = function (event) {
+                    if (event.target == backgroundModal) {
                         window.canvas.sendTextQuery("close hint");
                         backgroundModal.style.display = "none";
                     }
@@ -712,16 +744,18 @@ class Action {
                 const backgroundModal = document.getElementById("backgroundModal");
                 backgroundModal.style.display = "none";
 
-                if(hint!= "noHint") {
+                if (hint != "noHint") {
                     const usedHint = document.getElementById("usedHint");
-                    usedHint.textContent += hint + "\r\n";
+                    const content = document.createElement("p");
+                    content.textContent = hint;
+                    usedHint.appendChild(content);
                 }
 
             },
-            RESULT: function (data){
+            RESULT: function (data) {
                 console.log("실행 : result");
 
-                while(container.hasChildNodes()){
+                while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
                 }
 
@@ -732,20 +766,20 @@ class Action {
                 const unmatchedList = data.wrongList;
 
                 const resultBox = document.createElement("div");
-                resultBox.setAttribute("id","resultBox");
+                resultBox.setAttribute("id", "resultBox");
                 container.appendChild(resultBox);
 
                 const resultleftbox = document.createElement("div");
-                resultleftbox.setAttribute("id","resultleftbox");
+                resultleftbox.setAttribute("id", "resultleftbox");
                 resultBox.appendChild(resultleftbox);
 
                 const resultText = document.createElement("h1");
-                resultText.setAttribute("id","resultText");
+                resultText.setAttribute("id", "resultText");
                 resultText.textContent = result;
                 resultleftbox.appendChild(resultText);
 
                 const levelBox = document.createElement("div");
-                levelBox.setAttribute("id","resultlevelBox");
+                levelBox.setAttribute("id", "resultlevelBox");
                 resultleftbox.appendChild(levelBox);
 
                 const mylevel = document.createElement("div");
@@ -753,54 +787,54 @@ class Action {
                 levelBox.appendChild(mylevel);
 
                 const progressbar = document.createElement("progress");
-                progressbar.setAttribute("id","resultprogress");
-                progressbar.setAttribute("value",data.myExp);
-                progressbar.setAttribute("max",fullExp);
+                progressbar.setAttribute("id", "resultprogress");
+                progressbar.setAttribute("value", data.myExp);
+                progressbar.setAttribute("max", fullExp);
                 levelBox.appendChild(progressbar);
 
-                if(result == "success"){
+                if (result == "success") {
                     const gainexp = document.createElement("div");
                     gainexp.textContent = "+" + (data.myExp - exp);
                     levelBox.appendChild(gainexp);
-                }else if(result == "fail"){
+                } else if (result == "fail") {
                     const gainexp = document.createElement("div");
                     gainexp.textContent = "";
                     levelBox.appendChild(gainexp);
                 }
 
                 const coinBox = document.createElement("div");
-                coinBox.setAttribute("id","resultcoinbox");
+                coinBox.setAttribute("id", "resultcoinbox");
                 resultleftbox.appendChild(coinBox);
 
                 const coin = document.createElement("i");
-                coin.setAttribute("class","fa fa-eur");
+                coin.setAttribute("class", "fa fa-eur");
                 coinBox.appendChild(coin);
 
                 const mycoin = document.createElement("div");
                 mycoin.textContent = myCoin;
                 coinBox.appendChild(mycoin);
 
-                if(result == "success"){
+                if (result == "success") {
                     const gaincoin = document.createElement("div");
                     gaincoin.textContent = "+" + (data.myCoin - myCoin);
                     coinBox.appendChild(gaincoin);
-                }else if(result == "fail"){
+                } else if (result == "fail") {
                     const gaincoin = document.createElement("div");
                     gaincoin.textContent = "-" + (myCoin - data.myCoin);
                     coinBox.appendChild(gaincoin);
                 }
 
                 const resultWord = document.createElement("div");
-                resultWord.setAttribute("id","resultWord");
+                resultWord.setAttribute("id", "resultWord");
                 resultleftbox.appendChild(resultWord);
 
                 const matcheddiv = document.createElement("div");
-                matcheddiv.setAttribute("id","matcheddiv");
+                matcheddiv.setAttribute("id", "matcheddiv");
                 resultWord.appendChild(matcheddiv);
 
-                for(let i = 0; i < matchedList.length; i++){
+                for (let i = 0; i < matchedList.length; i++) {
                     const matched = document.createElement("span");
-                    matched.setAttribute("id","matched");
+                    matched.setAttribute("id", "matched");
                     matched.textContent = matchedList[i];
                     matcheddiv.appendChild(matched);
                 }
@@ -808,29 +842,29 @@ class Action {
                 const unmatcheddiv = document.createElement("div");
                 resultWord.appendChild(unmatcheddiv);
 
-                for(let i = 0; i < unmatchedList.length; i++){
+                for (let i = 0; i < unmatchedList.length; i++) {
                     const unmatched = document.createElement("span");
-                    unmatched.setAttribute("id","unmatched");
+                    unmatched.setAttribute("id", "unmatched");
                     unmatched.textContent = unmatchedList[i];
                     unmatcheddiv.appendChild(unmatched);
                 }
 
-                const RetryOrNextButton  = document.createElement("div");
-                RetryOrNextButton.setAttribute("id","RetryOrNextButton");
+                const RetryOrNextButton = document.createElement("div");
+                RetryOrNextButton.setAttribute("id", "RetryOrNextButton");
                 resultBox.appendChild(RetryOrNextButton);
 
-                if(result == "success"){
+                if (result == "success") {
                     const nextbutton = document.createElement("i");
-                    nextbutton.setAttribute("class","fa fa-chevron-right fa-3x");
+                    nextbutton.setAttribute("class", "fa fa-chevron-right fa-3x");
                     RetryOrNextButton.appendChild(nextbutton);
                     nextbutton.onclick = next;
 
                     const nextText = document.createElement("div");
                     nextText.textContent = "NEXT";
                     RetryOrNextButton.appendChild(nextText);
-                }else if(result == "fail"){
+                } else if (result == "fail") {
                     const retrybutton = document.createElement("i");
-                    retrybutton.setAttribute("class","fa fa-undo fa-3x");
+                    retrybutton.setAttribute("class", "fa fa-undo fa-3x");
                     retrybutton.onclick = retry;
                     RetryOrNextButton.appendChild(retrybutton);
 
@@ -847,58 +881,58 @@ class Action {
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if(document.getElementById("continueNviewallButton")!= null){
+                if (document.getElementById("continueNviewallButton") != null) {
                     container.removeChild(document.getElementById("continueNviewallButton"));
                 }
 
                 const UserID = document.createElement("div");
-                UserID.setAttribute("id","UserID");
+                UserID.setAttribute("id", "UserID");
                 UserID.textContent = "O2Ogmail.com";
                 container.appendChild(UserID);
 
                 const leftBox = document.createElement("div");
-                leftBox.setAttribute("id","leftBox");
+                leftBox.setAttribute("id", "leftBox");
                 container.appendChild(leftBox);
 
                 const SoundEffect = document.createElement("div");
-                SoundEffect.setAttribute("id","SoundEffect");
+                SoundEffect.setAttribute("id", "SoundEffect");
                 SoundEffect.textContent = "Sound Effect";
                 leftBox.appendChild(SoundEffect);
 
                 const BackGroundEffect = document.createElement("div");
-                BackGroundEffect.setAttribute("id","BackGroundEffect");
+                BackGroundEffect.setAttribute("id", "BackGroundEffect");
                 BackGroundEffect.textContent = "BackGround Effect";
                 leftBox.appendChild(BackGroundEffect);
 
                 const label = document.createElement("label");
-                label.setAttribute("class","switch");
+                label.setAttribute("class", "switch");
                 container.appendChild(label);
 
                 const input = document.createElement("input");
-                input.setAttribute("type","checkbox");
+                input.setAttribute("type", "checkbox");
                 label.appendChild(input);
 
                 const span = document.createElement("span");
-                span.setAttribute("class","slider round");
+                span.setAttribute("class", "slider round");
                 label.appendChild(span);
 
                 const label2 = document.createElement("label");
-                label2.setAttribute("class","switch2");
+                label2.setAttribute("class", "switch2");
                 container.appendChild(label2);
 
                 const input2 = document.createElement("input");
-                input2.setAttribute("type","checkbox");
+                input2.setAttribute("type", "checkbox");
                 label2.appendChild(input2);
 
                 const span2 = document.createElement("span");
-                span2.setAttribute("class","slider round");
+                span2.setAttribute("class", "slider round");
                 label2.appendChild(span2);
 
                 /**
                  * 초기화
                  */
                 const ResetButton = document.createElement("button");
-                ResetButton.setAttribute("id","ResetButton");
+                ResetButton.setAttribute("id", "ResetButton");
                 ResetButton.textContent = "RESET";
                 container.appendChild(ResetButton);
             },
@@ -908,7 +942,7 @@ class Action {
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if(document.getElementById("continueNviewallButton")!= null){
+                if (document.getElementById("continueNviewallButton") != null) {
                     container.removeChild(document.getElementById("continueNviewallButton"));
                 }
 
@@ -917,39 +951,39 @@ class Action {
                 // var test = JSON.stringify(array);
 
                 const rankBox = document.createElement("div");
-                rankBox.setAttribute("id","rankBox");
+                rankBox.setAttribute("id", "rankBox");
                 container.appendChild(rankBox);
 
                 const yourrank = document.createElement("div");
-                yourrank.setAttribute("id","yourrank");
+                yourrank.setAttribute("id", "yourrank");
                 yourrank.textContent = "O2O@gmail.com 님의 랭킹은 1위";
                 rankBox.appendChild(yourrank);
 
                 const ranking = document.createElement("div");
-                ranking.setAttribute("class","ranking");
+                ranking.setAttribute("class", "ranking");
                 rankBox.appendChild(ranking);
 
-                for(let i = 0; i < 50; i++){
+                for (let i = 0; i < 50; i++) {
                     const rank = document.createElement("div");
-                    rank.setAttribute("id","rank");
+                    rank.setAttribute("id", "rank");
                     ranking.appendChild(rank);
 
                     const User = document.createElement("div");
-                    User.setAttribute("id","User");
+                    User.setAttribute("id", "User");
                     rank.appendChild(User);
 
                     const ranknum = document.createElement("div");
-                    ranknum.setAttribute("id","ranknum");
-                    ranknum.textContent = "RANK "+(i+1);
+                    ranknum.setAttribute("id", "ranknum");
+                    ranknum.textContent = "RANK " + (i + 1);
                     User.appendChild(ranknum);
 
                     const rankId = document.createElement("div");
-                    rankId.setAttribute("id","rankId");
+                    rankId.setAttribute("id", "rankId");
                     rankId.textContent = "o2o@gmail.com";
                     User.appendChild(rankId);
 
                     const rankexp = document.createElement("div");
-                    rankexp.setAttribute("id","rankexp");
+                    rankexp.setAttribute("id", "rankexp");
                     rank.appendChild(rankexp);
                     rankexp.textContent = "exp 5140"
                 }
@@ -1015,20 +1049,20 @@ class Action {
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if(document.getElementById("continueNviewallButton")!= null){
+                if (document.getElementById("continueNviewallButton") != null) {
                     container.removeChild(document.getElementById("continueNviewallButton"));
                 }
 
                 const Store = document.createElement("div");
-                Store.setAttribute("id","Store");
+                Store.setAttribute("id", "Store");
                 container.appendChild(Store);
 
                 const Hintbox = document.createElement("div");
-                Hintbox.setAttribute("id","HintBox");
+                Hintbox.setAttribute("id", "HintBox");
                 Store.appendChild(Hintbox);
 
                 const top = document.createElement("div");
-                top.setAttribute("id","top");
+                top.setAttribute("id", "top");
                 Hintbox.appendChild(top);
 
                 const HintText = document.createElement("div");
@@ -1036,11 +1070,11 @@ class Action {
                 top.appendChild(HintText);
 
                 const hr = document.createElement("hr");
-                hr.setAttribute("id","hr");
+                hr.setAttribute("id", "hr");
                 top.appendChild(hr);
 
                 const HintIcon = document.createElement("i");
-                HintIcon.setAttribute( "class","fa fa-neuter fa-2x");
+                HintIcon.setAttribute("class", "fa fa-neuter fa-2x");
                 top.appendChild(HintIcon);
 
                 const Hintcount = document.createElement("span");
@@ -1048,17 +1082,17 @@ class Action {
                 top.appendChild(Hintcount);
 
                 const price = document.createElement("div");
-                price.setAttribute("id","price");
+                price.setAttribute("id", "price");
                 price.textContent = "300c";
                 Hintbox.appendChild(price);
 
                 //
                 const Coinbox = document.createElement("div");
-                Coinbox.setAttribute("id","Coinbox");
+                Coinbox.setAttribute("id", "Coinbox");
                 Store.appendChild(Coinbox);
 
                 const cointop = document.createElement("div");
-                cointop.setAttribute("id","cointop");
+                cointop.setAttribute("id", "cointop");
                 Coinbox.appendChild(cointop);
 
                 const CoinText = document.createElement("div");
@@ -1066,11 +1100,11 @@ class Action {
                 cointop.appendChild(CoinText);
 
                 const hr2 = document.createElement("hr");
-                hr2.setAttribute("id","hr");
+                hr2.setAttribute("id", "hr");
                 cointop.appendChild(hr2);
 
                 const CoinIcon = document.createElement("i");
-                CoinIcon.setAttribute( "class","fa fa-eur fa-2x");
+                CoinIcon.setAttribute("class", "fa fa-eur fa-2x");
                 cointop.appendChild(CoinIcon);
 
                 const Coincount = document.createElement("span");
@@ -1078,13 +1112,13 @@ class Action {
                 cointop.appendChild(Coincount);
 
                 const CoinPrice = document.createElement("div");
-                CoinPrice.setAttribute("id","CoinPrice");
+                CoinPrice.setAttribute("id", "CoinPrice");
                 CoinPrice.textContent = "1000w";
                 Coinbox.appendChild(CoinPrice);
 
                 //
                 const ad = document.createElement("div");
-                ad.setAttribute("id","ad");
+                ad.setAttribute("id", "ad");
                 container.appendChild(ad);
 
                 const adtext = document.createElement("span");
@@ -1092,7 +1126,7 @@ class Action {
                 ad.appendChild(adtext);
 
                 const adIcon = document.createElement("i");
-                adIcon.setAttribute("class","fa fa-caret-right");
+                adIcon.setAttribute("class", "fa fa-caret-right");
                 ad.appendChild(adIcon);
             },
         };

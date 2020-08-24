@@ -292,7 +292,8 @@ button {
     height: 1.5em;
     margin: 1em;
 }
-/*open hint*/
+
+/*힌트 열기*/
 .backgroundModal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -309,11 +310,15 @@ button {
 
 /* Modal Content */
 .contentModal {
+    text-align: center;
+    color: black;
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    position: relative;
+    top: 5em;
+    left: 2em;
 }
 /* The Close Button */
 .close {
