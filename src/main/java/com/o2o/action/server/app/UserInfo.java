@@ -1,6 +1,9 @@
 package com.o2o.action.server.app;
+
+import java.io.Serializable;
+
 //유저정보 클래스 - 실제로는 DBConnector에서 받아올것임
-public class UserInfo {
+public class UserInfo implements Serializable {
     // 유저레벨
     private int mylevel;
     // 유저 누적 경험치
@@ -13,6 +16,8 @@ public class UserInfo {
     private StagePropertyInfo stageInfo;
     // 상점 프로퍼티 정보
     private StorePropertyInfo storeInfo;
+
+    // 유저 정보 생성 - DB에서 초기화할것임.
     public UserInfo(int _mylevel, int _myExp, int _myHint, int _myCoin, StagePropertyInfo _stageInfo )
     {
         mylevel = _mylevel;
@@ -42,6 +47,7 @@ public class UserInfo {
     }
 
 
+
     // 유저 레벨업 - 레벨과 코인 증가
     private void UserLevelUp()
     {
@@ -49,6 +55,11 @@ public class UserInfo {
         int levelupcoin = stageInfo.Stages[mylevel].getLevelUpCoin();
         mylevel++;
         myCoin += levelupcoin;
+    }
+    // 게임상에서 힌트 사용
+    public void ConsumeHintCount()
+    {
+        myHint--;
     }
     // 스테이지 클리어 - 경험치, 코인 증가
     public void UserStageClearChange(int _stage, String _difficulty)

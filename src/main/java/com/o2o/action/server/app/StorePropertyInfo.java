@@ -1,13 +1,10 @@
 package com.o2o.action.server.app;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 
-public class StorePropertyInfo {
+public class StorePropertyInfo implements Serializable {
 
 
     // 힌트 구입 시 잃는 코인
@@ -40,7 +37,7 @@ public class StorePropertyInfo {
     {
         try {
             // 프로퍼티 경로
-            String propFile = "https://actions.o2o.kr/devsvr7/properties/StoreProperties.properties";
+            String propFile = "https://actions.o2o.kr/devsvr3/properties/StoreProperties.properties";
             // 프로퍼티 변수 초기화
             props = new Properties();
             // 인풋 스트림 생성
@@ -49,7 +46,6 @@ public class StorePropertyInfo {
             Reader reader = new InputStreamReader(is,"UTF-8");
             // 인풋 스트림 로드
             props.load(reader);
-
                hintpurchase_gethint = GetIntProperty("store.hintpurchase.gethint");
                 hintpurchase_losecoin = GetIntProperty("store.hintpurchase.losecoin");
                 hintcharge_getcoin = GetIntProperty("store.hintcharge.getcoin");

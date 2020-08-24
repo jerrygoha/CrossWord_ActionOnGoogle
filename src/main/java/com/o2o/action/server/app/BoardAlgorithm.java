@@ -1,10 +1,11 @@
 package com.o2o.action.server.app;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
 
 // x,y 좌표점 클래스
-class Point
+class Point implements Serializable
 {
     private int rowpoint=0;
     private int colpoint=0;
@@ -33,7 +34,7 @@ class Point
     }
 }
 // 보드판 알고리즘 클래스
-public class BoardAlgorithm {
+public class BoardAlgorithm implements Serializable{
     private int col = 0;
     private int row = 0;
     public BoardCell[][] board;

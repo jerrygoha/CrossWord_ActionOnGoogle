@@ -3,11 +3,12 @@ package com.o2o.action.server.app;
 
 import javax.print.DocFlavor;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GameBoard {
+public class GameBoard implements Serializable {
     // 보드 배열
     private BoardCell Board[][];
     // 정답변수

@@ -1,6 +1,8 @@
 package com.o2o.action.server.app;
 
-public class DBConnector {
+import java.io.Serializable;
+
+public class DBConnector implements Serializable {
 
 
 }

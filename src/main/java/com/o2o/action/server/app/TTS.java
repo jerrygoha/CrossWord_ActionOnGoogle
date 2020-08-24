@@ -1,8 +1,9 @@
 package com.o2o.action.server.app;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class TTS {
+public class TTS implements Serializable {
     public HashMap<String, String> getTtsmap() {
         return ttsmap;
     }

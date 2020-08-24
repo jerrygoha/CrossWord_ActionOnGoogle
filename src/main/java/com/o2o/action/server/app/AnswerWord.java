@@ -2,10 +2,11 @@ package com.o2o.action.server.app;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 // 정답 클래스
-public class AnswerWord implements Comparable{
+public class AnswerWord implements Comparable, Serializable {
     // 정답 문자
     private  String Answer;
     // 정답의 힌트 배열

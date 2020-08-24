@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-class Stage
+class Stage implements Serializable
 {
     // 스테이지 갯수
     private int StageCount=0;
@@ -93,14 +93,14 @@ class Stage
 
 }
 // 스테이지 프로퍼티 정보 클래스
-public class StagePropertyInfo {
+public class StagePropertyInfo implements Serializable{
     private Properties props = null;
     public Stage[] Stages = null;
 
     public StagePropertyInfo() throws FileNotFoundException {
         try {
             // 프로퍼티 경로
-            String propFile = "https://actions.o2o.kr/devsvr7/properties/StageProperties.properties";
+            String propFile = "https://actions.o2o.kr/devsvr3/properties/StageProperties.properties";
             // 프로퍼티 변수 초기화
             props = new Properties();
             // 인풋 스트림 생성
