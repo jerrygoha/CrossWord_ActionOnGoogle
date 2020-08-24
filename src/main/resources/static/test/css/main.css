@@ -1,12 +1,23 @@
+/*@media (orientation: portrait) {*/
+/*    html {*/
+/*        transform: rotate(-90deg);*/
+/*        transform-origin: top left;*/
+/*        position: absolute;*/
+/*        top: 100%;*/
+/*        left: 0;*/
+/*        width: 100vh;*/
+/*        height: 100vw;*/
+/*    }*/
+/*}*/
+
 body {
     margin: 0;
-    font-size : 200%;
+    font-size : 150%;
 }
 
 button {
     background-color: cornflowerblue;
     color : white;
-    font-size : 130%; //후에 지워야함
 }
 
 /*화면 전체*/
@@ -29,117 +40,212 @@ button {
 }
 
 #title{
-    margin : 6rem;
+    margin : 2em;
 }
 
 #playbutton{
     background-color: #668dd2;
-    height: 5rem;
-    width : 17rem;
-    font-size : 3rem;
+    height: 3em;
+    width : 10em;
+    font-size : 95%;
     background-color: rgba(255,255,255,0.3);
-    border-radius: 1rem;
+    border-radius: 1em;
     border-color : white;
 }
-
 #copyright{
     position: absolute;
-    bottom: 0%;
-    left: 8%
+    bottom: 0em;
+    left: 1em;
+    font-size: 75%;
 }
-
 #o2ologo {
     position: absolute;
-    bottom: 0%;
-    right: 6%
+    bottom: 0em;
+    right: 1em;
+    font-size: 75%;
 }
 
 /*메인 화면*/
 #levelBox {
     position: absolute;
-    left: 2%;
-    top: 15%;
+    left: 2em;
+    top: 7em;
 }
 
 #continueNviewallButton{
     display : flex;
     flex-direction : column;
+    position : absolute;
+    bottom : 6em;
 }
 
-.continue-viewallMargin {
-    margin-bottom: 3rem;
+#continueButton{
+    background-color: #668dd2;
+    height: 3em;
+    width : 9em;
+    font-size : 150%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+}
+
+#viewallButton{
+    margin-top : 20%;
+    background-color: #668dd2;
+    height: 3em;
+    width : 9em;
+    font-size : 150%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
 }
 
 #hint-coin {
     display: flex;
     position: absolute;
-    right: 2%;
-    top: 15%;
+    right: 2em;
+    top: 7em;
 }
 
-#hintBox, #coin{
-    display: flex;
-    flex-direction: row;
-    margin-left: 5%;
+#hintBox, #coinBox{
+    margin : 1em;
 }
 
-#ranking, #setting, #main {
+#ranking, #setting, #main, #welcomeback {
     display: flex;
     flex-direction: column;
+    margin : 1rem;
 }
 
-#bottom {
+#bottomCommon {
     position: absolute;
-    bottom:0%;
-    right:2%;
-}
-#backBox {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    bottom: 0%;
-    left: 2%;
+    right : 2em;
+    bottom : 2em;
 }
 
 /*단계 선택 화면*/
 #stepBox {
     flex-direction: column;
-    margin : 10rem;
+    position :absolute;
+    bottom : 2em;
+}
+.stepbutton{
+    margin-right: 3em;
+    margin-bottom : 5em;
+    background-color: #668dd2;
+    height: 2em;
+    width : 6em;
+    font-size : 100%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
 }
 
 /*난이도 선택 화면*/
+.difficulty {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.4em;
+    border-color : white;
+    text-align: center;
+}
+
 #difficultyBox {
+    text-align: center;
     white-space: pre;
+    display: flex;
+    flex-direction: row;
 }
 
 .difficultyBoxMargin {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.4em;
+    border-color : white;
     margin-right: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.difficultyText {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 2em;
+    padding-top: 0.4em;
+}
+
+.difficultyDetail {
+    padding: 0.5em;
 }
 
 /*인게임 화면*/
+#inGameBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.inGameBoxMargin {
+    margin-right: 6em;
+}
+
 #usedHint {
-    border: 2px solid black;
+    background-color: rgba(255,255,255,0.3);
+    border: 2px solid white;
     white-space: pre;
-    position: relative;
-    right: 38%;
-    top: 7%;
+    text-align: center;
+    padding: 0.3em;
+    width: 10em;
 }
 
 #gameProgressBox {
-    border: 2px solid black;
-    position:relative;
-    right: 45%;
-    top: 40%;
+    font-size: 1.34em;
+    background-color: rgba(255,255,255,0.3);
+    border: 2px solid white;
+    padding: 0.2em;
+    align-self: flex-end
+}
+
+#gameBoardBox {
+    display: flex;
+    flex-direction: row;
+}
+
+#gameBoard {
+    font-size: 1.5em;
+    background-color: rgba(255,255,255,0.3);
+    border: 2px solid white;
+    border-radius: 0.4em;
+}
+
+.rowBox {
+    display: flex;
+    flex-direction: row;
 }
 
 .gameBoardMargin {
-    margin-right: 5%;
+    background-color: rgba(255,255,255,0.3);
+    margin: 0.1em;
+    width: 2em;
+    height: 2em;
+    text-align: center;
+}
+
+#gameTimerBox {
+    width: 0.5em;
+    background-color: rgba(255,255,255,0.3);
+    border: white;
+    border-radius: 0.5em;
+    transform: rotate(180deg);
+    margin-left: 1em;
 }
 
 #gameTimer {
-    position:relative;
-    left: 25%;
-    bottom: 5%;
+    width: 0.5em;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 0.5em;
+    font-weight: bold;
+    transform: rotate(180deg);
 }
 
 /*결과 화면*/
@@ -174,130 +280,209 @@ button {
     left: 22%;
     bottom: 20%;
 }
+
 /*setting*/
-#UserBox{
-    position : absolute;
-    top: 35%;
+#UserID{
+    position: absolute;
+    top : 40%;
+    font-size : 180%;
 }
-
-#UserIcon, #UserID{
-    margin : 1rem;
+#leftBox{
+    position: absolute;
+    top : 55%;
+    margin-right : 25%;
+    text-align:right;
+    font-size : 150%;
 }
-
-#UserIDDetail{
-    margin : 20rem;
-    margin-right : 5rem;
+#SoundEffect{
+    margin-bottom:10%;
 }
-
-#SoundEffectBox{
-    position : absolute;
-    top: 45%;
-    margin-right : 6rem;
-}
-
-#SoundEffectIcon, #SoundEffect{
-    margin: 1rem;
-}
-
-#SoundEffectON{
-    margin-left: 8rem;
-}
-
-#BackGroundBox{
-    position : absolute;
-    top: 55%;
-    margin-right : 6rem;
-}
-
-#BackIcon, #BackGroundEffect{
-    margin: 1rem;
-}
-
-#BackGroundON{
-    margin-left: 8rem;
-}
-
-#ResetBox{
-    position : absolute;
-    top: 25%;
-}
-
-#ResetIcon, #Reset{
-    margin : 1rem;
-}
-
 #ResetButton{
-    margin : 20rem;
-    margin-right : 5rem;
+    position :absolute;
+    top: 80%;
+    background-color: #668dd2;
+    height: 2em;
+    width : 6em;
+    font-size : 150%;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
 }
-/*setting*/
-
+/* The switch - the box around the slider */
+.switch {
+    position: absolute;
+    display: inline-block;
+    width: 130px;
+    height: 34px;
+    top : 56%;
+    margin-left : 20%
+}
+.switch2 {
+    position: absolute;
+    display: inline-block;
+    width: 130px;
+    height: 34px;
+    top : 65%;
+    margin-left : 20%
+}
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.3);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 62px;
+    left: 4px;
+    bottom: 4px;
+    background-color: gray;
+    -webkit-transition: .4s;
+    transition: .4s;
+    content:'OFF';
+    color : white;
+    font-size : 20px;
+    text-align : center;
+}
+input:checked + .slider {
+    background-color: #2196F3;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(62px);
+    -ms-transform: translateX(62px);
+    transform: translateX(62px);
+    content:'ON';
+}
+/* Rounded sliders */
+.slider.round {
+    border-radius: 10px;
+}
+.slider.round:before {
+    border-radius: 15%;
+}
 /*ranking*/
-#UserRankBox{
-    position : absolute;
-    top: 35%;
-    margin-right : 6rem;
+#rank{
+    height: 3em;
+    display : flex;
+    font-size : 1.3em;
 }
-
-#RankBox{
-    position : absolute;
-    top: 55%;
-    margin-right : 6rem;
+.ranking{
+    height: 15em;
+    overflow: auto;
 }
-
-#UserRank,UserImage{
-    margin : 1rem;
+.ranking::-webkit-scrollbar {
+    width: 0.7em;
 }
-
-#Username{
-    margin-left: 8rem;
+.ranking::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.5);
+    border-radius : 0.5rem;
 }
-
-#firstRank, firstrankImage{
-    margin : 1rem;
+.ranking::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.2);
+    border-radius : 0.5rem;
 }
-
-#firstRankName{
-    margin-left: 8rem;
+#User{
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 0.2em;
+    border-color : white;
+    margin-right : 1em;
+    display : flex;
+    width : 15em;
+    height : 2em;
+    justify-content: center;
+}
+#rankexp{
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 0.2em;
+    border-color : white;
+    margin-right : 1em;
+    display : flex;
+    width : 8em;
+    height : 2em;
+    justify-content: center;
+}
+#ranknum{
+    margin-right: 1em;
+    border-right: 1px solid white;
+    padding-right : 1em;
+}
+#yourrank{
+    margin-bottom: 1em;
 }
 /*ranking*/
 
 /*shop*/
-#HintBox1{
-    position : absolute;
-    top: 30%;
-    margin-right : 50rem;
+#Store{
+    flex-direction: row;
+    display : flex;
 }
-#HintBox2{
-    position : absolute;
-    top: 30%;
-    margin-right : 20rem;
+#HintBox{
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 10em;
+    width : 12em;
+    padding-top: 0.4em;
+    text-align : center;
+    margin-right: 3em;
+    margin-bottom : 3em;
 }
-#HintBox3{
-    position : absolute;
-    top: 30%;
-    margin-left: 10rem;
+#price{
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 2em;
+    padding-top: 0.6em;
 }
-#CoinBox1{
-    position : absolute;
-    top: 50%;
-    margin-right : 50rem;
+#top{
+    margin-bottom: 3.7em;
 }
-#CoinBox2{
-    position : absolute;
-    top: 50%;
-    margin-right : 20rem;
+#Coinbox{
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 10em;
+    width : 12em;
+    padding-top: 0.4em;
+    text-align : center;
 }
-#CoinBox3{
-    position : absolute;
-    top: 50%;
-    margin-left: 10rem;
+#CoinPrice{
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 2em;
+    padding-top: 0.6em;
 }
-
-#blueBox{
-    position : absolute;
-    top : 20rem;
-    margin-left : 50rem;
+#cointop{
+    margin-bottom: 3.7em;
+}
+#hr{
+    width : 8em;
+    border: thin solid white;
+}
+#ad{
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0.5em;
+    border-color : white;
+    height: 2em;
+    top : 65%
 }
 /*shop*/
 
