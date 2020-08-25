@@ -472,8 +472,8 @@ class Action {
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if (document.getElementById("continueNviewallButton") != null) {
-                    container.removeChild(document.getElementById("continueNviewallButton"));
+                if (document.getElementById("continue_stageButton") != null) {
+                    container.removeChild(document.getElementById("continue_stageButton"));
                 }
                 /**
                  * 배팅머니, 획득머니, 시간제한 등을 fulfillment에서 가져옴
@@ -516,6 +516,7 @@ class Action {
                 const difficultyBox = document.createElement("div");
                 difficultyBox.setAttribute("id", "difficultyBox");
                 container.appendChild(difficultyBox);
+
                 const easyBox = document.createElement("div");
                 easyBox.setAttribute("id", "easyBox");
                 easyBox.setAttribute("class", "difficultyBoxMargin");
@@ -623,12 +624,15 @@ class Action {
                     rowBox.setAttribute("class", "rowBox");
                     gameBoard.appendChild(rowBox);
                     for (let row = 0; row < boardRow; row++) {
-                        const alphabet = document.createElement("div");
-                        alphabet.setAttribute("id", col + "," + row);
-                        alphabet.setAttribute("class", "gameBoardMargin");
-                        alphabet.style.height = gameBoardHeight / boardRow + "px";
-                        alphabet.style.width = gameBoardWidth / boardCol + "px";
+                        const alphabetBox = document.createElement("div");
+                        alphabetBox.setAttribute("id", col + "," + row);
+                        alphabetBox.setAttribute("class", "alphabetBox");
+                        alphabetBox.style.height = gameBoardHeight / boardRow + "px";
+                        alphabetBox.style.width = gameBoardWidth / boardCol + "px";
+                        const alphabet = document.createElement("p");
+                        alphabet.setAttribute("class", "alphabet");
                         alphabet.textContent = board[col][row];
+                        alphabetBox.appendChild(alphabet);
                         rowBox.appendChild(alphabet);
                     }
                 }
@@ -649,7 +653,7 @@ class Action {
                 gameBoardBox.appendChild(gameTimerBox);
                 const gameTimer = document.createElement("div");
                 gameTimer.setAttribute("id", "gameTimer");
-                gameTimer.style.height = (gameBoard.clientHeight * 4 / 5) + "px";
+                gameTimer.style.height = (gameBoard.clientHeight * 5 / 6) + "px";
                 gameTimerBox.appendChild(gameTimer);
                 const remainTime = document.createElement("div");
                 remainTime.setAttribute("id", "remainTime");
@@ -661,11 +665,6 @@ class Action {
                 Timer.setter(timeLimit, remainHeight);
                 Timer.init();
                 Timer.start();
-                // startTimer(timeLimit, remainHeight);
-                // //제한 시간이 지나면 fulfillment쪽으로 textQuery를 전송 -> 혹시의 오류를 감안하여 남겨둠
-                // timerOver = setTimeout(function () {
-                //     window.canvas.sendTextQuery("get fail result");
-                // }, timeLimit * 1000);
             },
             CORRECT: function (data) {
                 console.log("실행 : correct");
@@ -689,7 +688,7 @@ class Action {
                     setTimeout(function () {
                         window.canvas.sendTextQuery("get success result");
                     }, 1000);
-                    resetTimer();
+                    Timer.stop();
                     console.log("get success result");
                 }
             },
