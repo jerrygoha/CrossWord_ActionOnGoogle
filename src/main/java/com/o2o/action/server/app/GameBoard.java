@@ -2,11 +2,13 @@ package com.o2o.action.server.app;
 
 
 import javax.print.DocFlavor;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GameBoard {
+public class GameBoard implements Serializable {
     // 보드 배열
     private BoardCell Board[][];
     // 정답변수
@@ -21,28 +23,23 @@ public class GameBoard {
     private  int col;
     // 보드판 세로길이
     private int row;
-    // 유저정보
-    private UserInfo userinfo;
-    // 난이도
-    public enum Difficulty{easy, hard, medium}
     // 현재 게임판의 스테이지
     private int stage;
     // 현재 게임판의 난이도
-    private Difficulty difficulty;
-    //GameInfo
-    private GameInfo gameinfo;
-    // 생성자
-
-    public GameBoard(Difficulty _difficulty, int _stage)
+    private String difficulty;
+    // 스테이지 프로퍼티 정보
+    private StagePropertyInfo stageinfo;
+    public GameBoard(String _difficulty, int _stage, StagePropertyInfo _stageinfo)
     {
-        // UserInfo를 생성
-        userinfo = new UserInfo(1,31,54,3,5000);
         // 매개변수 대입
+        stageinfo = _stageinfo;
         stage = _stage;
         difficulty = _difficulty;
+        row = stageinfo.Stages[stage].getSize_Row();
+        col = stageinfo.Stages[stage].getSize_Col();
+        answercount = stageinfo.Stages[stage].getAnswerCount();
         // 보드판 생성
-        // makeBoard(stage+2,stage+2,3);
-        makeBoard(5,5,3);
+        makeBoard();
     }
     private void printBoard(BoardCell[][]board,int x, int y)
     {
@@ -58,7 +55,8 @@ public class GameBoard {
     // 타임시간 가져오기
     public int getTimeLimit()
     {
-        return 50;
+        int timelimit =stageinfo.Stages[stage].getTime().get(difficulty);
+        return timelimit;
     }
     // 총 단어 개수 가져오기
     public int getTotalWord()
@@ -90,16 +88,12 @@ public class GameBoard {
         answers[1]=answerWord;
         answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[2]=answerWord;
-
-
+        Arrays.sort(answers);
     }
 
     // 보드판 만들기
-    private void makeBoard(int _col, int _row, int _answercount)
+    private void makeBoard()
     {
-        col = _col;
-        row = _row;
-        answercount = _answercount;
         Board = new BoardCell[row][col];
 
         answerlist = new ArrayList<AnswerWord>();
@@ -107,18 +101,29 @@ public class GameBoard {
         // 정답 불러오기
         loadAnswer();
         // 채워야할 정답 리스트에 모든 정답 넣기
-        for (int i=0; i<_answercount; i++)
+        for (int i=0; i<answercount; i++)
         {
             restanswerlist.add(answers[i]);
         }
+        ArrayList dirarray1 = new ArrayList(Arrays.asList(2,4));
         // 보드판 알고리즘 클래스 인스턴스 생성
         BoardAlgorithm boardAlgorithm = new BoardAlgorithm(col,row,Board,answers);
-        //보드판에서 정답아닌곳에 랜덤 알파벳 구성
-        boardAlgorithm.MakeUpBoardAlphabet();
-        // 보드판에 정답 알파벳 넣기
-        boardAlgorithm.MakeUpBoardAnswer();
+        // 보드판 알고리즘이 성공할때까지 계속 시도
+        boolean issucess = false;
+        while(!issucess)
+        {
+            System.out.println("보드생성 실패!");
+            boardAlgorithm = new BoardAlgorithm(col,row,Board,answers);
+            // 보드판에 정답 알파벳 넣기
+            boardAlgorithm.MakeUpBoardAnswer(dirarray1);
+            //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+            boardAlgorithm.MakeUpBoardAlphabet();
+            issucess = boardAlgorithm.isBoardSuccess;
+
+        }
         // 성공보드 저장하기
         Board = boardAlgorithm.Successboard;
+
         //보드판 출력
         printBoard(Board,col,row);
     }
@@ -134,6 +139,18 @@ public class GameBoard {
         if(restanswerlist.size()==0)
             return "맞춰야 할 단어가 더이상 없습니다.";
         return restanswerlist.get(0).useHint();
+    }
+    // 정답의 좌표정보 가져오기
+    public int[] GetAnswerPoint(String _answer)
+    {
+        for (int i = 0; i<answercount; i++)
+        {
+            if(answers[i].getAnswer().equals(_answer)) {
+                return answers[i].GetAlphabetPoint();
+            }
+        }
+        System.out.println("좌표정보 가져오기 오류 : 가져오려는 정답이 부적절합니다");
+        return null;
     }
     // 정답 시도
     public boolean tryAnswer(String _answer)

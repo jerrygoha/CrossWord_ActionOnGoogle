@@ -1,6 +1,8 @@
 package com.o2o.action.server.app;
 
-public class BoardCell {
+import java.io.Serializable;
+
+public class BoardCell implements Serializable {
     public char cellchar;
     public boolean isAnswer;
     public BoardCell()

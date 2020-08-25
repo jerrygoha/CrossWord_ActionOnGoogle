@@ -1,86 +1,110 @@
 package com.o2o.action.server.app;
+
+import java.io.Serializable;
+
 //유저정보 클래스 - 실제로는 DBConnector에서 받아올것임
-public class UserInfo {
-
-    private int level;
+public class UserInfo implements Serializable {
+    // 유저레벨
+    private int mylevel;
+    // 유저 누적 경험치
     private int myExp;
-    private int fullExp;
+    // 유저 힌트
     private int myHint;
+    // 유저 코인
     private int myCoin;
+    // 스테이지 프로퍼티 정보
+    private StagePropertyInfo stageInfo;
+    // 상점 프로퍼티 정보
+    private StorePropertyInfo storeInfo;
 
-
-    public UserInfo() {
-        //레벨
-        level = 2;
-        // 현재 경험치
-        myExp = 31;
-        // 전체 경험치
-        fullExp = 54;
-        // 가진 힌트 개수
-        myHint = 4;
-        // 가진 코인 개수
-        myCoin = 5000;
-    }
-    public UserInfo(int _level, int _myExp, int _fullExp, int _myHint, int _myCoin)
+    // 유저 정보 생성 - DB에서 초기화할것임.
+    public UserInfo(int _mylevel, int _myExp, int _myHint, int _myCoin, StagePropertyInfo _stageInfo )
     {
-        // 원래는 DB객체에서 숫자를 가져올거임
-        level = _level;
+        mylevel = _mylevel;
         myExp = _myExp;
-        fullExp = _fullExp;
         myHint = _myHint;
         myCoin = _myCoin;
+        stageInfo = _stageInfo;
+        // 상점정보는 해당 UserInfo 내에서만 사용하기 때문에 이곳에서 인스턴스 생성
+        storeInfo = new StorePropertyInfo();
     }
 
 
     public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+        return mylevel;
     }
 
     public int getMyExp() {
         return myExp;
     }
 
-    public void setMyExp(int myExp) {
-        this.myExp = myExp;
-    }
-
-    public int getFullExp() {
-        return fullExp;
-    }
-
-    public void setFullExp(int fullExp) {
-        this.fullExp = fullExp;
-    }
-
     public int getMyHint() {
         return myHint;
-    }
-
-    public void setMyHint(int myHint) {
-        this.myHint = myHint;
     }
 
     public int getMyCoin() {
         return myCoin;
     }
 
-    public void setMyCoin(int myCoin) {
-        this.myCoin = myCoin;
-    }
 
 
-
-    void SetUserInfo(int _level, int _myExp, int _fullExp, int _myHint, int _myCoin)
+    // 유저 레벨업 - 레벨과 코인 증가
+    private void UserLevelUp()
     {
-        level = _level;
-        myExp = _myExp;
-        fullExp = _fullExp;
-        myHint = _myHint;
-        myCoin = _myCoin;
+        // levelupcoin은 해당 유저의 레벨에 따라 근거하므로 mylevel이 스테이지의 인덱스가 됨.
+        int levelupcoin = stageInfo.Stages[mylevel].getLevelUpCoin();
+        mylevel++;
+        myCoin += levelupcoin;
+    }
+    // 게임상에서 힌트 사용
+    public void ConsumeHintCount()
+    {
+        myHint--;
+    }
+    // 스테이지 클리어 - 경험치, 코인 증가
+    public void UserStageClearChange(int _stage, String _difficulty)
+    {
+
+        int winexp = stageInfo.Stages[_stage].getExp().get(_difficulty);
+        int wincoin = stageInfo.Stages[_stage].getBetCoin().get(_difficulty);
+        float coinratio = stageInfo.Stages[_stage].getCoinRatio();
+        // levelupexp는 해당 유저의 레벨에 따라 근거하므로 mylevel이 스테이지의 인덱스가 됨.
+        int levelupexp = stageInfo.Stages[mylevel].getLevelUpExp();
+        // 코인 증가
+        myCoin+=wincoin*coinratio;
+        // 경험치 증가
+        myExp+=winexp;
+        // 레벨업 확인
+        if(myExp>= levelupexp)
+        {
+            // 유저 레벨업
+            UserLevelUp();
+        }
+    }
+    // 게임 시작시 변경 - 배팅코인만큼 감소
+    public void GameStartChange(int _stage, String _difficulty)
+    {
+        // 코인 감소
+        myCoin -= stageInfo.Stages[_stage].getBetCoin().get(_difficulty);
     }
 
+
+    // 상점에서 힌트구매 - 코인 감소, 힌트 증가
+    public void HintPurchaseChange()
+    {
+        // 코인 감소
+        myCoin-=storeInfo.getHintpurchase_losecoin();
+        // 힌트 증가
+        myHint+=storeInfo.getHintpurchase_gethint();
+    }
+    // 상점에서 광고 보고 코인 충전 - 코인 증가
+    public void CoinChargeChange()
+    {
+        myCoin+=storeInfo.getHintcharge_getcoin();
+    }
+    // 상점에서 코인구매 - 코인 증가
+    public void CoinPurchaseChange()
+    {
+        myCoin+=storeInfo.getCoinpurchase_getcoin();
+    }
 }

@@ -1,7 +1,8 @@
 package com.o2o.action.server.app;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-class Result
+class Result implements Serializable
 {
     //맞춘 단어
     ArrayList<String> answer;

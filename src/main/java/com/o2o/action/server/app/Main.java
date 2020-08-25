@@ -5,40 +5,110 @@ import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.*;
 import com.o2o.action.server.util.CommonUtil;
 
+import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Main extends DialogflowApp {
 
     public static void main(String[] args) {
-         BoardCell[][] Board = new BoardCell[6][6];
-        int answercount = 5;
-       AnswerWord[] answers = new AnswerWord[answercount];
+        BoardCell[][] Board = new BoardCell[4][4];
+        int answercount = 3;
+        AnswerWord[] answers = new AnswerWord[answercount];
 
-        AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[0]=answerWord;
-        answerWord = new AnswerWord("dog",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[1]=answerWord;
-        answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[2]=answerWord;
-        answerWord = new AnswerWord("pig",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        AnswerWord answerWord = new AnswerWord("back", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
+        answers[0] = answerWord;
+        answerWord = new AnswerWord("dog", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
+        answers[1] = answerWord;
+        answerWord = new AnswerWord("wing", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
+        answers[2] = answerWord;
+    /*    answerWord = new AnswerWord("comes",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
         answers[3]=answerWord;
         answerWord = new AnswerWord("apple",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[4]=answerWord;
-        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(5,5,Board,answers);
-      //  boardAlgorithm.MakeUpBoardAlphabet();
-        boardAlgorithm.MakeUpBoardAnswer();
-    }
-    String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
+        answers[4]=answerWord;*/
+        Arrays.sort(answers);
+        boolean issucess = false;
+        ArrayList dirarray1 = new ArrayList(Arrays.asList(2, 4));
 
-    GameBoard gameBoard;
-    UserInfo user;
-    GameInfo gameinfo;
+        ArrayList dirarray2 = new ArrayList(Arrays.asList(2, 3, 4));
+
+        ArrayList dirarray3 = new ArrayList(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+
+        // 보드판 알고리즘 클래스 인스턴스 생성
+        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(4, 4, Board, answers);
+        // 보드판에 정답 알파벳 넣기
+        boardAlgorithm.MakeUpBoardAnswer(dirarray3);
+        //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+        boardAlgorithm.MakeUpBoardAlphabet();
+        issucess = boardAlgorithm.isBoardSuccess;
+        // 보드판 알고리즘이 성공할때까지 계속 시도
+        while (!issucess) {
+            System.out.println("보드생성 실패!");
+            boardAlgorithm = new BoardAlgorithm(4, 4, Board, answers);
+            // 보드판에 정답 알파벳 넣기
+            boardAlgorithm.MakeUpBoardAnswer(dirarray3);
+            //보드판에서 정답아닌곳에 랜덤 알파벳 구성
+            boardAlgorithm.MakeUpBoardAlphabet();
+            issucess = boardAlgorithm.isBoardSuccess;
+
+        }
+
+        Board = boardAlgorithm.Successboard;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(Board[i][j].cellchar + " ");
+            }
+            System.out.println();
+        }
+        String ss = Createserial(boardAlgorithm);
+    boardAlgorithm = (BoardAlgorithm) Desrial(ss);
+
+    }
+
+    String URL = "https://actions.o2o.kr/devsvr3/test/index.html";
+
+    StagePropertyInfo stageinfo;
     TTS tts;
 
     private void setUp() {
-        gameinfo = new GameInfo();
         tts = new TTS();
+        try {
+            stageinfo = new StagePropertyInfo();
+        } catch (FileNotFoundException e) {
+            e.getStackTrace();
+        }
+
+    }
+
+   static String Createserial(Object obj) {
+        byte[] serializedMember = null;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(baos);
+            out.writeObject(obj);
+            serializedMember = baos.toByteArray();
+            out.close();
+            System.out.println("serial!! " + serializedMember);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Base64.getEncoder().encodeToString(serializedMember);
+    }
+
+   static Object Desrial(String outst) {
+        byte[] inserializedMember = Base64.getDecoder().decode(outst);
+        ;
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(inserializedMember);
+            ObjectInputStream out = new ObjectInputStream(bais);
+            System.out.println("serial!!!");
+            out.close();
+            return out.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 //    ActionRequest ingameRequest;
@@ -107,6 +177,9 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
 
         String response;
+        request.getConversationData().clear();
+        System.out.println(request.getConversationData());
+        System.out.println(request.getContexts());
         data.clear();
         setUp();
         data.put("history", "welcome");
@@ -114,8 +187,9 @@ public class Main extends DialogflowApp {
         htmldata.put("command", "welcome");
 
         //db 연결
-        user = new UserInfo();
-
+       UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
+       String serial = Createserial(user);
+       data.put("user",serial);
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
@@ -181,15 +255,19 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
 
         data.put("history", "main");
+        // 세팅,상점, 랭킹인 경우 - 스페셜 케이스 -> 뒤로 돌아갈 수 있음
         data.put("special case", false);
 
         htmldata.put("command", "main");
+        // User정보 가져오기
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
-        htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-
+        htmldata.put("fullExp",Integer.toString(1024000));
         String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -220,7 +298,10 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
+        // User정보 가져오기
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+       // UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
         //메인에서 왔는지,, 스테이지에서왔는지
         int stage;
         if (data.get("history").equals("main")) {
@@ -234,15 +315,16 @@ public class Main extends DialogflowApp {
         data.put("stage", stage);
 
         htmldata.put("command", "difficultySelect");
-        htmldata.put("winMoney1", gameinfo.getStage()[1].getWinMoney());
-        htmldata.put("winMoney2", gameinfo.getStage()[2].getWinMoney());
-        htmldata.put("winMoney3", gameinfo.getStage()[3].getWinMoney());
-        htmldata.put("betMoney1", gameinfo.getStage()[1].getBetMoney());
-        htmldata.put("betMoney2", gameinfo.getStage()[2].getBetMoney());
-        htmldata.put("betMoney3", gameinfo.getStage()[3].getBetMoney());
-        htmldata.put("timeLimit1", gameinfo.getStage()[1].getTimeLimit()[0]);
-        htmldata.put("timeLimit2", gameinfo.getStage()[2].getTimeLimit()[0]);
-        htmldata.put("timeLimit3", gameinfo.getStage()[3].getTimeLimit()[0]);
+        Stage SelectStage = stageinfo.Stages[stage];
+        htmldata.put("winMoney1",Float.toString(SelectStage.getBetCoin().get("easy")*SelectStage.getCoinRatio()));
+        htmldata.put("winMoney2", Float.toString(SelectStage.getBetCoin().get("medium")*SelectStage.getCoinRatio()));
+        htmldata.put("winMoney3", Float.toString(SelectStage.getBetCoin().get("hard")*SelectStage.getCoinRatio()));
+        htmldata.put("betMoney1", stageinfo.Stages[stage].getBetCoin().get("easy").toString());
+        htmldata.put("betMoney2", stageinfo.Stages[stage].getBetCoin().get("medium").toString());
+        htmldata.put("betMoney3", stageinfo.Stages[stage].getBetCoin().get("hard").toString());
+        htmldata.put("timeLimit1", stageinfo.Stages[stage].getTime().get("easy").toString());
+        htmldata.put("timeLimit2", stageinfo.Stages[stage].getTime().get("medium").toString());
+        htmldata.put("timeLimit3", stageinfo.Stages[stage].getTime().get("hard").toString());
 
         String response = tts.getTtsmap().get("difficultyselect");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
@@ -259,6 +341,9 @@ public class Main extends DialogflowApp {
 
         //난이도에서 왔는지, 결과에서왔는지
         String difficulty;
+
+        double stages = ((double)data.get("stage"));
+        int stage = (int)stages;
         if (data.get("history").equals("result")) {
             difficulty = CommonUtil.makeSafeString(data.get("difficulty"));
         } else {
@@ -269,10 +354,21 @@ public class Main extends DialogflowApp {
         data.put("special case", false);
         data.put("difficulty",difficulty);
 
+        // User정보 가져오기
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+        // 유저 게임 시작 시 코인 감소
+        user.GameStartChange(stage,difficulty);
+        // 유저 정보 저장
+        userserial = Createserial(user);
+        data.put("user",userserial);
 
         String response;
-        gameBoard = new GameBoard(GameBoard.Difficulty.easy, 3);
-        //gameBoard = new GameBoard(data.difficulty,data.stage);
+        // 게임보드 생성
+       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo);
+       // 게임보드 직렬화 후 전송
+        String boardserial = Createserial(gameBoard);
+        data.put("gameboard",boardserial);
         char[][] board = gameBoard.getBoard();
         int timeLimit = gameBoard.getTimeLimit();
         int totalWord = gameBoard.getTotalWord();
@@ -280,7 +376,7 @@ public class Main extends DialogflowApp {
         htmldata.put("board", board);
         htmldata.put("timeLimit", timeLimit);
         htmldata.put("totalWord", totalWord);
-
+        htmldata.put("gameboard",gameBoard);
         response = tts.getTtsmap().get("ingame");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -298,14 +394,20 @@ public class Main extends DialogflowApp {
 
         String word = CommonUtil.makeSafeString(request.getParameter("word"));
         String hint = CommonUtil.makeSafeString(request.getParameter("hint"));
-
+        // User정보 가져오기
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+        // GameBoard정보 가져오기
+        String boardserial = (String)data.get("gameboard");
+        GameBoard gameBoard = (GameBoard) Desrial(boardserial);
         if (word.isEmpty()) {
 
             if (hint.equals("open")) {
                 htmldata.put("command", "openhint");
+                // 힌트 개수 차감
+                user.ConsumeHintCount();
                 htmldata.put("hint", gameBoard.getHintMessage());
                 response = "open hint";
-                //user.setMyHint();
             } else {
                 htmldata.put("command", "closehint");
                 response = "close hint";
@@ -326,7 +428,12 @@ public class Main extends DialogflowApp {
                 response = "wrong";
             }
         }
-
+        // 게임보드 저장
+        boardserial = Createserial(gameBoard);
+        data.put("gameboard",boardserial);
+        // 유저 정보 저장
+        userserial = Createserial(user);
+        data.put("user",userserial);
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
@@ -344,29 +451,39 @@ public class Main extends DialogflowApp {
         data.put("history", "result");
         data.put("special case", false);
 
-        //(user,stage,difficulty,result);
+        // User정보 가져오기
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+
         //결과, stage, difficulty에 따라 user의 level, exp, coin 정보를 조정한다.
         String response = "";
+        double stage = (double)data.get("stage");
+        String difficulty = (String)data.get("difficulty");
         if (result.equals("success"))
+        {
             response = tts.getTtsmap().get("success");
+            user.UserStageClearChange((int)stage,difficulty);
+        }
+
         else
+        {
             response = tts.getTtsmap().get("fail");
-
-
+        }
         htmldata.put("command", "result");
         htmldata.put("result", result);
-
         htmldata.put("level", user.getLevel());
         htmldata.put("myExp", user.getMyExp());
-        htmldata.put("fullExp", user.getFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-
+        // GameBoard정보 가져오기
+        String boardserial = (String)data.get("gameboard");
+        GameBoard gameBoard = (GameBoard) Desrial(boardserial);
         Result results = gameBoard.getResult();
         htmldata.put("correctList", results.getAnser());
         htmldata.put("wrongList", results.getRestWord());
-
-
+        // 유저 정보 저장
+        String serial = Createserial(user);
+        data.put("user",serial);
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
@@ -429,7 +546,6 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
         String history = CommonUtil.makeSafeString(data.get("history"));
         Boolean isSpecial = (Boolean) (data.get("special case"));
 
