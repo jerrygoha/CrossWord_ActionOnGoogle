@@ -629,11 +629,11 @@ class Action {
                         alphabetBox.setAttribute("class", "alphabetBox");
                         alphabetBox.style.height = gameBoardHeight / boardRow + "px";
                         alphabetBox.style.width = gameBoardWidth / boardCol + "px";
+                        rowBox.appendChild(alphabetBox);
                         const alphabet = document.createElement("p");
                         alphabet.setAttribute("class", "alphabet");
                         alphabet.textContent = board[col][row];
                         alphabetBox.appendChild(alphabet);
-                        rowBox.appendChild(alphabet);
                     }
                 }
                 //게임보드에 높이 맞추기
