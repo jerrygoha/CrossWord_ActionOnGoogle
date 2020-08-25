@@ -4,7 +4,7 @@
  * @param level
  * @returns {*}
  */
-function stepLock(level) {
+function stepLock(step) {
     let stepNum = 0;
     const stepBox = document.getElementById("stepButton");
     for (let row = 0; row < 3; row++) {
@@ -15,78 +15,99 @@ function stepLock(level) {
             if (stepNum == 10) return;
             stepNum++;
             const underBox = document.createElement("div");
-            stepBox.appendChild(underBox);
-            if (level < stepNum) { //disable
+            if (step < stepNum) { //disable
+                const outerBox = document.createElement("div");
+                outerBox.setAttribute("id", "outerBox");
+                stepRow.appendChild(outerBox);
                 underBox.textContent = "Lv. " + stepNum;
                 underBox.setAttribute("class", "disableUnderBox");
                 const upperBox = document.createElement("div");
                 upperBox.setAttribute("class", "upperBox");
                 upperBox.textContent = "Lock";
-                underBox.appendChild(upperBox);
-                stepRow.appendChild(underBox);
+                outerBox.appendChild(underBox);
+                outerBox.appendChild(upperBox);
             } else {
                 underBox.textContent = "Lv. " + stepNum;
+                const num = stepNum;
+                console.log("open : " + num);
                 underBox.setAttribute("class", "ableUnderBox");
-                // underBox.onclick = step(stepNum + 1);
+                underBox.addEventListener("click", function () {
+                    window.canvas.sendTextQuery("level" + num);
+                });
                 stepRow.appendChild(underBox);
             }
         }
     }
 }
 
-// const Timer = (function() {
-//     let id;
-//     let intervalId = null;
-//     let timer = 0;
-//     let el;
-//
-//     function setTimer(time) {
-//         timer = time;
-//     }
-//     function initTimer() {
-//         id = el_id;
-//         if(id === undefined) {
-//             throw "Provide a valid Id!";
-//         }
-//         el = document.getElementById("mainTimer");
-//
-//         if(el === null) {
-//             throw "Element does not exists!";
-//         }
-//     }
-//     function update() {
-//         //console.log(timer);
-//         timer -= 1;
-//     }
-//     function startTimer() {
-//         if(intervalId !== null) {
-//             throw "Timer is already running!";
-//         }
-//         intervalId = setInterval(update, 1000);
-//     }
-//     function stopTimer() {
-//         if(intervalId === null) {
-//             throw "Timer is not running!";
-//         }
-//         clearInterval(intervalId);
-//         intervalId = null;
-//     }
-//     function resumeTimer() {
-//         if (intervalId !== null) {
-//             throw "Timer is already running";
-//         }
-//         intervalId = setInterval(update, 1000);
-//     }
-//     return {
-//         'setter',setTimer,
-//         'init':initTimer,
-//         'start': startTimer,
-//         'stop': stopTimer,
-//         'resume': resumeTimer
-//     };
-// })();
+const Timer = (function () {
+    let intervalId = null;
+    let timerHeightBox = 0;
+    let timerTextBox = 0;
+    let timerHeight = 0;
+    let timerText = 0;
+    let minusHeight = 0;
 
-let interval = 0;
+    function setTimer(remainTime, remainHeight) { //시간을 정함.
+        timerHeight = remainHeight;
+        timerText = remainTime;
+        minusHeight = remainHeight / remainTime;
+    }
+
+    function initTimer() { //초기 타이머 설정
+        timerHeightBox = document.getElementById("remainTime");
+        timerTextBox = document.getElementById("gameTimerText");
+
+        if (timerHeightBox == null && timerTextBox == null) {
+            throw "Element does not exists!";
+        }
+    }
+
+    function update() {
+        //console.log(timer);
+        timerTextBox.textContent = timerText;
+        timerHeightBox.style.height = timerHeight + "px";
+        timerText -= 1;
+        timerHeight -= minusHeight;
+
+        if (timerText < 0 && timerHeight < 0) {
+            stopTimer();
+            window.canvas.sendTextQuery("get fail result");
+        }
+    }
+
+    function startTimer() {
+        if (intervalId !== null) {
+            throw "Timer is already running!";
+        }
+        intervalId = setInterval(update, 1000);
+    }
+
+    function stopTimer() {
+        if (intervalId === null) {
+            throw "Timer is not running!";
+        }
+        clearInterval(intervalId);
+        intervalId = null;
+    }
+
+    function resumeTimer() {
+        if (intervalId !== null) {
+            throw "Timer is already running";
+        }
+        intervalId = setInterval(update, 1000);
+    }
+
+    return {
+        'setter': setTimer,
+        'init': initTimer,
+        'start': startTimer,
+        'stop': stopTimer,
+        'resume': resumeTimer
+    };
+})();
+
+/*let interval = 0;
 let timerTime = 0;
 let timerHeight = 0;
 let startFlag = false;
@@ -123,7 +144,7 @@ function resumeTimer(timeLimit) {
 function resetTimer() {
     clearInterval(interval);
     startFlag = true;
-}
+}*/
 
 function main() {
     window.canvas.sendTextQuery("play");
@@ -166,7 +187,7 @@ function retry() {
 
 //result화면에서 next 눌렀을 때
 function next() {
-    window.canvas.sendTextQuery("retry");
+    window.canvas.sendTextQuery("keep going");
 }
 
 function easyGame() {
@@ -212,21 +233,12 @@ class Action {
         let myCoin = 0;
         let fullExp = 0;
 
-        let winMoney1 = 0;
-        let winMoney2 = 0;
-        let winMoney3 = 0;
-        let betMoney1 = 0;
-        let betMoney2 = 0;
-        let betMoney3 = 0;
-        let timeLimit1 = 0;
-        let timeLimit2 = 0;
-        let timeLimit3 = 0;
-
         //ingame, correct에서 사용
         let cnt = 0;
 
         //openHint, closeHint에서 사용
         let hint = "";
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -302,66 +314,83 @@ class Action {
                 levelBox.setAttribute("id", "levelBox");
                 container.appendChild(levelBox);
 
-                const navLevel = document.createElement("div");
-                navLevel.textContent = "Lv." + level;
-                levelBox.appendChild(navLevel);
+                const userLevel = document.createElement("div");
+                userLevel.setAttribute("id", "userLevel");
+                userLevel.textContent = "Lv." + level;
+                levelBox.appendChild(userLevel);
 
-                const navIcon = document.createElement("div");
-                navIcon.textContent = "O2O.gmail.com";
-                levelBox.appendChild(navIcon);
+                const userMail = document.createElement("div");
+                userMail.setAttribute("id", "userMail");
+                userMail.textContent = "O2O.gmail.com";
+                levelBox.appendChild(userMail);
 
-                const navExp = document.createElement("progress");
-                navExp.setAttribute("id", "progress");
-                navExp.setAttribute("value", exp);
-                navExp.setAttribute("max", fullExp);
-                levelBox.appendChild(navExp);
+                const userExpBox = document.createElement("div");
+                levelBox.appendChild(userExpBox);
+
+                const userExp = document.createElement("progress");
+                userExp.setAttribute("id", "progress");
+                userExp.setAttribute("value", exp);
+                userExp.setAttribute("max", fullExp);
+                userExpBox.appendChild(userExp);
+
+                const userExpText = document.createElement("div");
+                userExpText.textContent = exp + "/" + fullExp;
+                userExpBox.appendChild(userExpText);
+
 
                 /**
                  * 중앙에 이어하기, 단계 선택 버튼
                  * @type {HTMLDivElement}
                  */
-                const continueNviewallButton = document.createElement("div")
-                continueNviewallButton.setAttribute("id", "continueNviewallButton")
-                container.appendChild(continueNviewallButton);
+                const continue_stageButton = document.createElement("div")
+                continue_stageButton.setAttribute("id", "continue_stageButton")
+                container.appendChild(continue_stageButton);
 
                 const continueButton = document.createElement("button");
                 continueButton.setAttribute("id", "continueButton");
                 continueButton.onclick = continuebutton;
                 continueButton.textContent = "CONTINUE";
-                continueNviewallButton.appendChild(continueButton);
+                continue_stageButton.appendChild(continueButton);
 
-                const viewAllButton = document.createElement("button");
-                viewAllButton.setAttribute("id", "viewallButton");
-                viewAllButton.onclick = viewallButton;
-                viewAllButton.textContent = "SELECT STAGE";
-                continueNviewallButton.appendChild(viewAllButton);
+                const stageButton = document.createElement("button");
+                stageButton.setAttribute("id", "stageButton");
+                stageButton.onclick = viewallButton;
+                stageButton.textContent = "SELECT STAGE";
+                continue_stageButton.appendChild(stageButton);
                 /**
                  * 우측 상단에
                  * 힌트와 코인
                  * @type {HTMLDivElement}
                  */
-                const hintNcoin = document.createElement("div");
-                hintNcoin.setAttribute("id", "hint-coin");
-                container.appendChild(hintNcoin);
+                const hint_coinBox = document.createElement("div");
+                hint_coinBox.setAttribute("id", "hint_coinBox");
+                container.appendChild(hint_coinBox);
 
-                const hintBox = document.createElement("i");
-                hintBox.setAttribute("class", "fa fa-neuter");
+                const hintBox = document.createElement("div");
                 hintBox.setAttribute("id", "hintBox");
-                hintBox.onclick = shop;
-                hintNcoin.appendChild(hintBox);
+                const hintIcon = document.createElement("i");
+                hintIcon.setAttribute("class", "fa fa-neuter");
+                hintIcon.setAttribute("id", "hintIcon");
+                hintIcon.onclick = shop;
+                hintBox.appendChild(hintIcon);
+                hint_coinBox.appendChild(hintBox);
 
-                const hintText = document.createElement("span");
+                const hintText = document.createElement("div");
                 hintText.setAttribute("id", "hintText");
                 hintText.textContent = myHint;
                 hintBox.appendChild(hintText);
 
-                const coinBox = document.createElement("i");
-                coinBox.setAttribute("class", "fa fa-eur");
+                const coinBox = document.createElement("div");
                 coinBox.setAttribute("id", "coinBox");
-                coinBox.onclick = shop;
-                hintNcoin.appendChild(coinBox);
+                const coinIcon = document.createElement("i");
+                coinIcon.setAttribute("class", "fa fa-eur");
+                coinIcon.setAttribute("id", "coinIcon");
+                coinIcon.onclick = shop;
+                coinBox.appendChild(coinIcon);
+                hint_coinBox.appendChild(coinBox);
 
-                const coinText = document.createElement("span");
+                const coinText = document.createElement("div");
+                coinText.setAttribute("id", "coinText");
                 coinText.textContent = myCoin;
                 coinBox.appendChild(coinText);
 
@@ -404,7 +433,7 @@ class Action {
                  * 메인 화면, 중앙에 생성했던
                  * continue, view all 버튼 제거
                  */
-                container.removeChild(document.getElementById("continueNviewallButton"));
+                container.removeChild(document.getElementById("continue_stageButton"));
                 /**
                  * 중앙에
                  * 선택할 수 있는 단계 보여줌
@@ -426,6 +455,15 @@ class Action {
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
+                let winMoney1 = 0;
+                let winMoney2 = 0;
+                let winMoney3 = 0;
+                let betMoney1 = 0;
+                let betMoney2 = 0;
+                let betMoney3 = 0;
+                let timeLimit1 = 0;
+                let timeLimit2 = 0;
+                let timeLimit3 = 0;
                 /**
                  * 단계 선택, 중앙에 생성했던
                  * 단계 버튼 제거
@@ -619,7 +657,10 @@ class Action {
                 gameTimerText.setAttribute("id", "gameTimerText");
                 gameTimerBox.appendChild(gameTimerText);
                 const remainHeight = document.getElementById("gameTimer").clientHeight;
-                startTimer(timeLimit, remainHeight);
+                Timer.setter(timeLimit, remainHeight);
+                Timer.init();
+                Timer.start();
+                // startTimer(timeLimit, remainHeight);
                 // //제한 시간이 지나면 fulfillment쪽으로 textQuery를 전송 -> 혹시의 오류를 감안하여 남겨둠
                 // timerOver = setTimeout(function () {
                 //     window.canvas.sendTextQuery("get fail result");
@@ -639,8 +680,8 @@ class Action {
                 //     document.getElementById(matchedWord[cnt]).style.backgroundColor = "white";
                 //     document.getElementById(matchedWord[cnt]).style.color = "black";
                 // }
-                    document.getElementById(matchedWord).style.backgroundColor = "white";
-                    document.getElementById(matchedWord).style.color = "black";
+                document.getElementById(matchedWord).style.backgroundColor = "white";
+                document.getElementById(matchedWord).style.color = "black";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -676,11 +717,12 @@ class Action {
                  */
 
                 //힌트를 열면 타이머를 잠시 멈춤
-                pauseTimer();
+                // pauseTimer();
+                Timer.stop();
 
                 //사용자의 남은 힌트를 보여줌
                 const remainingHint = document.getElementById("hintText");
-                myHint--;
+                if (myHint > 0) myHint--;
                 remainingHint.textContent = myHint;
 
                 hint = data.hint;
@@ -739,7 +781,8 @@ class Action {
                  * 타이머 다시 시작
                  */
 
-                resumeTimer(timerTime);
+                Timer.resume();
+                // resumeTimer(timerTime);
 
                 const backgroundModal = document.getElementById("backgroundModal");
                 backgroundModal.style.display = "none";
@@ -754,44 +797,35 @@ class Action {
             },
             RESULT: function (data) {
                 console.log("실행 : result");
-
-                while (container.hasChildNodes()) {
-                    container.removeChild(container.firstChild);
+                if (document.getElementById("inGameBox") != null) {
+                    container.removeChild(document.getElementById("inGameBox"));
                 }
-
                 const result = data.result;
                 level = data.level;
                 myHint = data.myHint;
                 const matchedList = data.correctList;
                 const unmatchedList = data.wrongList;
-
                 const resultBox = document.createElement("div");
                 resultBox.setAttribute("id", "resultBox");
                 container.appendChild(resultBox);
-
                 const resultleftbox = document.createElement("div");
                 resultleftbox.setAttribute("id", "resultleftbox");
                 resultBox.appendChild(resultleftbox);
-
                 const resultText = document.createElement("h1");
                 resultText.setAttribute("id", "resultText");
                 resultText.textContent = result;
                 resultleftbox.appendChild(resultText);
-
                 const levelBox = document.createElement("div");
                 levelBox.setAttribute("id", "resultlevelBox");
                 resultleftbox.appendChild(levelBox);
-
                 const mylevel = document.createElement("div");
                 mylevel.textContent = "Lv." + level;
                 levelBox.appendChild(mylevel);
-
                 const progressbar = document.createElement("progress");
                 progressbar.setAttribute("id", "resultprogress");
                 progressbar.setAttribute("value", data.myExp);
                 progressbar.setAttribute("max", fullExp);
                 levelBox.appendChild(progressbar);
-
                 if (result == "success") {
                     const gainexp = document.createElement("div");
                     gainexp.textContent = "+" + (data.myExp - exp);
@@ -801,19 +835,15 @@ class Action {
                     gainexp.textContent = "";
                     levelBox.appendChild(gainexp);
                 }
-
                 const coinBox = document.createElement("div");
                 coinBox.setAttribute("id", "resultcoinbox");
                 resultleftbox.appendChild(coinBox);
-
                 const coin = document.createElement("i");
                 coin.setAttribute("class", "fa fa-eur");
                 coinBox.appendChild(coin);
-
                 const mycoin = document.createElement("div");
                 mycoin.textContent = myCoin;
                 coinBox.appendChild(mycoin);
-
                 if (result == "success") {
                     const gaincoin = document.createElement("div");
                     gaincoin.textContent = "+" + (data.myCoin - myCoin);
@@ -823,42 +853,34 @@ class Action {
                     gaincoin.textContent = "-" + (myCoin - data.myCoin);
                     coinBox.appendChild(gaincoin);
                 }
-
                 const resultWord = document.createElement("div");
                 resultWord.setAttribute("id", "resultWord");
                 resultleftbox.appendChild(resultWord);
-
                 const matcheddiv = document.createElement("div");
                 matcheddiv.setAttribute("id", "matcheddiv");
                 resultWord.appendChild(matcheddiv);
-
                 for (let i = 0; i < matchedList.length; i++) {
                     const matched = document.createElement("span");
                     matched.setAttribute("id", "matched");
                     matched.textContent = matchedList[i];
                     matcheddiv.appendChild(matched);
                 }
-
                 const unmatcheddiv = document.createElement("div");
                 resultWord.appendChild(unmatcheddiv);
-
                 for (let i = 0; i < unmatchedList.length; i++) {
                     const unmatched = document.createElement("span");
                     unmatched.setAttribute("id", "unmatched");
                     unmatched.textContent = unmatchedList[i];
                     unmatcheddiv.appendChild(unmatched);
                 }
-
                 const RetryOrNextButton = document.createElement("div");
                 RetryOrNextButton.setAttribute("id", "RetryOrNextButton");
                 resultBox.appendChild(RetryOrNextButton);
-
                 if (result == "success") {
                     const nextbutton = document.createElement("i");
                     nextbutton.setAttribute("class", "fa fa-chevron-right fa-3x");
                     RetryOrNextButton.appendChild(nextbutton);
                     nextbutton.onclick = next;
-
                     const nextText = document.createElement("div");
                     nextText.textContent = "NEXT";
                     RetryOrNextButton.appendChild(nextText);
@@ -867,7 +889,6 @@ class Action {
                     retrybutton.setAttribute("class", "fa fa-undo fa-3x");
                     retrybutton.onclick = retry;
                     RetryOrNextButton.appendChild(retrybutton);
-
                     const retryText = document.createElement("div");
                     retryText.textContent = "RETRY";
                     RetryOrNextButton.appendChild(retryText);
