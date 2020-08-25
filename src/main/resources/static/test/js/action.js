@@ -334,6 +334,7 @@ class Action {
                 userExpBox.appendChild(userExp);
 
                 const userExpText = document.createElement("div");
+                userExpText.setAttribute("id","userExpText");
                 userExpText.textContent = exp + "/" + fullExp;
                 userExpBox.appendChild(userExpText);
 

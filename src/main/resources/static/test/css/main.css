@@ -133,13 +133,13 @@ button {
 }
 
 #progress {
-    border-radius: 2vh;
+    /*border-radius: 2vh;*/
     -webkit-appearance: none;
 }
 
 #userExpText{
     position: relative;
-    bottom : 1.3vh;
+    bottom : 4vh;
     text-align : center;
 }
 
