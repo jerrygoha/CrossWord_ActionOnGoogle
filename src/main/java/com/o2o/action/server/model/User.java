@@ -32,7 +32,7 @@ public class User {
     @Column(name = "visit_timestamp", columnDefinition = "TIMESTAMP WITH TIME ZONE" )
     private OffsetDateTime visitTimestamp;
 
-    protected User(){
+    public User(){
     }
 
     public User(String userEmail){
@@ -44,6 +44,17 @@ public class User {
         accountTimestamp = OffsetDateTime.now();
         visitTimestamp = OffsetDateTime.now();
     }
+
+    public interface getUserInfo{
+        String getUserEmail();
+        short getUserLevel();
+        int getUserExp();
+        int getUserHint();
+        int getUserCoin();
+        void setVisitTimestamp();
+    }
+
+
 
     public String getUserEmail() {
         return userEmail;
@@ -84,8 +95,8 @@ public class User {
     public OffsetDateTime getVisitTimestamp() {
         return visitTimestamp;
     }
-    public void setVisitTimestamp(OffsetDateTime visitTimestamp) {
-        this.visitTimestamp = visitTimestamp;
+    public void setVisitTimestamp() {
+        this.visitTimestamp = OffsetDateTime.now();
     }
 }
 

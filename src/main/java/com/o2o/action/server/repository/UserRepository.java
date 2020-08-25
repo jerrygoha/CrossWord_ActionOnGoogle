@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UserRepository extends PagingAndSortingRepository<User, String> {
     List<User> findAll();
+    List<User.getUserInfo> findByUserEmail(String email);
+
 }

@@ -28,8 +28,8 @@ public class UserController {
         return true;
     }
     @RequestMapping("/getUser/{email}")
-    public User getUser(@PathVariable String email){
-        return repository.findById(email).get();
+    public List getUser(@PathVariable String email){
+        return repository.findByUserEmail(email);
     }
 
     //변수명에 "_"붙이면 오류생겨서 _안붙이도록함
