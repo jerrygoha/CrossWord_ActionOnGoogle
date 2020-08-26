@@ -2,17 +2,28 @@ package com.o2o.action.server.app;
 
 import com.google.actions.api.*;
 import com.google.actions.api.response.ResponseBuilder;
+import com.google.actions.api.response.helperintent.SignIn;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.actions_fulfillment.v2.model.*;
+import com.o2o.action.server.model.User;
 import com.o2o.action.server.util.CommonUtil;
 
 import java.io.*;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Main extends DialogflowApp {
 
     public static void main(String[] args) {
+
+
+
         BoardCell[][] Board = new BoardCell[4][4];
         int answercount = 3;
         AnswerWord[] answers = new AnswerWord[answercount];
@@ -66,7 +77,7 @@ public class Main extends DialogflowApp {
 
     }
 
-    String URL = "https://actions.o2o.kr/devsvr3/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -169,12 +180,38 @@ public class Main extends DialogflowApp {
                 .build();
     }
 
+    private GoogleIdToken.Payload getUserProfile(String idToken) {
+        GoogleIdToken.Payload profile = null;
+        try {
+            profile = decodeIdToken(idToken);
+        } catch (Exception e) {
+            //LOGGER.error("error decoding idtoken");
+            //LOGGER.error(e.toString());
+        }
+        return profile;
+    }
+    private GoogleIdToken.Payload decodeIdToken(String idTokenString)
+            throws GeneralSecurityException, IOException {
+        HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
+        JacksonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        GoogleIdTokenVerifier verifier =
+                new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                        // Specify the CLIENT_ID of the app that accesses the backend:
+                        //.setAudience(Collections.singletonList(clientId))
+                        .build();
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        return idToken.getPayload();
+    }
+
+
+
     @ForIntent("Default Welcome Intent")
     public ActionResponse defaultWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+        DBConnector dbConnector = new DBConnector();
 
         String response;
         request.getConversationData().clear();
@@ -186,6 +223,7 @@ public class Main extends DialogflowApp {
         data.put("special case", false);
         htmldata.put("command", "welcome");
 
+
         //db 연결
        UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
        String serial = Createserial(user);
@@ -195,9 +233,28 @@ public class Main extends DialogflowApp {
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
         } else {
             response = tts.getTtsmap().get("welcome");
-            return rb.add(new SimpleResponse().setTextToSpeech(response))
-                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
-                    .build();
+
+            if (request.isSignInGranted()){
+                GoogleIdToken.Payload profile = getUserProfile(request.getUser().getIdToken());
+                System.out.println("case 1");
+                String email = profile.getEmail();
+                htmldata.put("inputemail", email);
+                //신규유저인지 아닌지
+                //sign한후에 email
+                return rb.add(new SimpleResponse().setTextToSpeech(response))
+                        .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                        .build();
+            }
+            else{
+                System.out.println("case 2");
+                return rb.add(new SignIn().setContext("To get your account details")).build();
+
+            }
+
+//            return rb.add(new SimpleResponse().setTextToSpeech(response))
+//                    .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+//                    .build();
+
         }
     }
 
