@@ -80,22 +80,30 @@ button {
 }
 
 #continueButton{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     height: 15vh;
     width : 30vw;
     font-size : 6vh;
     background-color: rgba(255,255,255,0.3);
     border-radius: 1.5vh;
-    border-color : white;
+    border : 1px solid rgba(255,255,255,0.6);
     margin-right : 10vw;
 }
 
 #stageButton{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     height: 15vh;
     width : 30vw;
     font-size : 6vh;
     background-color: rgba(255,255,255,0.3);
     border-radius: 1.5vh;
-    border-color : white;
+    border : 1px solid rgba(255,255,255,0.6);
 }
 
 #hint_coinBox {
@@ -209,17 +217,17 @@ button {
     top: 3vh;
 }
 .difficultyBoxMargin {
+    border: 1px solid rgba(255,255,255,0.6);
     background-color: rgba(255,255,255,0.3);
     border-radius: 1.4vh;
-    border-color : white;
     margin-right: 3vw;
     display: flex;
     flex-direction: column;
 }
 .difficultyText {
+    border: 1px solid rgba(255,255,255,0.6);
     background-color: rgba(255,255,255,0.3);
     border-radius: 1.5vh;
-    border-color : white;
     height: 6vh;
     padding-top: 2vh;
 }
