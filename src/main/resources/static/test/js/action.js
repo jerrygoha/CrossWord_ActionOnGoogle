@@ -174,7 +174,6 @@ class Action {
      */
     constructor(scene) {
 
-        // const lockAllowed = window.screen.lockOrientation(landscape-primary);
         // index.html 안의 <div id="screen"></div>
         const container = document.getElementById("screen"); // container
         const headerheight = async () => {
@@ -198,8 +197,8 @@ class Action {
         //ingame, correct에서 사용
         let cnt = 0;
 
-        //openHint, closeHint에서 사용
-        let hint = "";
+        //openhint에서 사용
+        let hintCnt = 0;
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
@@ -207,7 +206,7 @@ class Action {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
 
-                while (container.hasChildNodes()) {
+                /*while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
                 }
 
@@ -226,10 +225,6 @@ class Action {
                 playButton.textContent = "PLAY";
                 welcomeBox.appendChild(playButton);
 
-                /**
-                 * 문제 발생, 위치 제대로 배치되지 않음
-                 * @type {HTMLDivElement}
-                 */
                 const copyright = document.createElement("span");
                 copyright.setAttribute("id", "copyright");
                 copyright.textContent = "COPYRIGHT O2O.INC. ALL RIGHT RESERVED";
@@ -238,7 +233,7 @@ class Action {
                 const o2ologo = document.createElement("span");
                 o2ologo.setAttribute("id", "o2ologo");
                 o2ologo.textContent = "O2OCI";
-                container.appendChild(o2ologo);
+                container.appendChild(o2ologo);*/
 
             },
             MAIN: function (data) {
@@ -309,16 +304,20 @@ class Action {
                 continue_stageButton.setAttribute("id", "continue_stageButton")
                 container.appendChild(continue_stageButton);
 
-                const continueButton = document.createElement("button");
+                const continueButton = document.createElement("div");
                 continueButton.setAttribute("id", "continueButton");
                 continueButton.onclick = continuebutton;
-                continueButton.textContent = "CONTINUE";
+                const continueText = document.createElement("p");
+                continueText.textContent = "CONTINUE";
+                continueButton.appendChild(continueText);
                 continue_stageButton.appendChild(continueButton);
 
-                const stageButton = document.createElement("button");
+                const stageButton = document.createElement("div");
                 stageButton.setAttribute("id", "stageButton");
                 stageButton.onclick = viewallButton;
-                stageButton.textContent = "SELECT STAGE";
+                const stageText = document.createElement("p");
+                stageText.textContent = "SELECT STAGE";
+                stageButton.appendChild(stageText);
                 continue_stageButton.appendChild(stageButton);
                 /**
                  * 우측 상단에
@@ -533,6 +532,7 @@ class Action {
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
                 cnt = 0;
+                hintCnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
@@ -688,86 +688,78 @@ class Action {
                  * 게임판을 가리고 힌트를 보여줌
                  * 타이머가 잠시 멈춤
                  */
-
+                //몇 단계의 힌트인지
+                hintCnt++;
                 //힌트를 열면 타이머를 잠시 멈춤
-                // pauseTimer();
                 Timer.stop();
-
                 //사용자의 남은 힌트를 보여줌
                 const remainingHint = document.getElementById("hintText");
                 if (myHint > 0) myHint--;
                 remainingHint.textContent = myHint;
 
-                hint = data.hint;
+                const hint = data.hint;
 
-                const backgroundModal = document.createElement("div");
-                backgroundModal.setAttribute("class", "backgroundModal");
-                backgroundModal.setAttribute("id", "backgroundModal");
-                container.appendChild(backgroundModal);
+                if (hintCnt < 3) {
+                    const backgroundModal = document.createElement("div");
+                    backgroundModal.setAttribute("class", "backgroundModal");
+                    backgroundModal.setAttribute("id", "backgroundModal");
+                    container.appendChild(backgroundModal);
 
-                const contentModal = document.createElement("div");
-                contentModal.setAttribute("class", "contentModal");
-                contentModal.style.height = document.getElementById("gameBoard").clientHeight + "px";
-                contentModal.style.width = document.getElementById("gameBoard").clientWidth + "px";
-                backgroundModal.appendChild(contentModal);
+                    const contentModal = document.createElement("div");
+                    contentModal.setAttribute("class", "contentModal");
+                    contentModal.style.height = document.getElementById("gameBoard").clientHeight + "px";
+                    contentModal.style.width = document.getElementById("gameBoard").clientWidth + "px";
+                    backgroundModal.appendChild(contentModal);
 
-                // const close = document.createElement("span");
-                // close.setAttribute("class", "close");
-                // close.textContent = "X";
-                // contentModal.appendChild(close);
-                const hintModalText = document.createElement("p");
-                hintModalText.textContent = "HINT";
-                contentModal.appendChild(hintModalText);
-                contentModal.appendChild(document.createElement("br"));
-                contentModal.appendChild(document.createElement("hr"));
-                contentModal.appendChild(document.createElement("br"));
+                    const hintModalText = document.createElement("p");
+                    hintModalText.textContent = "HINT";
+                    contentModal.appendChild(hintModalText);
+                    contentModal.appendChild(document.createElement("br"));
+                    contentModal.appendChild(document.createElement("hr"));
+                    contentModal.appendChild(document.createElement("br"));
 
-                const hintModal = document.createElement("p");
-                if (hint != "noHint") {
-                    hintModal.textContent = hint;
-                    contentModal.appendChild(hintModal);
-                } else if (hint == "noHint") {
-                    hintModal.textContent = "Please charge your hint";
-                    contentModal.appendChild(hintModal);
-                }
-
-                backgroundModal.style.display = "block";
-
-                // close.onclick = function () {
-                //     window.canvas.sendTextQuery("close hint");
-                //     backgroundModal.style.display = "none";
-                //
-                // }
-
-                window.onclick = function (event) {
-                    if (event.target == backgroundModal) {
-                        window.canvas.sendTextQuery("close hint");
-                        backgroundModal.style.display = "none";
+                    const hintModal = document.createElement("p");
+                    if (hint != "noHint") {
+                        hintModal.textContent = hint;
+                        contentModal.appendChild(hintModal);
+                    } else if (hint == "noHint") {
+                        hintModal.textContent = "Please charge your hint";
+                        contentModal.appendChild(hintModal);
                     }
+                    backgroundModal.style.display = "block";
+
+                    setTimeout(function () {
+                        backgroundModal.style.display = "none";
+                        Timer.resume();
+                        if (hint != "noHint") {
+                            const usedHint = document.getElementById("usedHint");
+                            const content = document.createElement("p");
+                            content.textContent = hint;
+                            usedHint.appendChild(content);
+                        }
+
+                    }, 5000);
+                } else if (hintCnt == 3) {
+                    /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
+                    * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
+                    setTimeout(function () {
+                        /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
+                    }, 5000);
                 }
 
             },
-            CLOSEHINT: function (data) {
+            /*CLOSEHINT: function (data) {
                 console.log("실행: closeHint");
-                /**
+                /!**
                  * 가렸던 게임판을 다시 보여줌
                  * 타이머 다시 시작
-                 */
-
-                Timer.resume();
-                // resumeTimer(timerTime);
+                 *!/
 
                 const backgroundModal = document.getElementById("backgroundModal");
                 backgroundModal.style.display = "none";
 
-                if (hint != "noHint") {
-                    const usedHint = document.getElementById("usedHint");
-                    const content = document.createElement("p");
-                    content.textContent = hint;
-                    usedHint.appendChild(content);
-                }
 
-            },
+            },*/
             RESULT: function (data) {
                 console.log("실행 : result");
                 if (document.getElementById("inGameBox") != null) {
@@ -876,6 +868,9 @@ class Action {
                     retryText.textContent = "RETRY";
                     RetryOrNextButton.appendChild(retryText);
                 }
+                document.getElementById("userExpText").textContent = data.myExp + "/" + fullExp;
+                document.getElementById("coinText").textContent = data.myCoin;
+                document.getElementById("progress").setAttribute("value", data.myExp);
                 exp = data.myExp;
                 myCoin = data.myCoin;
             },
@@ -886,6 +881,9 @@ class Action {
                 }
                 if (document.getElementById("continue_stageButton") != null) {
                     container.removeChild(document.getElementById("continue_stageButton"));
+                }
+                if (document.getElementById("difficultyBox") != null) {
+                    container.removeChild(document.getElementById("difficultyBox"));
                 }
                 if (document.getElementById("rankBox") != null) {
                     container.removeChild(document.getElementById("rankBox"));
