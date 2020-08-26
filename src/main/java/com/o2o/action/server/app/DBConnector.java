@@ -1,266 +1,94 @@
 package com.o2o.action.server.app;
 
-import com.o2o.action.server.model.User;
-import com.o2o.action.server.repository.HintInfoRepository;
-import com.o2o.action.server.repository.UserRepository;
-import com.o2o.action.server.repository.WordInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.Serializable;
-import java.util.List;
+//@Service
+public class DBConnector{
+    public static void main(String[] args){
 
-@Service
-public class DBConnector implements Serializable {
+        String command = "/getUser/t@naver.com";
 
-    @Autowired
-    UserRepository userRepo;
-    WordInfoRepository wordRepo;
-    HintInfoRepository hintRepo;
+        final String sendUrl =  "https://actions.o2o.kr/devsvr5" + command;
 
-    //신규유저 이메일 db로 저장
-    public String newUser(@PathVariable String email){
-        userRepo.save(new User(email));
-        return "new user data created";
+        QueryController queryController = new QueryController();
+
+        String result = queryController.get(sendUrl);
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(result);
+        String pl = jsonObject.getAsString();
+
+        System.out.println(pl);
+
+
+
     }
 
-    //최근접속시간 갱신
-    public String visitCheck(@PathVariable String email){
-        User ur = new User();
-        ur.setVisitTimestamp();
-        return "time check";
-    }
 
-    //유저 정보 검색 email_level_exp_hint_coin
-    public List<User.getUserInfo> getUserInfo(@PathVariable String email){
-        return userRepo.findByUserEmail(email);
-    }
 
-    //유저 레벨 갱신
-    //유저 경험치 갱신
-    //유저 힌트 갱신
-    //유저 코인 갱신
 
 
 
+//    @Autowired
+//    UserRepository userRepo;
+//    WordInfoRepository wordRepo;
+//    HintInfoRepository hintRepo;
+//
+//    String userEmail = "t2@naver.com";
+//    User ur = new User();
+//    /*
+//    * user table 접근 함수
+//    */
+//    //신규유저 이메일 db로 저장
+//    public String newUser(@PathVariable String email){
+//        userRepo.save(new User(email));
+//        return "new user data created";
+//    }
+//
+//    //최근접속시간 갱신
+//    public void visitCheck(){
+//        ur.setVisitTimestamp();
+//    }
+//
+//    //유저 정보 검색 email_level_exp_hint_coin
+//    public List getUserInfo(String email){
+//        return userRepo.findByUserEmail(email);
+//    }
+//
+//    //유저 레벨 갱신
+//    public void updateLevel(short level){
+//        ur.setUserLevel(level);
+//
+//    }
+//    //유저 경험치 갱신
+//    public void updateExp(int exp){
+//        ur.setUserExp(exp);
+//    }
+//    //유저 힌트 갱신
+//    public void updateHint(int hint){
+//        ur.setUserHint(hint);
+//    }
+//    //유저 코인 갱신
+//    public void updateCoin(int coin){
+//        ur.setUserCoin(coin);
+//    }
+//    //전체 랭킹 반환
+//    public List<User> getTotalRank(){
+//        List<Sort.Order> orders = new ArrayList<>();
+//        Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "user_level");
+//        orders.add(order1);
+//        Sort.Order order2 = new Sort.Order(Sort.Direction.DESC, "user_exp");
+//        orders.add(order2);
+//        Sort.Order order3 = new Sort.Order(Sort.Direction.DESC, "account_timestamp");
+//        orders.add(order3);
+//        return (List<User>) userRepo.findAll(Sort.by(orders));
+//    }
+//    //개인 랭킹 반환
+//
+//    /*
+//     * word table 접근 함수
+//     */
 
-
-
-
-
-
-    /*UserRepository user = new UserRepository() {
-        @Override
-        public List<User> findAll() {
-            return null;
-        }
-
-        @Override
-        public Iterable<User> findAll(Sort sort) {
-            return null;
-        }
-
-        @Override
-        public Page<User> findAll(Pageable pageable) {
-            return null;
-        }
-
-        @Override
-        public <S extends User> S save(User String) {
-            return null;
-        }
-
-        @Override
-        public <S extends User> Iterable<S> saveAll(Iterable<S> entities) {
-            return null;
-        }
-
-        @Override
-        public Optional<User> findById(String s) {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean existsById(String s) {
-            return false;
-        }
-
-        @Override
-        public Iterable<User> findAllById(Iterable<String> strings) {
-            return null;
-        }
-
-        @Override
-        public long count() {
-            return 0;
-        }
-
-        @Override
-        public void deleteById(String s) {
-
-        }
-
-        @Override
-        public void delete(User entity) {
-
-        }
-
-        @Override
-        public void deleteAll(Iterable<? extends User> entities) {
-
-        }
-
-        @Override
-        public void deleteAll() {
-
-        }
-    };
-
-    WordInfoRepository word = new WordInfoRepository() {
-        @Override
-        public List<WordInfo> findAll() {
-            return null;
-        }
-
-        @Override
-        public List<WordInfo.wordMapping> findByStageDifficulty(String stageDifficulty) {
-            return null;
-        }
-
-        @Override
-        public Iterable<WordInfo> findAll(Sort sort) {
-            return null;
-        }
-
-        @Override
-        public Page<WordInfo> findAll(Pageable pageable) {
-            return null;
-        }
-
-        @Override
-        public <S extends WordInfo> S save(S entity) {
-            return null;
-        }
-
-        @Override
-        public <S extends WordInfo> Iterable<S> saveAll(Iterable<S> entities) {
-            return null;
-        }
-
-        @Override
-        public Optional<WordInfo> findById(Short aShort) {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean existsById(Short aShort) {
-            return false;
-        }
-
-        @Override
-        public Iterable<WordInfo> findAllById(Iterable<Short> shorts) {
-            return null;
-        }
-
-        @Override
-        public long count() {
-            return 0;
-        }
-
-        @Override
-        public void deleteById(Short aShort) {
-
-        }
-
-        @Override
-        public void delete(WordInfo entity) {
-
-        }
-
-        @Override
-        public void deleteAll(Iterable<? extends WordInfo> entities) {
-
-        }
-
-        @Override
-        public void deleteAll() {
-
-        }
-    };
-
-    HintInfoRepository hint = new HintInfoRepository() {
-
-        @Override
-        public List<HintInfo> findAll() {
-            return null;
-        }
-
-        @Override
-        public List<HintInfo.HintMapping> findByWordContent(String word_content) {
-            return null;
-        }
-
-        @Override
-        public Iterable<HintInfo> findAll(Sort sort) {
-            return null;
-        }
-
-        @Override
-        public Page<HintInfo> findAll(Pageable pageable) {
-            return null;
-        }
-
-        @Override
-        public <S extends HintInfo> S save(S entity) {
-            return null;
-        }
-
-        @Override
-        public <S extends HintInfo> Iterable<S> saveAll(Iterable<S> entities) {
-            return null;
-        }
-
-        @Override
-        public Optional<HintInfo> findById(Short aShort) {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean existsById(Short aShort) {
-            return false;
-        }
-
-        @Override
-        public Iterable<HintInfo> findAllById(Iterable<Short> shorts) {
-            return null;
-        }
-
-        @Override
-        public long count() {
-            return 0;
-        }
-
-        @Override
-        public void deleteById(Short aShort) {
-
-        }
-
-        @Override
-        public void delete(HintInfo entity) {
-
-        }
-
-        @Override
-        public void deleteAll(Iterable<? extends HintInfo> entities) {
-
-        }
-
-        @Override
-        public void deleteAll() {
-
-        }
-    };*/
 
 
 }
