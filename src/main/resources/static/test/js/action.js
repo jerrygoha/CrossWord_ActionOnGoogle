@@ -107,45 +107,6 @@ const Timer = (function () {
     };
 })();
 
-/*let interval = 0;
-let timerTime = 0;
-let timerHeight = 0;
-let startFlag = false;
-
-function startTimer(timeLimit, height) {
-    timerTime = timeLimit;
-    const mainTimer = document.getElementById("remainTime");
-    timerHeight = height;
-    const minusHeight = timerHeight / timeLimit;
-    interval = setInterval(function () {
-        if (!startFlag) {
-            document.getElementById("gameTimerText").textContent = timerTime;
-            mainTimer.style.height = timerHeight + "px";
-            timerHeight -= minusHeight;
-            timerTime--;
-        }
-        if (timerTime < 0) {
-            resetTimer();
-            window.canvas.sendTextQuery("get fail result");
-        }
-    }, 1000);
-}
-
-function pauseTimer() {
-    clearInterval(interval);
-    startFlag = true;
-}
-
-function resumeTimer(timeLimit) {
-    startFlag = false;
-    startTimer(timeLimit, timerHeight);
-}
-
-function resetTimer() {
-    clearInterval(interval);
-    startFlag = true;
-}*/
-
 function main() {
     window.canvas.sendTextQuery("play");
 }
@@ -213,6 +174,7 @@ class Action {
      */
     constructor(scene) {
 
+        // const lockAllowed = window.screen.lockOrientation(landscape-primary);
         // index.html 안의 <div id="screen"></div>
         const container = document.getElementById("screen"); // container
         const headerheight = async () => {
@@ -334,7 +296,7 @@ class Action {
                 userExpBox.appendChild(userExp);
 
                 const userExpText = document.createElement("div");
-                userExpText.setAttribute("id","userExpText");
+                userExpText.setAttribute("id", "userExpText");
                 userExpText.textContent = exp + "/" + fullExp;
                 userExpBox.appendChild(userExpText);
 
@@ -557,7 +519,10 @@ class Action {
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
-                container.removeChild(document.getElementById("difficultyBox"));
+                if (document.getElementById("difficultyBox") != null)
+                    container.removeChild(document.getElementById("difficultyBox"));
+                if (document.getElementById("resultBox") != null)
+                    container.removeChild(document.getElementById("resultBox"));
                 /**
                  * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
@@ -567,6 +532,7 @@ class Action {
                 const boardCol = data.board.length; //행
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
+                cnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
@@ -632,7 +598,7 @@ class Action {
                         rowBox.appendChild(alphabetBox);
                         const alphabet = document.createElement("p");
                         alphabet.setAttribute("class", "alphabet");
-                        alphabet.textContent = board[col][row];
+                        alphabet.textContent = board[col][row].toUpperCase();
                         alphabetBox.appendChild(alphabet);
                     }
                 }
@@ -671,6 +637,13 @@ class Action {
                 // 게임 종료 여부를 받아옴, 변경되면 안되므로 상수 선언
                 const finish = data.finish;
                 //남은 단어 수 보여줌 -> 진행 상황 박스에
+
+                const correctAudio = document.createElement("audio");
+                correctAudio.canPlayType("audio/mp3");
+                correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
+                correctAudio.load();
+                correctAudio.autoplay = true;
+
                 const correctOne = document.getElementById("progress" + cnt);
                 correctOne.style.backgroundColor = "white";
                 cnt++;
@@ -680,8 +653,8 @@ class Action {
                 //     document.getElementById(matchedWord[cnt]).style.backgroundColor = "white";
                 //     document.getElementById(matchedWord[cnt]).style.color = "black";
                 // }
-                document.getElementById(matchedWord).style.backgroundColor = "white";
-                document.getElementById(matchedWord).style.color = "black";
+                document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                // document.getElementById(matchedWord).style.color = "black";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -700,8 +673,8 @@ class Action {
                 const wrongAudio = document.createElement("audio");
                 wrongAudio.canPlayType("audio/mp3");
                 wrongAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/wrong_sound.mp3");
-                wrongAudio.autoplay = true;
                 wrongAudio.load();
+                wrongAudio.autoplay = true;
                 const gameBoard = document.getElementById("gameBoard");
                 gameBoard.classList.remove("shake");
                 void gameBoard.offsetWidth;
@@ -827,10 +800,20 @@ class Action {
                 progressbar.setAttribute("max", fullExp);
                 levelBox.appendChild(progressbar);
                 if (result == "success") {
+                    const successAudio = document.createElement("audio");
+                    successAudio.canPlayType("audio/mp3");
+                    successAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/success_sound.mp3");
+                    successAudio.load();
+                    successAudio.autoplay = true;
                     const gainexp = document.createElement("div");
                     gainexp.textContent = "+" + (data.myExp - exp);
                     levelBox.appendChild(gainexp);
                 } else if (result == "fail") {
+                    const failAudio = document.createElement("audio");
+                    failAudio.canPlayType("audio/mp3");
+                    failAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/fail_sound.mp3");
+                    failAudio.load();
+                    failAudio.autoplay = true;
                     const gainexp = document.createElement("div");
                     gainexp.textContent = "";
                     levelBox.appendChild(gainexp);
@@ -898,167 +881,119 @@ class Action {
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
-
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if (document.getElementById("continueNviewallButton") != null) {
-                    container.removeChild(document.getElementById("continueNviewallButton"));
+                if (document.getElementById("continue_stageButton") != null) {
+                    container.removeChild(document.getElementById("continue_stageButton"));
+                }
+                if (document.getElementById("rankBox") != null) {
+                    container.removeChild(document.getElementById("rankBox"));
+                }
+                if (document.getElementById("Store") != null) {
+                    container.removeChild(document.getElementById("Store"));
                 }
 
+                const SettingBox = document.createElement("div");
+                SettingBox.setAttribute("id", "SettingBox");
+                container.appendChild(SettingBox);
                 const UserID = document.createElement("div");
                 UserID.setAttribute("id", "UserID");
                 UserID.textContent = "O2Ogmail.com";
-                container.appendChild(UserID);
-
+                SettingBox.appendChild(UserID);
+                // const middleBox = document.createElement("div");
+                // middleBox.setAttribute("id","middleBox");
+                // container.appendChild(middleBox);
                 const leftBox = document.createElement("div");
                 leftBox.setAttribute("id", "leftBox");
-                container.appendChild(leftBox);
-
+                SettingBox.appendChild(leftBox);
                 const SoundEffect = document.createElement("div");
                 SoundEffect.setAttribute("id", "SoundEffect");
                 SoundEffect.textContent = "Sound Effect";
                 leftBox.appendChild(SoundEffect);
-
                 const BackGroundEffect = document.createElement("div");
                 BackGroundEffect.setAttribute("id", "BackGroundEffect");
                 BackGroundEffect.textContent = "BackGround Effect";
                 leftBox.appendChild(BackGroundEffect);
-
+                const rightBox = document.createElement("div");
+                rightBox.setAttribute("id", "rightBox");
+                SettingBox.appendChild(rightBox);
                 const label = document.createElement("label");
                 label.setAttribute("class", "switch");
-                container.appendChild(label);
-
+                rightBox.appendChild(label);
                 const input = document.createElement("input");
                 input.setAttribute("type", "checkbox");
                 label.appendChild(input);
-
                 const span = document.createElement("span");
                 span.setAttribute("class", "slider round");
                 label.appendChild(span);
-
                 const label2 = document.createElement("label");
                 label2.setAttribute("class", "switch2");
-                container.appendChild(label2);
-
+                rightBox.appendChild(label2);
                 const input2 = document.createElement("input");
                 input2.setAttribute("type", "checkbox");
                 label2.appendChild(input2);
-
                 const span2 = document.createElement("span");
                 span2.setAttribute("class", "slider round");
                 label2.appendChild(span2);
-
                 /**
                  * 초기화
                  */
                 const ResetButton = document.createElement("button");
                 ResetButton.setAttribute("id", "ResetButton");
                 ResetButton.textContent = "RESET";
-                container.appendChild(ResetButton);
+                SettingBox.appendChild(ResetButton);
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
-
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if (document.getElementById("continueNviewallButton") != null) {
-                    container.removeChild(document.getElementById("continueNviewallButton"));
+                if (document.getElementById("continue_stageButton") != null) {
+                    container.removeChild(document.getElementById("continue_stageButton"));
                 }
-
+                if (document.getElementById("SettingBox") != null) {
+                    container.removeChild(document.getElementById("SettingBox"));
+                }
+                if (document.getElementById("Store") != null) {
+                    container.removeChild(document.getElementById("Store"));
+                }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
                 //
                 // var test = JSON.stringify(array);
-
                 const rankBox = document.createElement("div");
                 rankBox.setAttribute("id", "rankBox");
                 container.appendChild(rankBox);
-
                 const yourrank = document.createElement("div");
                 yourrank.setAttribute("id", "yourrank");
                 yourrank.textContent = "O2O@gmail.com 님의 랭킹은 1위";
                 rankBox.appendChild(yourrank);
-
                 const ranking = document.createElement("div");
                 ranking.setAttribute("class", "ranking");
                 rankBox.appendChild(ranking);
-
                 for (let i = 0; i < 50; i++) {
                     const rank = document.createElement("div");
                     rank.setAttribute("id", "rank");
                     ranking.appendChild(rank);
-
                     const User = document.createElement("div");
                     User.setAttribute("id", "User");
                     rank.appendChild(User);
-
                     const ranknum = document.createElement("div");
                     ranknum.setAttribute("id", "ranknum");
                     ranknum.textContent = "RANK " + (i + 1);
                     User.appendChild(ranknum);
-
                     const rankId = document.createElement("div");
                     rankId.setAttribute("id", "rankId");
                     rankId.textContent = "o2o@gmail.com";
                     User.appendChild(rankId);
-
                     const rankexp = document.createElement("div");
                     rankexp.setAttribute("id", "rankexp");
                     rank.appendChild(rankexp);
                     rankexp.textContent = "exp 5140"
                 }
-
-
-                // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
-                //
-                // var test = JSON.stringify(array);
-                //
-                // let userrank = 10;
-                //
-                // const rankBox = document.createElement("div");
-                // container.appendChild(rankBox);
-                //
-                // const yourrank = document.createElement("div");
-                // yourrank.setAttribute("id","yourrank");
-                // yourrank.textContent = "O2O@gmail.com 님의 랭킹은 1위";
-                // rankBox.appendChild(yourrank);
-                //
-                // const ranking = document.createElement("div");
-                // ranking.setAttribute("class","ranking");
-                // rankBox.appendChild(ranking);
-                //
-                // for(let i = 0; i < 20; i++) {
-                //     const rank = document.createElement("div");
-                //     rank.setAttribute("class", "rank");
-                //     rank.setAttribute("id", "rank" + i);
-                //     ranking.appendChild(rank);
-                //
-                //     const User = document.createElement("div");
-                //     User.setAttribute("id", "User");
-                //     rank.appendChild(User);
-                //
-                //     const ranknum = document.createElement("div");
-                //     ranknum.setAttribute("id", "ranknum");
-                //     ranknum.textContent = "RANK " + (i + 1);
-                //     User.appendChild(ranknum);
-                //
-                //     const rankId = document.createElement("div");
-                //     rankId.setAttribute("id", "rankId");
-                //     // rankId.textContent = test[i];
-                //     rankId.textContent = "o2o@gmail.com";
-                //     User.appendChild(rankId);
-                //
-                //     const rankexp = document.createElement("div");
-                //     rankexp.setAttribute("id", "rankexp");
-                //     rankexp.textContent = "exp 5140";
-                //     rank.appendChild(rankexp);
-                // }
-
             },
             SHOP: function (data) {
                 console.log("실행 : shop");
-
                 /**
                  * 상점은
                  * 뒤로 가기
@@ -1066,86 +1001,73 @@ class Action {
                  * 코인 충전
                  * 힌트 충전
                  */
-
                 if (document.getElementById("stepBox") != null) {
                     container.removeChild(document.getElementById("stepBox"));
                 }
-                if (document.getElementById("continueNviewallButton") != null) {
-                    container.removeChild(document.getElementById("continueNviewallButton"));
+                if (document.getElementById("continue_stageButton") != null) {
+                    container.removeChild(document.getElementById("continue_stageButton"));
                 }
-
+                if (document.getElementById("rankBox") != null) {
+                    container.removeChild(document.getElementById("rankBox"));
+                }
+                if (document.getElementById("SettingBox") != null) {
+                    container.removeChild(document.getElementById("SettingBox"));
+                }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");
                 container.appendChild(Store);
-
                 const Hintbox = document.createElement("div");
                 Hintbox.setAttribute("id", "HintBox");
                 Store.appendChild(Hintbox);
-
                 const top = document.createElement("div");
                 top.setAttribute("id", "top");
                 Hintbox.appendChild(top);
-
                 const HintText = document.createElement("div");
                 HintText.textContent = "Hint Purchase";
                 top.appendChild(HintText);
-
                 const hr = document.createElement("hr");
                 hr.setAttribute("id", "hr");
                 top.appendChild(hr);
-
                 const HintIcon = document.createElement("i");
                 HintIcon.setAttribute("class", "fa fa-neuter fa-2x");
                 top.appendChild(HintIcon);
-
                 const Hintcount = document.createElement("span");
                 Hintcount.textContent = " X 3";
                 top.appendChild(Hintcount);
-
                 const price = document.createElement("div");
                 price.setAttribute("id", "price");
                 price.textContent = "300c";
                 Hintbox.appendChild(price);
-
                 //
                 const Coinbox = document.createElement("div");
                 Coinbox.setAttribute("id", "Coinbox");
                 Store.appendChild(Coinbox);
-
                 const cointop = document.createElement("div");
                 cointop.setAttribute("id", "cointop");
                 Coinbox.appendChild(cointop);
-
                 const CoinText = document.createElement("div");
                 CoinText.textContent = "Coin Purchase";
                 cointop.appendChild(CoinText);
-
                 const hr2 = document.createElement("hr");
                 hr2.setAttribute("id", "hr");
                 cointop.appendChild(hr2);
-
                 const CoinIcon = document.createElement("i");
                 CoinIcon.setAttribute("class", "fa fa-eur fa-2x");
                 cointop.appendChild(CoinIcon);
-
                 const Coincount = document.createElement("span");
                 Coincount.textContent = " 1000c";
                 cointop.appendChild(Coincount);
-
                 const CoinPrice = document.createElement("div");
                 CoinPrice.setAttribute("id", "CoinPrice");
                 CoinPrice.textContent = "1000w";
                 Coinbox.appendChild(CoinPrice);
-
                 //
                 const ad = document.createElement("div");
                 ad.setAttribute("id", "ad");
-                container.appendChild(ad);
-
+                Store.appendChild(ad);
                 const adtext = document.createElement("span");
                 adtext.textContent = "GET COINS ";
                 ad.appendChild(adtext);
-
                 const adIcon = document.createElement("i");
                 adIcon.setAttribute("class", "fa fa-caret-right");
                 ad.appendChild(adIcon);
