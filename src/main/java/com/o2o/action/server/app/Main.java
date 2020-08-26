@@ -66,7 +66,7 @@ public class Main extends DialogflowApp {
 
     }
 
-    String URL = "https://actions.o2o.kr/devsvr3/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr4/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -267,7 +267,7 @@ public class Main extends DialogflowApp {
         htmldata.put("myExp", user.getMyExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-        htmldata.put("fullExp",Integer.toString(1024000));
+        htmldata.put("fullExp",1024000);
         String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -408,16 +408,13 @@ public class Main extends DialogflowApp {
                 user.ConsumeHintCount();
                 htmldata.put("hint", gameBoard.getHintMessage());
                 response = "open hint";
-            } else {
-                htmldata.put("command", "closehint");
-                response = "close hint";
             }
 
         } else {
-
             if (gameBoard.tryAnswer(word)) {
                 htmldata.put("command", "correct");
                 response = "correct";
+                htmldata.put("matchpoint", gameBoard.GetAnswerPoint(word));
                 Result result = gameBoard.getResult();
                 if (result.isWin())
                     htmldata.put("finish", true);
