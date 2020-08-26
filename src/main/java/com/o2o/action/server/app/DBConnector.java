@@ -1,28 +1,41 @@
 package com.o2o.action.server.app;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 //@Service
-public class DBConnector{
-    public static void main(String[] args){
+public class DBConnector {
+    String userEmail = "";
 
-        String command = "/getUser/t@naver.com";
+    String commandGetUser = "/getUser/";
+    String commandCreateUser = "/createUser/";
+    String defaultSendUrl = " ";
+    QueryController queryController;
+    JsonObject user;
 
-        final String sendUrl =  "https://actions.o2o.kr/devsvr5" + command;
-
-        QueryController queryController = new QueryController();
-
-        String result = queryController.get(sendUrl);
+    public DBConnector(String userEmail) {
+        this.userEmail = userEmail;
+        defaultSendUrl = "https://actions.o2o.kr/devsvr5" + commandGetUser + userEmail;
+        queryController = new QueryController();
+        String result = queryController.get(defaultSendUrl);
         JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObject = (JsonObject) jsonParser.parse(result);
-        String pl = jsonObject.getAsString();
 
-        System.out.println(pl);
-
-
+        if(result == null){
+            defaultSendUrl = "https://actions.o2o.kr/devsvr5" + commandCreateUser + userEmail;
+            queryController.get(defaultSendUrl);
+        }else{
+            //유저 한명 data 전체 row
+            JsonArray jsonObject = (JsonArray) jsonParser.parse(result);
+            //user = jsonObject.getAsString();
+        }
 
     }
+
+    public String GetUserInfo() {
+        return user.toString();
+    }
+}
 
 
 
@@ -91,4 +104,4 @@ public class DBConnector{
 
 
 
-}
+
