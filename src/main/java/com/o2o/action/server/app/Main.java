@@ -211,7 +211,7 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-        DBConnector dbConnector = new DBConnector();
+        DBConnector dbConnector;
 
         String response;
         request.getConversationData().clear();
@@ -225,9 +225,9 @@ public class Main extends DialogflowApp {
 
 
         //db 연결
-       UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
-       String serial = Createserial(user);
-       data.put("user",serial);
+
+        String serial;
+        UserInfo user;
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
@@ -237,7 +237,14 @@ public class Main extends DialogflowApp {
             if (request.isSignInGranted()){
                 GoogleIdToken.Payload profile = getUserProfile(request.getUser().getIdToken());
                 System.out.println("case 1");
+                //이메일 가져옴
                 String email = profile.getEmail();
+
+                dbConnector = new DBConnector(email);
+                user = new UserInfo(1, 0, 3, 5000, stageinfo);
+                serial = Createserial(user);
+                data.put("user",serial);
+
                 htmldata.put("inputemail", email);
                 //신규유저인지 아닌지
                 //sign한후에 email
@@ -324,7 +331,7 @@ public class Main extends DialogflowApp {
         htmldata.put("myExp", user.getMyExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-        htmldata.put("fullExp",Integer.toString(1024000));
+        htmldata.put("fullExp",1024000);
         String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
