@@ -1,8 +1,11 @@
 package com.o2o.action.server.app;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //@Service
 public class DBConnector {
@@ -10,97 +13,102 @@ public class DBConnector {
 
     String commandGetUser = "/getUser/";
     String commandCreateUser = "/createUser/";
-    String defaultSendUrl = " ";
+    String commandGetHint = "/getHint/";
+    String commandGetWord = "/getWord/";
+    String commandGetTotalRank = "/getTotalRank";
+    String commandGetMyRank = "/getMyRank/";
+    String defaultSendUrl = "https://actions.o2o.kr/devsvr5";
     QueryController queryController;
-    JsonObject user;
+    JsonParser jsonParser;
+    JsonArray user;
 
-    public DBConnector(String userEmail) {
-        this.userEmail = userEmail;
-        defaultSendUrl = "https://actions.o2o.kr/devsvr5" + commandGetUser + userEmail;
+    public DBConnector(String email) {
+        userEmail = email;
+        String userCheckUrl = defaultSendUrl + commandGetUser + userEmail;
         queryController = new QueryController();
-        String result = queryController.get(defaultSendUrl);
-        JsonParser jsonParser = new JsonParser();
+        String result = queryController.get(userCheckUrl);
+        System.out.println("result =" + result.length() + "result");
 
-        if(result == null){
-            defaultSendUrl = "https://actions.o2o.kr/devsvr5" + commandCreateUser + userEmail;
-            queryController.get(defaultSendUrl);
+        jsonParser = new JsonParser();
+
+
+        if(result.length() == 3){
+            //처음사용자 등록
+            String fisrtInputUrl = defaultSendUrl + commandCreateUser + userEmail;
+            String createResult = queryController.get(fisrtInputUrl);
+            System.out.println("createResult = " + createResult);
+            DBConnector dbConnector = new DBConnector(userEmail);
         }else{
+            //이미 등록된 사용
             //유저 한명 data 전체 row
-            JsonArray jsonObject = (JsonArray) jsonParser.parse(result);
-            //user = jsonObject.getAsString();
+             user = (JsonArray) jsonParser.parse(result);
+            String userData = user.toString();
+            System.out.println("user = " + userData);
+            System.out.println(user.get(0).getAsJsonObject().size());
         }
 
     }
 
-    public String GetUserInfo() {
-        return user.toString();
+    //유저 각각 요소 가져오는거
+    public String getUserLevel() {
+        return user.get(0).getAsJsonObject().get("userLevel").toString();
     }
+    public String getUserExp() {
+        return user.get(0).getAsJsonObject().get("userExp").toString();
+    }
+    public String getUserCoin() {
+        return user.get(0).getAsJsonObject().get("userCoin").toString();
+    }
+    public String getUserHint() {
+        return user.get(0).getAsJsonObject().get("userHint").toString();
+    }
+    public List<JsonArray> getTotalRank(){
+        String getTotalRankUrl = defaultSendUrl + commandGetTotalRank;
+        String getTotalRankResult = queryController.get(getTotalRankUrl);
+        JsonArray totalRankArray = (JsonArray) jsonParser.parse(getTotalRankResult);
+        List<JsonArray> totalRankList = Arrays.asList(totalRankArray);
+        int rowSize = totalRankArray.size();
+        int colSize = totalRankArray.get(0).getAsJsonObject().size();
+        String[][] totalRank2X = new String[rowSize][colSize];
+        for(int i = 0; i<rowSize; i++){
+
+        }
+
+        return Arrays.asList(totalRankArray);
+    }
+
+//    public String[][] getMyRank(){
+//
+//    }
+
+    public List<String> getWord(int stage, int difficulty){
+        ArrayList<String> wordList = new ArrayList<>();
+        String sndn = "s"+stage+"d"+difficulty;
+        String getWordUrl = defaultSendUrl + commandGetWord + sndn;
+        String getWordResult = queryController.get(getWordUrl);
+        JsonArray wordArray = (JsonArray) jsonParser.parse(getWordResult);
+        int size = wordArray.size();
+        for(int i = 0; i<size; i++){
+            wordList.add(wordArray.get(i).getAsJsonObject().get("wordContent").toString());
+        }
+
+        return wordList;
+    }
+
+    public String getHint(String word){
+        String getHintUrl = defaultSendUrl + commandGetHint + word;
+        String getHintResult = queryController.get(getHintUrl);
+        JsonArray hintArray = (JsonArray) jsonParser.parse(getHintResult);
+        String hint = hintArray.get(0).getAsJsonObject().get("hintContent").toString();
+
+        return hint;
+    }
+
 }
 
 
 
 
-
-
-//    @Autowired
-//    UserRepository userRepo;
-//    WordInfoRepository wordRepo;
-//    HintInfoRepository hintRepo;
-//
-//    String userEmail = "t2@naver.com";
-//    User ur = new User();
-//    /*
-//    * user table 접근 함수
-//    */
-//    //신규유저 이메일 db로 저장
-//    public String newUser(@PathVariable String email){
-//        userRepo.save(new User(email));
-//        return "new user data created";
-//    }
-//
-//    //최근접속시간 갱신
-//    public void visitCheck(){
-//        ur.setVisitTimestamp();
-//    }
-//
-//    //유저 정보 검색 email_level_exp_hint_coin
-//    public List getUserInfo(String email){
-//        return userRepo.findByUserEmail(email);
-//    }
-//
-//    //유저 레벨 갱신
-//    public void updateLevel(short level){
-//        ur.setUserLevel(level);
-//
-//    }
-//    //유저 경험치 갱신
-//    public void updateExp(int exp){
-//        ur.setUserExp(exp);
-//    }
-//    //유저 힌트 갱신
-//    public void updateHint(int hint){
-//        ur.setUserHint(hint);
-//    }
-//    //유저 코인 갱신
-//    public void updateCoin(int coin){
-//        ur.setUserCoin(coin);
-//    }
-//    //전체 랭킹 반환
-//    public List<User> getTotalRank(){
-//        List<Sort.Order> orders = new ArrayList<>();
-//        Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "user_level");
-//        orders.add(order1);
-//        Sort.Order order2 = new Sort.Order(Sort.Direction.DESC, "user_exp");
-//        orders.add(order2);
-//        Sort.Order order3 = new Sort.Order(Sort.Direction.DESC, "account_timestamp");
-//        orders.add(order3);
-//        return (List<User>) userRepo.findAll(Sort.by(orders));
-//    }
-//    //개인 랭킹 반환
-//
-//    /*
-//     * word table 접근 함수
-//     */
 
 
 
