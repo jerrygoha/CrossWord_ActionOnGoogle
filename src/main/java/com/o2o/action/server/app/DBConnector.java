@@ -83,6 +83,12 @@ public class DBConnector implements Serializable {
         return Arrays.asList(totalRankArray);
     }
 
+    public int getMyRank(String email){
+        String getMyRankUrl = defaultSendUrl + commandGetMyRank + email;
+        String getMyRankResult = queryController.get(getMyRankUrl);
+        return  Integer.parseInt(getMyRankResult);
+    }
+
 
 
     public List<String> getWord(int stage, int difficulty){
