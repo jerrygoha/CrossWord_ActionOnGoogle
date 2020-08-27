@@ -3,12 +3,13 @@ package com.o2o.action.server.app;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 //@Service
-public class DBConnector {
+public class DBConnector implements Serializable {
     String userEmail = "";
 
     String commandGetUser = "/getUser/";
@@ -69,19 +70,23 @@ public class DBConnector {
         List<JsonArray> totalRankList = Arrays.asList(totalRankArray);
         int rowSize = totalRankArray.size();
         int colSize = totalRankArray.get(0).getAsJsonObject().size();
-        String[][] totalRank2X = new String[rowSize][colSize];
+        String[][] totalRank2X = new String[rowSize][2];
         for(int i = 0; i<rowSize; i++){
+            totalRank2X[i][0] = totalRankArray.get(i).getAsJsonObject().get("userEmail").toString();
+            System.out.print(totalRank2X[i][0]);
+            totalRank2X[i][1] = totalRankArray.get(i).getAsJsonObject().get("userExp").toString();
+            System.out.println(totalRank2X[i][1]);
 
         }
+
 
         return Arrays.asList(totalRankArray);
     }
 
-//    public String[][] getMyRank(){
-//
-//    }
+
 
     public List<String> getWord(int stage, int difficulty){
+        System.out.println(stage + " " + difficulty);
         ArrayList<String> wordList = new ArrayList<>();
         String sndn = "s"+stage+"d"+difficulty;
         String getWordUrl = defaultSendUrl + commandGetWord + sndn;
@@ -95,13 +100,17 @@ public class DBConnector {
         return wordList;
     }
 
-    public String getHint(String word){
+    public ArrayList<String> getHint(String word){
+        ArrayList<String> hintList = new ArrayList<>();
         String getHintUrl = defaultSendUrl + commandGetHint + word;
         String getHintResult = queryController.get(getHintUrl);
         JsonArray hintArray = (JsonArray) jsonParser.parse(getHintResult);
-        String hint = hintArray.get(0).getAsJsonObject().get("hintContent").toString();
+        int size = hintArray.size();
+        for(int i = 0; i<size; i++){
+            hintList.add(hintArray.get(i).getAsJsonObject().get("hintContent").toString());
+        }
 
-        return hint;
+        return hintList;
     }
 
 }

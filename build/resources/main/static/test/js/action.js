@@ -197,11 +197,19 @@ class Action {
         //ingame, correct에서 사용
         let cnt = 0;
 
+        //openhint에서 사용
+        let hintCnt = 0;
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
+                console.log(data.inputemail);
+
+                const test = document.createElement("div");
+                test.textContent = data.inputemail;
+                container.appendChild(test);
 
                 /*while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -237,6 +245,7 @@ class Action {
             },
             MAIN: function (data) {
                 console.log("실행 : main");
+
 
                 while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -531,6 +540,7 @@ class Action {
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
                 cnt = 0;
+                hintCnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
@@ -568,7 +578,6 @@ class Action {
                 const hintScrollBox = document.createElement("div");
                 hintScrollBox.setAttribute("id", "hintScrollBox");
                 usedHint.appendChild(hintScrollBox);
-
                 const gameBoardBox = document.createElement("div");
                 gameBoardBox.setAttribute("id", "gameBoardBox");
                 gameBoardBox.setAttribute("class", "inGameBoxMargin");
@@ -611,6 +620,7 @@ class Action {
                 //  0 0 0 0 0 형식
                 for (let i = 0; i < totalWord; i++) {
                     const gameProgress = document.createElement("div");
+                    // gameProgress.style.width = gameProgressBox.clientWidth / totalWord + "px";
                     gameProgress.setAttribute("id", "progress" + i);
                     gameProgress.setAttribute("class", "gameProgress");
                     gameProgressBox.appendChild(gameProgress);
@@ -651,11 +661,11 @@ class Action {
                 correctOne.style.backgroundColor = "white";
                 cnt++;
 
-                const matchedWord = "0,1";//data.matchpoint;
-                // for(let cnt = 0; cnt < matchedWord.length; cnt++) {
-                //     document.getElementById(matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
-                // }
-                document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                const matchedWord = data.matchpoint;
+                for(let cnt = 0; cnt < matchedWord.length; cnt++) {
+                    document.getElementById(matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                }
+                // document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -690,7 +700,8 @@ class Action {
                  * 게임판을 가리고 힌트를 보여줌
                  * 타이머가 잠시 멈춤
                  */
-
+                //몇 단계의 힌트인지
+                hintCnt++;
                 //힌트를 열면 타이머를 잠시 멈춤
                 Timer.stop();
                 //사용자의 남은 힌트를 보여줌
@@ -722,6 +733,7 @@ class Action {
                     const hintModal = document.createElement("p");
                     if (hint != "noHint") {
                         hintModal.textContent = hint;
+                        console.log(hint);
                         contentModal.appendChild(hintModal);
                     } else if (hint == "noHint") {
                         hintModal.textContent = "Please charge your hint";
@@ -733,18 +745,16 @@ class Action {
                         backgroundModal.style.display = "none";
                         Timer.resume();
                         if (hint != "noHint") {
-                            const usedHint = document.getElementById("hintScrollBox");
-                            const content = document.createElement("p");
+                            const usedHint = document.getElementById("hintScrollBox");                            const content = document.createElement("p");
                             content.textContent = hint;
+                            console.log(hint);
                             usedHint.appendChild(content);
                         }
-
                     }, 5000);
                 } else if (hintCnt == 3) {
                     /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
                     * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-                    console.log("hint : " + hint);
-
+                    console.log("hint : " + document.getElementsByName(hint).length);
                     for (let i = 0; i < document.getElementsByName(hint).length; i++)
                         document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
@@ -754,11 +764,10 @@ class Action {
                             document.getElementsByName(hint)[i].style.textShadow = "none";
                         const usedHint = document.getElementById("hintScrollBox");
                         const content = document.createElement("p");
-                        content.textContent = "first alphabet is \"" + hint.toUpperCase() +"\"";
+                        content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
                         usedHint.appendChild(content);
                     }, 5000);
                 }
-
             },
             RESULT: function (data) {
                 console.log("실행 : result");
@@ -893,7 +902,9 @@ class Action {
                 if (document.getElementById("Store") != null) {
                     container.removeChild(document.getElementById("Store"));
                 }
-
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
+                }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
                 container.appendChild(SettingBox);
@@ -958,6 +969,9 @@ class Action {
                 if (document.getElementById("Store") != null) {
                     container.removeChild(document.getElementById("Store"));
                 }
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
+                }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
                 //
                 // var test = JSON.stringify(array);
@@ -1012,6 +1026,9 @@ class Action {
                 }
                 if (document.getElementById("SettingBox") != null) {
                     container.removeChild(document.getElementById("SettingBox"));
+                }
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");

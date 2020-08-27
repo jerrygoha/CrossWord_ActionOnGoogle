@@ -199,12 +199,22 @@ class Action {
 
         //openhint에서 사용
         let hintCnt = 0;
+        let userEmail = "";
+
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
             WELCOME: function (data) {
                 console.log("실행 : welcome");
+                console.log(data.inputemail);
+
+                const test = document.createElement("div");
+                test.textContent = data.inputemail;
+                container.appendChild(test);
+                userEmail = data.inputemail;
+
+
 
                 /*while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -240,6 +250,7 @@ class Action {
             },
             MAIN: function (data) {
                 console.log("실행 : main");
+
 
                 while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -280,7 +291,7 @@ class Action {
 
                 const userMail = document.createElement("div");
                 userMail.setAttribute("id", "userMail");
-                userMail.textContent = "O2O.gmail.com";
+                userMail.textContent = userEmail;
                 levelBox.appendChild(userMail);
 
                 const userExpBox = document.createElement("div");
@@ -927,6 +938,7 @@ class Action {
                 label.setAttribute("class", "switch");
                 rightBox.appendChild(label);
                 const input = document.createElement("input");
+                input.setAttribute("id","input");
                 input.setAttribute("type", "checkbox");
                 label.appendChild(input);
                 const span = document.createElement("span");
@@ -936,6 +948,7 @@ class Action {
                 label2.setAttribute("class", "switch2");
                 rightBox.appendChild(label2);
                 const input2 = document.createElement("input");
+                input2.setAttribute("id","input2");
                 input2.setAttribute("type", "checkbox");
                 label2.appendChild(input2);
                 const span2 = document.createElement("span");
@@ -948,6 +961,23 @@ class Action {
                 ResetButton.setAttribute("id", "ResetButton");
                 ResetButton.textContent = "RESET";
                 SettingBox.appendChild(ResetButton);
+            },
+            SETTINGSELECT: function (data)
+            {
+                let sound = data.sound; //1. soundEffect 2.background sound
+                let onoff = data.onoff; //1.  1 오면 true -> on/ 0오면 false;
+                if((onoff == "[1]")&&(sound == "SoundEffect")){
+                    document.querySelector("#input").checked = true;
+                }
+                if((onoff == "[0]")&&(sound == "SoundEffect")){
+                    document.querySelector("#input").checked = false;
+                }
+                if((onoff == "[1]")&&(sound == "BackGround")){
+                    document.querySelector("#input2").checked = true;
+                }
+                if((onoff == "[0]")&&(sound == "BackGround")){
+                    document.querySelector("#input2").checked = false;
+                }
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");

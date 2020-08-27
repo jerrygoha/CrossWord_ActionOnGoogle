@@ -81,7 +81,7 @@ public class Main extends DialogflowApp {
 
     StagePropertyInfo stageinfo;
     TTS tts;
-
+    DBConnector dbConnector;
     private void setUp() {
         tts = new TTS();
         try {
@@ -205,6 +205,9 @@ public class Main extends DialogflowApp {
 
 
 
+
+
+
     @ForIntent("Default Welcome Intent")
     public ActionResponse defaultWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
@@ -225,34 +228,33 @@ public class Main extends DialogflowApp {
 
 
         //db 연결
-
-        String serial;
-        UserInfo user;
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
             return rb.add(new SimpleResponse().setSsml(response)).endConversation().build();
         } else {
             response = tts.getTtsmap().get("welcome");
-
-            if (request.isSignInGranted()){
+            if (request.isSignInGranted()) {
                 GoogleIdToken.Payload profile = getUserProfile(request.getUser().getIdToken());
                 System.out.println("case 1");
                 //이메일 가져옴
                 String email = profile.getEmail();
-
                 dbConnector = new DBConnector(email);
-                user = new UserInfo(1, 0, 3, 5000, stageinfo);
-                serial = Createserial(user);
-                data.put("user",serial);
-
+                String level = dbConnector.getUserLevel();
+                String exp = dbConnector.getUserExp();
+                String coin = dbConnector.getUserCoin();
+                String hint = dbConnector.getUserHint();
+                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo);
+                System.out.println("userc ocin!!!! " + user.getMyCoin());
+                String serial = Createserial(user);
+                System.out.println("first Seiral!!!!1!!!!! : " + serial);
+                data.put("user", serial);
                 htmldata.put("inputemail", email);
                 //신규유저인지 아닌지
                 //sign한후에 email
                 return rb.add(new SimpleResponse().setTextToSpeech(response))
                         .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                         .build();
-            }
-            else{
+            }else{
                 System.out.println("case 2");
                 return rb.add(new SignIn().setContext("To get your account details")).build();
 
@@ -429,7 +431,7 @@ public class Main extends DialogflowApp {
 
         String response;
         // 게임보드 생성
-       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo);
+       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,dbConnector);
        // 게임보드 직렬화 후 전송
         String boardserial = Createserial(gameBoard);
         data.put("gameboard",boardserial);
@@ -481,6 +483,7 @@ public class Main extends DialogflowApp {
 
             if (gameBoard.tryAnswer(word)) {
                 htmldata.put("command", "correct");
+                htmldata.put("matchpoint", gameBoard.GetAnswerPoint(word));
                 response = "correct";
                 Result result = gameBoard.getResult();
                 if (result.isWin())
@@ -560,17 +563,36 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
         data.put("special case", true);
         htmldata.put("command", "setting");
-
         String response = tts.getTtsmap().get("setting");
-
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
     }
-
+    @ForIntent("settingselect")
+    public ActionResponse settingselect(ActionRequest request) throws ExecutionException, InterruptedException {
+        ResponseBuilder rb = getResponseBuilder(request);
+        Map<String, Object> data = rb.getConversationData();
+        Map<String, Object> htmldata = new HashMap<>();
+        HtmlResponse htmlResponse = new HtmlResponse();
+        data.put("special case", true);
+        String response = tts.getTtsmap().get("setting");
+        String serial = (String)data.get("setting");
+        UserSettingInfo userSettingInfo = (UserSettingInfo) Desrial(serial);
+        System.out.println("settinginfo :" + userSettingInfo.isBackGroundSound());
+        String sound = request.getParameter("Sound").toString();
+        String isonoff = request.getParameter("onoff").toString();
+        System.out.println("sound : " + sound + "isonoff :" + isonoff);
+        htmldata.put("command", "settingselect");
+        htmldata.put("sound",sound);
+        htmldata.put("onoff",isonoff);
+        // userSettingInfo.setBackGroundSound(sound,isonoff);
+//        htmldata.put("command","setting");
+        return rb.add(new SimpleResponse().setTextToSpeech(response))
+                .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
+                .build();
+    }
     @ForIntent("ranking")
     public ActionResponse ranking(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
