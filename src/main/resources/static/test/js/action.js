@@ -6,7 +6,7 @@
  */
 function stepLock(step) {
     let stepNum = 0;
-    const stepBox = document.getElementById("stepButton");
+    const stepBox = document.querySelector("#stepButton");
     for (let row = 0; row < 3; row++) {
         const stepRow = document.createElement("div");
         stepRow.setAttribute("id", "stepRow");
@@ -55,8 +55,8 @@ const Timer = (function () {
     }
 
     function initTimer() { //초기 타이머 설정
-        timerHeightBox = document.getElementById("remainTime");
-        timerTextBox = document.getElementById("gameTimerText");
+        timerHeightBox = document.querySelector("#remainTime");
+        timerTextBox = document.querySelector("#gameTimerText");
 
         if (timerHeightBox == null && timerTextBox == null) {
             throw "Element does not exists!";
@@ -175,7 +175,7 @@ class Action {
     constructor(scene) {
 
         // index.html 안의 <div id="screen"></div>
-        const container = document.getElementById("screen"); // container
+        const container = document.querySelector("#screen"); // container
         const headerheight = async () => {
             return await window.interactiveCanvas.getHeaderHeightPx();
         };
@@ -196,9 +196,6 @@ class Action {
 
         //ingame, correct에서 사용
         let cnt = 0;
-
-        //openhint에서 사용
-        let hintCnt = 0;
         let userEmail = "";
 
 
@@ -250,7 +247,6 @@ class Action {
             },
             MAIN: function (data) {
                 console.log("실행 : main");
-
 
                 while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -408,7 +404,7 @@ class Action {
                  * 메인 화면, 중앙에 생성했던
                  * continue, view all 버튼 제거
                  */
-                container.removeChild(document.getElementById("continue_stageButton"));
+                container.removeChild(document.querySelector("#continue_stageButton"));
                 /**
                  * 중앙에
                  * 선택할 수 있는 단계 보여줌
@@ -443,11 +439,11 @@ class Action {
                  * 단계 선택, 중앙에 생성했던
                  * 단계 버튼 제거
                  */
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
                 /**
                  * 배팅머니, 획득머니, 시간제한 등을 fulfillment에서 가져옴
@@ -531,10 +527,10 @@ class Action {
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
-                if (document.getElementById("difficultyBox") != null)
-                    container.removeChild(document.getElementById("difficultyBox"));
-                if (document.getElementById("resultBox") != null)
-                    container.removeChild(document.getElementById("resultBox"));
+                if (document.querySelector("#difficultyBox") != null)
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                if (document.querySelector("#resultBox") != null)
+                    container.removeChild(document.querySelector("#resultBox"));
                 /**
                  * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
@@ -545,7 +541,7 @@ class Action {
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
                 cnt = 0;
-                hintCnt = 0;
+                // hintCnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
@@ -644,7 +640,7 @@ class Action {
                 const gameTimerText = document.createElement("div");
                 gameTimerText.setAttribute("id", "gameTimerText");
                 gameTimerBox.appendChild(gameTimerText);
-                const remainHeight = document.getElementById("gameTimer").clientHeight;
+                const remainHeight = document.querySelector("#gameTimer").clientHeight;
                 Timer.setter(timeLimit, remainHeight);
                 Timer.init();
                 Timer.start();
@@ -662,7 +658,7 @@ class Action {
                 correctAudio.load();
                 correctAudio.autoplay = true;
 
-                const correctOne = document.getElementById("progress" + cnt);
+                const correctOne = document.querySelector("#progress" + cnt);
                 correctOne.style.backgroundColor = "white";
                 cnt++;
 
@@ -692,7 +688,7 @@ class Action {
                 wrongAudio.volume = 1.0;
                 wrongAudio.load();
                 wrongAudio.autoplay = true;
-                const gameBoard = document.getElementById("gameBoard");
+                const gameBoard = document.querySelector("#gameBoard");
                 gameBoard.classList.remove("shake");
                 void gameBoard.offsetWidth;
                 gameBoard.classList.add("shake");
@@ -706,11 +702,11 @@ class Action {
                  * 타이머가 잠시 멈춤
                  */
                 //몇 단계의 힌트인지
-                hintCnt++;
+                // hintCnt++;
                 //힌트를 열면 타이머를 잠시 멈춤
                 Timer.stop();
                 //사용자의 남은 힌트를 보여줌
-                const remainingHint = document.getElementById("hintText");
+                const remainingHint = document.querySelector("#hintText");
                 if (myHint > 0) myHint--;
                 remainingHint.textContent = myHint;
 
@@ -776,8 +772,8 @@ class Action {
             },
             RESULT: function (data) {
                 console.log("실행 : result");
-                if (document.getElementById("inGameBox") != null) {
-                    container.removeChild(document.getElementById("inGameBox"));
+                if (document.querySelector("#inGameBox") != null) {
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const result = data.result;
                 level = data.level;
@@ -884,31 +880,31 @@ class Action {
                     retryText.textContent = "RETRY";
                     RetryOrNextButton.appendChild(retryText);
                 }
-                document.getElementById("userExpText").textContent = data.myExp + "/" + fullExp;
-                document.getElementById("coinText").textContent = data.myCoin;
-                document.getElementById("progress").setAttribute("value", data.myExp);
+                document.querySelector("#userExpText").textContent = data.myExp + "/" + fullExp;
+                document.querySelector("#coinText").textContent = data.myCoin;
+                document.querySelector("#progress").setAttribute("value", data.myExp);
                 exp = data.myExp;
                 myCoin = data.myCoin;
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("difficultyBox") != null) {
-                    container.removeChild(document.getElementById("difficultyBox"));
+                if (document.querySelector("#difficultyBox") != null) {
+                    container.removeChild(document.querySelector("#difficultyBox"));
                 }
-                if (document.getElementById("rankBox") != null) {
-                    container.removeChild(document.getElementById("rankBox"));
+                if (document.querySelector("#rankBox") != null) {
+                    container.removeChild(document.querySelector("#rankBox"));
                 }
-                if (document.getElementById("Store") != null) {
-                    container.removeChild(document.getElementById("Store"));
+                if (document.querySelector("#Store") != null) {
+                    container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if (document.querySelector("#inGameBox") != null) {
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
@@ -981,20 +977,20 @@ class Action {
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("SettingBox") != null) {
-                    container.removeChild(document.getElementById("SettingBox"));
+                if (document.querySelector("#SettingBox") != null) {
+                    container.removeChild(document.querySelector("#SettingBox"));
                 }
-                if (document.getElementById("Store") != null) {
-                    container.removeChild(document.getElementById("Store"));
+                if (document.querySelector("#Store") != null) {
+                    container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if (document.querySelector("#inGameBox") != null) {
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
                 //
@@ -1039,20 +1035,20 @@ class Action {
                  * 코인 충전
                  * 힌트 충전
                  */
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("rankBox") != null) {
-                    container.removeChild(document.getElementById("rankBox"));
+                if (document.querySelector("#rankBox") != null) {
+                    container.removeChild(document.querySelector("#rankBox"));
                 }
-                if (document.getElementById("SettingBox") != null) {
-                    container.removeChild(document.getElementById("SettingBox"));
+                if (document.querySelector("#SettingBox") != null) {
+                    container.removeChild(document.querySelector("#SettingBox"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if (document.querySelector("#inGameBox") != null) {
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");
