@@ -585,12 +585,12 @@ input:checked + .slider:before {
     margin-top : 5vh;
 }
 #rank{
-    height: 8vh;
+    height: 8 vh;
     display : flex;
-    font-size : 3vw;
+    font-size : 2vw;
 }
 .ranking{
-    height: 31vh;
+    height: 30vh;
     margin-left: 3vw;
     overflow : auto;
 }
@@ -613,7 +613,9 @@ input:checked + .slider:before {
     display : flex;
     width : 38vw;
     height : 7vh;
-    justify-content: center;
+    justify-content: left;
+    padding-left : 2vw;
+    margin-bottom : 1vh;
 }
 #rankexp{
     background-color: rgba(255,255,255,0.2);
@@ -624,6 +626,7 @@ input:checked + .slider:before {
     width : 18vw;
     height : 7vh;
     justify-content: center;
+    white-space : pre-wrap;
 }
 #ranknum{
     margin-right: 1vw;

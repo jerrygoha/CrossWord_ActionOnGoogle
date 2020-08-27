@@ -992,20 +992,23 @@ class Action {
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
-                // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
-                //
-                // var test = JSON.stringify(array);
+
+                let totalRank = data.totalRank;
+                let myrank = data.myRank;
+                console.log("totalRank : " + totalRank); //list.json
+                console.log("myrank : "+ myrank);
+
                 const rankBox = document.createElement("div");
                 rankBox.setAttribute("id", "rankBox");
                 container.appendChild(rankBox);
                 const yourrank = document.createElement("div");
                 yourrank.setAttribute("id", "yourrank");
-                yourrank.textContent = "O2O@gmail.com 님의 랭킹은 1위";
+                yourrank.textContent = userEmail+"님의 랭킹은"+myrank+"위입니다.";
                 rankBox.appendChild(yourrank);
                 const ranking = document.createElement("div");
                 ranking.setAttribute("class", "ranking");
                 rankBox.appendChild(ranking);
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < totalRank.length; i++) {
                     const rank = document.createElement("div");
                     rank.setAttribute("id", "rank");
                     ranking.appendChild(rank);
@@ -1018,12 +1021,12 @@ class Action {
                     User.appendChild(ranknum);
                     const rankId = document.createElement("div");
                     rankId.setAttribute("id", "rankId");
-                    rankId.textContent = "o2o@gmail.com";
+                    rankId.textContent = totalRank[i][0];
                     User.appendChild(rankId);
                     const rankexp = document.createElement("div");
                     rankexp.setAttribute("id", "rankexp");
                     rank.appendChild(rankexp);
-                    rankexp.textContent = "exp 5140"
+                    rankexp.textContent = "exp \t"+totalRank[i][1];
                 }
             },
             SHOP: function (data) {
