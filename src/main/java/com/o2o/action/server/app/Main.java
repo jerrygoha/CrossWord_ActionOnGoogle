@@ -77,7 +77,7 @@ public class Main extends DialogflowApp {
 
     }
 
-    String URL = "https://actions.o2o.kr/devsvr4/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -214,6 +214,7 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+        DBConnector dbConnector;
 
         String response;
         request.getConversationData().clear();
@@ -225,9 +226,7 @@ public class Main extends DialogflowApp {
         data.put("special case", false);
         htmldata.put("command", "welcome");
 
-        UserSettingInfo info = new UserSettingInfo();
-        String settingserial = Createserial(info);
-        data.put("setting", settingserial);
+
         //db 연결
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
@@ -244,7 +243,7 @@ public class Main extends DialogflowApp {
                 String exp = dbConnector.getUserExp();
                 String coin = dbConnector.getUserCoin();
                 String hint = dbConnector.getUserHint();
-                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo,email);
+                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo);
                 System.out.println("userc ocin!!!! " + user.getMyCoin());
                 String serial = Createserial(user);
                 System.out.println("first Seiral!!!!1!!!!! : " + serial);
@@ -600,15 +599,10 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
+
         data.put("special case", true);
         htmldata.put("command", "ranking");
 
-
-        String userserial = (String)data.get("user");
-        UserInfo user = (UserInfo) Desrial(userserial);
-
-        htmldata.put("myRank",dbConnector.getMyRank(user.getEmail()));
-        htmldata.put("totalRank",dbConnector.getTotalRank());
         String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
