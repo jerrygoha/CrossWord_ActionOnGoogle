@@ -6,7 +6,7 @@
  */
 function stepLock(step) {
     let stepNum = 0;
-    const stepBox = document.getElementById("stepButton");
+    const stepBox = document.querySelector("#stepButton");
     for (let row = 0; row < 3; row++) {
         const stepRow = document.createElement("div");
         stepRow.setAttribute("id", "stepRow");
@@ -55,8 +55,8 @@ const Timer = (function () {
     }
 
     function initTimer() { //초기 타이머 설정
-        timerHeightBox = document.getElementById("remainTime");
-        timerTextBox = document.getElementById("gameTimerText");
+        timerHeightBox = document.querySelector("#remainTime");
+        timerTextBox = document.querySelector("#gameTimerText");
 
         if (timerHeightBox == null && timerTextBox == null) {
             throw "Element does not exists!";
@@ -175,7 +175,7 @@ class Action {
     constructor(scene) {
 
         // index.html 안의 <div id="screen"></div>
-        const container = document.getElementById("screen"); // container
+        const container = document.querySelector("#screen"); // container
         const headerheight = async () => {
             return await window.interactiveCanvas.getHeaderHeightPx();
         };
@@ -397,7 +397,7 @@ class Action {
                  * 메인 화면, 중앙에 생성했던
                  * continue, view all 버튼 제거
                  */
-                container.removeChild(document.getElementById("continue_stageButton"));
+                container.removeChild(document.querySelector("#continue_stageButton"));
                 /**
                  * 중앙에
                  * 선택할 수 있는 단계 보여줌
@@ -432,11 +432,11 @@ class Action {
                  * 단계 선택, 중앙에 생성했던
                  * 단계 버튼 제거
                  */
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
                 /**
                  * 배팅머니, 획득머니, 시간제한 등을 fulfillment에서 가져옴
@@ -520,10 +520,10 @@ class Action {
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
-                if (document.getElementById("difficultyBox") != null)
-                    container.removeChild(document.getElementById("difficultyBox"));
-                if (document.getElementById("resultBox") != null)
-                    container.removeChild(document.getElementById("resultBox"));
+                if (document.querySelector("#difficultyBox") != null)
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                if (document.querySelector("#resultBox") != null)
+                    container.removeChild(document.querySelector("#resultBox"));
                 /**
                  * 게임판, 게임판 행과 열, 시간제한, 맞춰야 할 모든 단어 수는 변경되면 안 되서 상수 선언
                  * 맞춰야 하는 단어 수는 변경되어야 하므로 let 선언 -> correct에서도 사용할 변수
@@ -633,7 +633,7 @@ class Action {
                 const gameTimerText = document.createElement("div");
                 gameTimerText.setAttribute("id", "gameTimerText");
                 gameTimerBox.appendChild(gameTimerText);
-                const remainHeight = document.getElementById("gameTimer").clientHeight;
+                const remainHeight = document.querySelector("#gameTimer").clientHeight;
                 Timer.setter(timeLimit, remainHeight);
                 Timer.init();
                 Timer.start();
@@ -651,15 +651,15 @@ class Action {
                 correctAudio.load();
                 correctAudio.autoplay = true;
 
-                const correctOne = document.getElementById("progress" + cnt);
+                const correctOne = document.querySelector("#progress" + cnt);
                 correctOne.style.backgroundColor = "white";
                 cnt++;
 
                 const matchedWord = data.matchpoint;
                 for(let cnt = 0; cnt < matchedWord.length; cnt++) {
-                    document.getElementById(matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                    document.querySelector("#" + matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
                 }
-                // document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                // document.querySelector("#" + matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -681,7 +681,7 @@ class Action {
                 wrongAudio.volume = 1.0;
                 wrongAudio.load();
                 wrongAudio.autoplay = true;
-                const gameBoard = document.getElementById("gameBoard");
+                const gameBoard = document.querySelector("#gameBoard");
                 gameBoard.classList.remove("shake");
                 void gameBoard.offsetWidth;
                 gameBoard.classList.add("shake");
@@ -699,7 +699,7 @@ class Action {
                 //힌트를 열면 타이머를 잠시 멈춤
                 Timer.stop();
                 //사용자의 남은 힌트를 보여줌
-                const remainingHint = document.getElementById("hintText");
+                const remainingHint = document.querySelector("#hintText");
                 if (myHint > 0) myHint--;
                 remainingHint.textContent = myHint;
 
@@ -713,8 +713,8 @@ class Action {
 
                     const contentModal = document.createElement("div");
                     contentModal.setAttribute("class", "contentModal");
-                    contentModal.style.height = document.getElementById("gameBoard").clientHeight + "px";
-                    contentModal.style.width = document.getElementById("gameBoard").clientWidth + "px";
+                    contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
+                    contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
                     backgroundModal.appendChild(contentModal);
 
                     const hintModalText = document.createElement("p");
@@ -739,7 +739,7 @@ class Action {
                         backgroundModal.style.display = "none";
                         Timer.resume();
                         if (hint != "noHint") {
-                            const usedHint = document.getElementById("hintScrollBox");                            const content = document.createElement("p");
+                            const usedHint = document.querySelector("#hintScrollBox");                            const content = document.createElement("p");
                             content.textContent = hint;
                             console.log(hint);
                             usedHint.appendChild(content);
@@ -748,15 +748,15 @@ class Action {
                 } else if (hintCnt == 3) {
                     /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
                     * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-                    console.log("hint : " + document.getElementsByName(hint).length);
-                    for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                        document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
+                    console.log("hint : " + document.querySelectorAll("p[name=" + hint + "]").length);
+                    // for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                        document.document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
                         /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
                         Timer.resume();
-                        for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                            document.getElementsByName(hint)[i].style.textShadow = "none";
-                        const usedHint = document.getElementById("hintScrollBox");
+                        // for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                        document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "none";
+                        const usedHint = document.querySelector("#hintScrollBox");
                         const content = document.createElement("p");
                         content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
                         usedHint.appendChild(content);
@@ -765,8 +765,8 @@ class Action {
             },
             RESULT: function (data) {
                 console.log("실행 : result");
-                if (document.getElementById("inGameBox") != null) {
-                    container.removeChild(document.getElementById("inGameBox"));
+                if (document.querySelector("#inGameBox") != null) {
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const result = data.result;
                 level = data.level;
@@ -873,31 +873,31 @@ class Action {
                     retryText.textContent = "RETRY";
                     RetryOrNextButton.appendChild(retryText);
                 }
-                document.getElementById("userExpText").textContent = data.myExp + "/" + fullExp;
-                document.getElementById("coinText").textContent = data.myCoin;
-                document.getElementById("progress").setAttribute("value", data.myExp);
+                document.querySelector("#userExpText").textContent = data.myExp + "/" + fullExp;
+                document.querySelector("#coinText").textContent = data.myCoin;
+                document.querySelector("#progress").setAttribute("value", data.myExp);
                 exp = data.myExp;
                 myCoin = data.myCoin;
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("difficultyBox") != null) {
-                    container.removeChild(document.getElementById("difficultyBox"));
+                if (document.querySelector("#difficultyBox") != null) {
+                    container.removeChild(document.querySelector("#difficultyBox"));
                 }
-                if (document.getElementById("rankBox") != null) {
-                    container.removeChild(document.getElementById("rankBox"));
+                if (document.querySelector("#rankBox") != null) {
+                    container.removeChild(document.querySelector("#rankBox"));
                 }
-                if (document.getElementById("Store") != null) {
-                    container.removeChild(document.getElementById("Store"));
+                if (document.querySelector("#Store") != null) {
+                    container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if(document.querySelector("#inGameBox") != null){
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
@@ -951,20 +951,20 @@ class Action {
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("SettingBox") != null) {
-                    container.removeChild(document.getElementById("SettingBox"));
+                if (document.querySelector("#SettingBox") != null) {
+                    container.removeChild(document.querySelector("#SettingBox"));
                 }
-                if (document.getElementById("Store") != null) {
-                    container.removeChild(document.getElementById("Store"));
+                if (document.querySelector("#Store") != null) {
+                    container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if(document.querySelector("#inGameBox") != null){
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
                 //
@@ -1009,20 +1009,20 @@ class Action {
                  * 코인 충전
                  * 힌트 충전
                  */
-                if (document.getElementById("stepBox") != null) {
-                    container.removeChild(document.getElementById("stepBox"));
+                if (document.querySelector("#stepBox") != null) {
+                    container.removeChild(document.querySelector("#stepBox"));
                 }
-                if (document.getElementById("continue_stageButton") != null) {
-                    container.removeChild(document.getElementById("continue_stageButton"));
+                if (document.querySelector("#continue_stageButton") != null) {
+                    container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.getElementById("rankBox") != null) {
-                    container.removeChild(document.getElementById("rankBox"));
+                if (document.querySelector("#rankBox") != null) {
+                    container.removeChild(document.querySelector("#rankBox"));
                 }
-                if (document.getElementById("SettingBox") != null) {
-                    container.removeChild(document.getElementById("SettingBox"));
+                if (document.querySelector("#SettingBox") != null) {
+                    container.removeChild(document.querySelector("#SettingBox"));
                 }
-                if(document.getElementById("inGameBox") != null){
-                    container.removeChild(document.getElementById("inGameBox"));
+                if(document.querySelector("#inGameBox") != null){
+                    container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");
