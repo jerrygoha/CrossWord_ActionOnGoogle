@@ -198,7 +198,7 @@ class Action {
         let cnt = 0;
 
         //openhint에서 사용
-        let hintCnt = 0;
+        // let hintCnt = 0;
 
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
@@ -534,7 +534,7 @@ class Action {
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
                 cnt = 0;
-                hintCnt = 0;
+                // hintCnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
                 // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
                 // console.log(board[0][0]);
@@ -656,7 +656,7 @@ class Action {
                 cnt++;
 
                 const matchedWord = data.matchpoint;
-                for(let cnt = 0; cnt < matchedWord.length; cnt++) {
+                for (let cnt = 0; cnt < matchedWord.length; cnt++) {
                     document.querySelector("#" + matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
                 }
                 // document.querySelector("#" + matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
@@ -695,7 +695,7 @@ class Action {
                  * 타이머가 잠시 멈춤
                  */
                 //몇 단계의 힌트인지
-                hintCnt++;
+                // hintCnt++;
                 //힌트를 열면 타이머를 잠시 멈춤
                 Timer.stop();
                 //사용자의 남은 힌트를 보여줌
@@ -705,52 +705,8 @@ class Action {
 
                 const hint = data.hint;
 
-                if (hintCnt < 3) {
-                    const backgroundModal = document.createElement("div");
-                    backgroundModal.setAttribute("class", "backgroundModal");
-                    backgroundModal.setAttribute("id", "backgroundModal");
-                    container.appendChild(backgroundModal);
-
-                    const contentModal = document.createElement("div");
-                    contentModal.setAttribute("class", "contentModal");
-                    contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
-                    contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
-                    backgroundModal.appendChild(contentModal);
-
-                    const hintModalText = document.createElement("p");
-                    hintModalText.textContent = "HINT";
-                    contentModal.appendChild(hintModalText);
-                    contentModal.appendChild(document.createElement("br"));
-                    contentModal.appendChild(document.createElement("hr"));
-                    contentModal.appendChild(document.createElement("br"));
-
-                    const hintModal = document.createElement("p");
-                    if (hint != "noHint") {
-                        hintModal.textContent = hint;
-                        console.log(hint);
-                        contentModal.appendChild(hintModal);
-                    } else if (hint == "noHint") {
-                        hintModal.textContent = "Please charge your hint";
-                        contentModal.appendChild(hintModal);
-                    }
-                    backgroundModal.style.display = "block";
-
-                    setTimeout(function () {
-                        backgroundModal.style.display = "none";
-                        Timer.resume();
-                        if (hint != "noHint") {
-                            const usedHint = document.querySelector("#hintScrollBox");                            const content = document.createElement("p");
-                            content.textContent = hint;
-                            console.log(hint);
-                            usedHint.appendChild(content);
-                        }
-                    }, 5000);
-                } else if (hintCnt == 3) {
-                    /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
-                    * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-                    console.log("hint : " + document.querySelectorAll("p[name=" + hint + "]").length);
-                    // for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                        document.document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "1px 1px 8px #FF0000";
+                if(hint.toUpperCase() == document.querySelector("p[name=" + hint + "]").textContent) {
+                    document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
                         /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
                         Timer.resume();
@@ -762,6 +718,66 @@ class Action {
                         usedHint.appendChild(content);
                     }, 5000);
                 }
+
+
+                // if (hintCnt < 3) {
+                const backgroundModal = document.createElement("div");
+                backgroundModal.setAttribute("class", "backgroundModal");
+                backgroundModal.setAttribute("id", "backgroundModal");
+                container.appendChild(backgroundModal);
+
+                const contentModal = document.createElement("div");
+                contentModal.setAttribute("class", "contentModal");
+                contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
+                contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
+                backgroundModal.appendChild(contentModal);
+
+                const hintModalText = document.createElement("p");
+                hintModalText.textContent = "HINT";
+                contentModal.appendChild(hintModalText);
+                contentModal.appendChild(document.createElement("br"));
+                contentModal.appendChild(document.createElement("hr"));
+                contentModal.appendChild(document.createElement("br"));
+
+                const hintModal = document.createElement("p");
+                if (hint != "noHint") {
+                    hintModal.textContent = hint;
+                    console.log(hint);
+                    contentModal.appendChild(hintModal);
+                } else if (hint == "noHint") {
+                    hintModal.textContent = "Please charge your hint";
+                    contentModal.appendChild(hintModal);
+                }
+                backgroundModal.style.display = "block";
+
+                setTimeout(function () {
+                    backgroundModal.style.display = "none";
+                    Timer.resume();
+                    if (hint != "noHint") {
+                        const usedHint = document.querySelector("#hintScrollBox");
+                        const content = document.createElement("p");
+                        content.textContent = hint;
+                        console.log(hint);
+                        usedHint.appendChild(content);
+                    }
+                }, 5000);
+                // } else if (hintCnt == 3) {
+                /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
+                * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
+                console.log("hint : " + document.querySelectorAll("p[name=" + hint + "]").length);
+                // for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                // document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "1px 1px 8px #FF0000";
+                // setTimeout(function () {
+                //     /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
+                //     Timer.resume();
+                //     // for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                //     document.querySelectorAll("p[name=" + hint + "]").style.textShadow = "none";
+                //     const usedHint = document.querySelector("#hintScrollBox");
+                //     const content = document.createElement("p");
+                //     content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
+                //     usedHint.appendChild(content);
+                // }, 5000);
+                // }
             },
             RESULT: function (data) {
                 console.log("실행 : result");
@@ -896,7 +912,7 @@ class Action {
                 if (document.querySelector("#Store") != null) {
                     container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.querySelector("#inGameBox") != null){
+                if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const SettingBox = document.createElement("div");
@@ -963,7 +979,7 @@ class Action {
                 if (document.querySelector("#Store") != null) {
                     container.removeChild(document.querySelector("#Store"));
                 }
-                if(document.querySelector("#inGameBox") != null){
+                if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
@@ -1021,7 +1037,7 @@ class Action {
                 if (document.querySelector("#SettingBox") != null) {
                     container.removeChild(document.querySelector("#SettingBox"));
                 }
-                if(document.querySelector("#inGameBox") != null){
+                if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
                 const Store = document.createElement("div");
