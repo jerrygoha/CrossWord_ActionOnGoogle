@@ -603,6 +603,10 @@ public class Main extends DialogflowApp {
         data.put("special case", true);
         htmldata.put("command", "ranking");
 
+        DBConnector db= new DBConnector("test");
+        htmldata.put("myRank",db.getMyRank("tngus988207@gmail.com"));
+        htmldata.put("totalRank",db.getTotalRank());
+
         String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
