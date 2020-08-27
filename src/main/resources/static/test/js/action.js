@@ -597,7 +597,7 @@ class Action {
                         alphabetBox.style.width = gameBoardWidth / boardCol + "px";
                         rowBox.appendChild(alphabetBox);
                         const alphabet = document.createElement("p");
-                        alphabet.setAttribute("class", "alphabet");
+                        alphabet.setAttribute("class",   board[col][row] + " alphabet");
                         alphabet.textContent = board[col][row].toUpperCase();
                         alphabetBox.appendChild(alphabet);
                     }
@@ -634,13 +634,13 @@ class Action {
             },
             CORRECT: function (data) {
                 console.log("실행 : correct");
+
                 // 게임 종료 여부를 받아옴, 변경되면 안되므로 상수 선언
                 const finish = data.finish;
-                //남은 단어 수 보여줌 -> 진행 상황 박스에
 
                 const correctAudio = document.createElement("audio");
-                correctAudio.canPlayType("audio/mp3");
                 correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
+                correctAudio.canPlayType("audio/mp3");
                 correctAudio.load();
                 correctAudio.autoplay = true;
 
@@ -648,13 +648,11 @@ class Action {
                 correctOne.style.backgroundColor = "white";
                 cnt++;
 
-                const matchedWord = "0,1";
-                // for(let cnt = 0; cnt < matchedWord.length; cnt++) {
-                //     document.getElementById(matchedWord[cnt]).style.backgroundColor = "white";
-                //     document.getElementById(matchedWord[cnt]).style.color = "black";
-                // }
-                document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
-                // document.getElementById(matchedWord).style.color = "black";
+                const matchedWord = data.matchpoint;
+                for(let cnt = 0; cnt < matchedWord.length; cnt++) {
+                    document.getElementById(matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
+                }
+                // document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -742,8 +740,12 @@ class Action {
                 } else if (hintCnt == 3) {
                     /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
                     * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
+
+                    document.getElementById(hint).style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
                         /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
+                        Timer.resume();
+                        document.getElementById(hint).style.textShadow = "none";
                     }, 5000);
                 }
 

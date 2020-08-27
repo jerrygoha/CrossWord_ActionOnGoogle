@@ -82,11 +82,11 @@ public class GameBoard implements Serializable {
     {
         answers = new AnswerWord[answercount];
 
-        AnswerWord answerWord = new AnswerWord("cat",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        AnswerWord answerWord = new AnswerWord("cat",new String[]{"cathint"});
         answers[0]=answerWord;
-        answerWord = new AnswerWord("floor",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answerWord = new AnswerWord("floor",new String[]{"floorhint"});
         answers[1]=answerWord;
-        answerWord = new AnswerWord("wing",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
+        answerWord = new AnswerWord("wing",new String[]{"winghint"});
         answers[2]=answerWord;
         Arrays.sort(answers);
     }
@@ -141,7 +141,7 @@ public class GameBoard implements Serializable {
         return restanswerlist.get(0).useHint();
     }
     // 정답의 좌표정보 가져오기
-    public int[] GetAnswerPoint(String _answer)
+    public String[] GetAnswerPoint(String _answer)
     {
         for (int i = 0; i<answercount; i++)
         {

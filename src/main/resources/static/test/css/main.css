@@ -184,7 +184,7 @@ button {
     border: 1px solid white;
 }
 .ableUnderBox {
-    background-color: rgba(255,255,255,0.6);
+    background-color: rgba(255,255,255,0.5);
 }
 .disableUnderBox {
     background-color: rgba(255,255,255,0.2);
