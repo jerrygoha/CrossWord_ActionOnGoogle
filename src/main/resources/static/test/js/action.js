@@ -564,11 +564,14 @@ class Action {
                 const usedHint = document.createElement("div");
                 usedHint.setAttribute("id", "usedHint");
                 usedHint.setAttribute("class", "inGameBoxMargin");
+                gameProgress_HintBox.appendChild(usedHint);
                 const hint = document.createElement("p");
                 hint.textContent = "HINT";
                 usedHint.appendChild(hint);
                 usedHint.appendChild(document.createElement("hr"));
-                gameProgress_HintBox.appendChild(usedHint);
+                const hintScrollBox = document.createElement("div");
+                hintScrollBox.setAttribute("id", "hintScrollBox");
+                usedHint.appendChild(hintScrollBox);
                 const gameBoardBox = document.createElement("div");
                 gameBoardBox.setAttribute("id", "gameBoardBox");
                 gameBoardBox.setAttribute("class", "inGameBoxMargin");
@@ -722,6 +725,7 @@ class Action {
                     const hintModal = document.createElement("p");
                     if (hint != "noHint") {
                         hintModal.textContent = hint;
+                        console.log(hint);
                         contentModal.appendChild(hintModal);
                     } else if (hint == "noHint") {
                         hintModal.textContent = "Please charge your hint";
@@ -733,17 +737,16 @@ class Action {
                         backgroundModal.style.display = "none";
                         Timer.resume();
                         if (hint != "noHint") {
-                            const usedHint = document.getElementById("usedHint");
-                            const content = document.createElement("p");
+                            const usedHint = document.getElementById("hintScrollBox");                            const content = document.createElement("p");
                             content.textContent = hint;
+                            console.log(hint);
                             usedHint.appendChild(content);
                         }
-
                     }, 5000);
                 } else if (hintCnt == 3) {
                     /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
                     * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-                    console.log("hint : " + hint);
+                    console.log("hint : " + document.getElementsByName(hint).length);
                     for (let i = 0; i < document.getElementsByName(hint).length; i++)
                         document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
@@ -751,7 +754,7 @@ class Action {
                         Timer.resume();
                         for (let i = 0; i < document.getElementsByName(hint).length; i++)
                             document.getElementsByName(hint)[i].style.textShadow = "none";
-                        const usedHint = document.getElementById("usedHint");
+                        const usedHint = document.getElementById("hintScrollBox");
                         const content = document.createElement("p");
                         content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
                         usedHint.appendChild(content);
@@ -767,8 +770,6 @@ class Action {
 
                 const backgroundModal = document.getElementById("backgroundModal");
                 backgroundModal.style.display = "none";
-
-
             },*/
             RESULT: function (data) {
                 console.log("실행 : result");
@@ -901,7 +902,9 @@ class Action {
                 if (document.getElementById("Store") != null) {
                     container.removeChild(document.getElementById("Store"));
                 }
-
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
+                }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
                 container.appendChild(SettingBox);
@@ -966,6 +969,9 @@ class Action {
                 if (document.getElementById("Store") != null) {
                     container.removeChild(document.getElementById("Store"));
                 }
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
+                }
                 // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
                 //
                 // var test = JSON.stringify(array);
@@ -1020,6 +1026,9 @@ class Action {
                 }
                 if (document.getElementById("SettingBox") != null) {
                     container.removeChild(document.getElementById("SettingBox"));
+                }
+                if(document.getElementById("inGameBox") != null){
+                    container.removeChild(document.getElementById("inGameBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");

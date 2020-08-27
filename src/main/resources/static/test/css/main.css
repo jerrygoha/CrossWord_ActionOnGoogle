@@ -284,6 +284,21 @@ button {
     width: 18vw;
     border-radius: 1vh;
 }
+#hintScrollBox{
+    height: 25vh;
+    overflow : auto;
+}
+#hintScrollBox::-webkit-scrollbar {
+    width: 0.5vw;
+}
+#hintScrollBox::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.9);
+    border-radius : 0.5vw;
+}
+#hintScrollBox::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.3);
+    border-radius : 0.5vw;
+}
 #gameBoardBox {
     display: flex;
     flex-direction: row;
