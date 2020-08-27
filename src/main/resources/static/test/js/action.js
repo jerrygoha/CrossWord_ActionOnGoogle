@@ -647,6 +647,7 @@ class Action {
                 const correctAudio = document.createElement("audio");
                 correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
                 correctAudio.canPlayType("audio/mp3");
+                correctAudio.volume = 1.0;
                 correctAudio.load();
                 correctAudio.autoplay = true;
 
@@ -677,6 +678,7 @@ class Action {
                 const wrongAudio = document.createElement("audio");
                 wrongAudio.canPlayType("audio/mp3");
                 wrongAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/wrong_sound.mp3");
+                wrongAudio.volume = 1.0;
                 wrongAudio.load();
                 wrongAudio.autoplay = true;
                 const gameBoard = document.getElementById("gameBoard");
@@ -761,16 +763,6 @@ class Action {
                     }, 5000);
                 }
             },
-            /*CLOSEHINT: function (data) {
-                console.log("실행: closeHint");
-                /!**
-                 * 가렸던 게임판을 다시 보여줌
-                 * 타이머 다시 시작
-                 *!/
-
-                const backgroundModal = document.getElementById("backgroundModal");
-                backgroundModal.style.display = "none";
-            },*/
             RESULT: function (data) {
                 console.log("실행 : result");
                 if (document.getElementById("inGameBox") != null) {
@@ -806,6 +798,7 @@ class Action {
                     const successAudio = document.createElement("audio");
                     successAudio.canPlayType("audio/mp3");
                     successAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/success_sound.mp3");
+                    successAudio.volume = 1.0;
                     successAudio.load();
                     successAudio.autoplay = true;
                     const gainexp = document.createElement("div");
@@ -815,6 +808,7 @@ class Action {
                     const failAudio = document.createElement("audio");
                     failAudio.canPlayType("audio/mp3");
                     failAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/fail_sound.mp3");
+                    failAudio.volume = 1.0;
                     failAudio.load();
                     failAudio.autoplay = true;
                     const gainexp = document.createElement("div");

@@ -211,7 +211,7 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-        DBConnector dbConnector = new DBConnector();
+//        DBConnector dbConnector = new DBConnector();
 
         String response;
         request.getConversationData().clear();
@@ -464,6 +464,7 @@ public class Main extends DialogflowApp {
                 // 힌트 개수 차감
                 user.ConsumeHintCount();
                 htmldata.put("hint", gameBoard.getHintMessage());
+                htmldata.put("matchpoint", gameBoard.GetAnswerPoint(word));
                 response = "open hint";
             } else {
                 htmldata.put("command", "closehint");
