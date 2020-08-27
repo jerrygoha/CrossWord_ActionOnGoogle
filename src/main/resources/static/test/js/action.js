@@ -219,10 +219,12 @@ class Action {
                 title.textContent = "WORD SEARCH";
                 welcomeBox.appendChild(title);
 
-                const playButton = document.createElement("button");
+                const playButton = document.createElement("div");
                 playButton.setAttribute("id", "playbutton");
                 playButton.onclick = main;
-                playButton.textContent = "PLAY";
+                const playText = document.createElement("p");
+                playText.textContent = "PLAY";
+                playButton.appendChild(playText);
                 welcomeBox.appendChild(playButton);
 
                 const copyright = document.createElement("span");
@@ -597,7 +599,8 @@ class Action {
                         alphabetBox.style.width = gameBoardWidth / boardCol + "px";
                         rowBox.appendChild(alphabetBox);
                         const alphabet = document.createElement("p");
-                        alphabet.setAttribute("class",   board[col][row] + " alphabet");
+                        alphabet.setAttribute("class", "alphabet");
+                        alphabet.setAttribute("name", board[col][row]);
                         alphabet.textContent = board[col][row].toUpperCase();
                         alphabetBox.appendChild(alphabet);
                     }
@@ -740,15 +743,20 @@ class Action {
                 } else if (hintCnt == 3) {
                     /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
                     * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-
-                    document.getElementById(hint).style.textShadow = "1px 1px 8px #FF0000";
+                    console.log("hint : " + hint);
+                    for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                        document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
                     setTimeout(function () {
                         /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
                         Timer.resume();
-                        document.getElementById(hint).style.textShadow = "none";
+                        for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                            document.getElementsByName(hint)[i].style.textShadow = "none";
+                        const usedHint = document.getElementById("usedHint");
+                        const content = document.createElement("p");
+                        content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
+                        usedHint.appendChild(content);
                     }, 5000);
                 }
-
             },
             /*CLOSEHINT: function (data) {
                 console.log("실행: closeHint");

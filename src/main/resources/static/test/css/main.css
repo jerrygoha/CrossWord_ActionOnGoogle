@@ -37,7 +37,10 @@ button {
     font-size : 7vh;
     background-color: rgba(255,255,255,0.3);
     border-radius: 1.5vh;
-    border-color : white;
+    border : 1px solid rgba(255,255,255,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #copyright{
     position: absolute;

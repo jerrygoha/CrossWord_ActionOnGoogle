@@ -29,10 +29,12 @@ class Scene {
 		title.textContent = "WORD SEARCH";
 		welcomeBox.appendChild(title);
 
-		const playButton = document.createElement("button");
+		const playButton = document.createElement("div");
 		playButton.setAttribute("id", "playbutton");
 		playButton.onclick = main;
-		playButton.textContent = "PLAY";
+		const playText = document.createElement("p");
+		playText.textContent = "PLAY";
+		playButton.appendChild(playText);
 		welcomeBox.appendChild(playButton);
 
 		const copyright = document.createElement("span");
