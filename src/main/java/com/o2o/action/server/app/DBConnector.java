@@ -86,9 +86,9 @@ public class DBConnector implements Serializable {
     public int getMyRank(String email){
         String getMyRankUrl = defaultSendUrl + commandGetMyRank + email;
         String getMyRankResult = queryController.get(getMyRankUrl);
-        return  Integer.parseInt(getMyRankResult);
+        System.out.println("myrank - " + jsonParser.parse(getMyRankResult).getAsInt());
+        return jsonParser.parse(getMyRankResult).getAsInt();
     }
-
 
 
     public List<String> getWord(int stage, int difficulty){
