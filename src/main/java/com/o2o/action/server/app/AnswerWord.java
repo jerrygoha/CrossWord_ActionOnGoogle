@@ -18,9 +18,15 @@ public class AnswerWord implements Comparable, Serializable {
         Answer = _word;
         Hints= _hints.clone();
         HintsStack = new Stack<String>();
-        HintsStack.push(Character.toString(_hints[0].charAt(0)));
-        HintsStack.push(Integer.toString(_hints[0].length()));
-        HintsStack.push(_hints[0]);
+        HintsStack.push(Character.toString(Answer.charAt(0)));
+        String LenSt = "";
+        for(int i=0; i< Answer.length(); i++)
+        {
+            LenSt +="X ";
+        }
+        HintsStack.push(LenSt);
+
+        HintsStack.push(Hints[0]);
         // row좌표 col좌표 이므로 *2의 배열 자리 선정
         AnswerPoint = new String[Answer.length()];
     }

@@ -26,31 +26,8 @@ public class Main extends DialogflowApp {
         try{
 
             StagePropertyInfo info = new StagePropertyInfo();
-            List<String> wordlist = dbConnectors.getWord(1,1);
-            System.out.println("realsword" + wordlist);
-            Collections.shuffle(wordlist);
-            List<String> hintlist = new ArrayList<>();
-            for(int i=0; i< wordlist.size(); i++)
-            {
-                String word = wordlist.get(i).replaceAll("\"","");
-                wordlist.set(i,word);
-                System.out.println(word);
-                if(!word.equals("ttt"))
-                {
-                    String hint = dbConnectors.getHint(word).get(0).replaceAll("\"","");
-                    hintlist.add(hint);
-                    System.out.println(hint);
-                }
-            }
-            System.out.println("wl : " + wordlist);
-            System.out.println("hl : " + hintlist);
-            GameBoard gameBoard = new GameBoard("easy",1,info,wordlist,hintlist);
-            System.out.println(gameBoard.tryAnswer("dog"));
-            System.out.println(gameBoard.tryAnswer("cat"));
-            System.out.println(gameBoard.tryAnswer("uk"));
-            System.out.println(gameBoard.getResult().getRestWord());
-            System.out.println(gameBoard.getResult().getAnser());
-            System.out.println(gameBoard.getResult().isWin());
+            UserInfo user = new UserInfo("1","0","3","5000",info,"intern2001@o2o.kr");
+            System.out.println("accumexp : " + user.getMyExp() + "  " +user.getMyCurrentExp() + " / " + user.getMyCurrentFullExp());
 
         }catch(Exception e)
         {
@@ -205,7 +182,9 @@ public class Main extends DialogflowApp {
         data.put("history", "welcome");
         data.put("special case", false);
         htmldata.put("command", "welcome");
-
+        UserSettingInfo userSettingInfo = new UserSettingInfo();
+        String settingserial = Createserial(userSettingInfo);
+        data.put("setting", settingserial);
 
         //db 연결
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
@@ -223,10 +202,9 @@ public class Main extends DialogflowApp {
                 String exp = dbConnector.getUserExp();
                 String coin = dbConnector.getUserCoin();
                 String hint = dbConnector.getUserHint();
+                System.out.println("accumexp : " + exp);
                 UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo,email);
-                System.out.println("userc ocin!!!! " + user.getMyCoin());
                 String serial = Createserial(user);
-                System.out.println("first Seiral!!!!1!!!!! : " + serial);
                 data.put("user", serial);
                 htmldata.put("inputemail", email);
                 //신규유저인지 아닌지
@@ -310,10 +288,11 @@ public class Main extends DialogflowApp {
         UserInfo user = (UserInfo) Desrial(userserial);
 
         htmldata.put("level", user.getLevel());
-        htmldata.put("myExp", user.getMyExp());
+        htmldata.put("myExp", user.getMyCurrentExp());
+        htmldata.put("fullExp", user.getMyCurrentFullExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-        htmldata.put("fullExp",user.getLevelUpExp());
+        htmldata.put("fullExp",user.getMyCurrentFullExp());
         String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -433,7 +412,7 @@ public class Main extends DialogflowApp {
         }
 
        GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,wordlist,hintlist);
-        System.out.println("answerlist : " + gameBoard.getResult().getRestWord());
+        System.out.println("answerlist : " + wordlist);
            // 게임보드 직렬화 후 전송
         String boardserial = Createserial(gameBoard);
         data.put("gameboard",boardserial);
@@ -445,6 +424,7 @@ public class Main extends DialogflowApp {
         htmldata.put("timeLimit", timeLimit);
         htmldata.put("totalWord", totalWord);
         htmldata.put("gameboard",gameBoard);
+        htmldata.put("difficulty", dif);
         response = tts.getTtsmap().get("ingame");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -468,7 +448,6 @@ public class Main extends DialogflowApp {
         // GameBoard정보 가져오기
         String boardserial = (String)data.get("gameboard");
         GameBoard gameBoard = (GameBoard) Desrial(boardserial);
-        System.out.println("before!!!!!! " + word);
         if (word.isEmpty()) {
 
             if (hint.equals("open")) {
@@ -484,12 +463,9 @@ public class Main extends DialogflowApp {
             }
 
         } else {
-                System.out.println("realereal word!!!! : "+ word);
             if (gameBoard.tryAnswer(word)) {
-                System.out.println(gameBoard.tryAnswer(word));
                 htmldata.put("command", "correct");
                 htmldata.put("matchpoint", gameBoard.GetAnswerPoint(word));
-                System.out.println(gameBoard.GetAnswerPoint(word));
                 response = "correct";
                 Result result = gameBoard.getResult();
                 if (result.isWin())
@@ -548,7 +524,9 @@ public class Main extends DialogflowApp {
         htmldata.put("command", "result");
         htmldata.put("result", result);
         htmldata.put("level", user.getLevel());
-        htmldata.put("myExp", user.getMyExp());
+        htmldata.put("myExp", user.getMyCurrentExp());
+        htmldata.put("fullExp", user.getMyCurrentFullExp());
+
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
         // GameBoard정보 가져오기
@@ -589,10 +567,8 @@ public class Main extends DialogflowApp {
         String response = tts.getTtsmap().get("setting");
         String serial = (String)data.get("setting");
         UserSettingInfo userSettingInfo = (UserSettingInfo) Desrial(serial);
-        System.out.println("settinginfo :" + userSettingInfo.isBackGroundSound());
         String sound = request.getParameter("Sound").toString();
         String isonoff = request.getParameter("onoff").toString();
-        System.out.println("sound : " + sound + "isonoff :" + isonoff);
         htmldata.put("command", "settingselect");
         htmldata.put("sound",sound);
         htmldata.put("onoff",isonoff);

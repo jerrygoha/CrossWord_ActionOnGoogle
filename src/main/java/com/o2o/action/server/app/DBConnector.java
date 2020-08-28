@@ -18,7 +18,7 @@ public class DBConnector implements Serializable {
     String commandGetTotalRank = "/getTotalRank";
     String commandGetMyRank = "/getMyRank/";
     String commandGet = "/get";
-    String commandUpdate = "/update/";
+    String commandUpdate = "/update";
     String defaultSendUrl = "https://actions.o2o.kr/devsvr7";
     QueryController queryController;
     JsonParser jsonParser;
@@ -74,19 +74,19 @@ public class DBConnector implements Serializable {
 
         String updateUserExpUrl = defaultSendUrl + commandUpdate + "Exp/" + exp + "/" + email;
         String updateUserExpResult = queryController.get(updateUserExpUrl);
-        System.out.println(updateUserExpResult);
+        System.out.println("updateresult : " + updateUserExpResult);
     }
     public void updateUserHint(int hint, String email){
 
         String updateUserHintUrl = defaultSendUrl + commandUpdate + "Hint/" + hint + "/" + email;
         String updateUserHintResult = queryController.get(updateUserHintUrl);
-        System.out.println(updateUserHintResult);
+        System.out.println("updatehint : " + updateUserHintResult);
     }
     public void updateUserCoin(int coin, String email){
 
         String updateUserCoinUrl = defaultSendUrl + commandUpdate + "Coin/" + coin + "/" + email;
         String updateUserCoinResult = queryController.get(updateUserCoinUrl);
-        System.out.println(updateUserCoinResult);
+        System.out.println("coin" + coin + "email" + email + "updatecoin : " +updateUserCoinResult);
     }
 
 

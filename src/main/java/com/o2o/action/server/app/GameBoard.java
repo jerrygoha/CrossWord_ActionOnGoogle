@@ -91,7 +91,6 @@ public class GameBoard implements Serializable {
             return;
 
         }
-
         answers = new AnswerWord[answercount];
         int dif = 0;
         if(difficulty.equals("easy"))
@@ -192,10 +191,17 @@ public class GameBoard implements Serializable {
         Result result = new Result();
         // 결과 객체에 정답리스트와 맞춰야할답 리스트 복사 후 리턴
         for (AnswerWord i:answerlist) {
-            result.answer.add(i.getAnswer());
+            if(!result.answer.contains(i.getAnswer()))
+            {
+                result.answer.add(i.getAnswer());
+            }
         }
         for (AnswerWord i:restanswerlist) {
-            result.restword.add(i.getAnswer());
+            if(!result.restword.contains(i.getAnswer()))
+            {
+                result.restword.add(i.getAnswer());
+            }
+
         }
         return result;
     }

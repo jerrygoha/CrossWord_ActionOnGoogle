@@ -8,6 +8,11 @@ public class UserInfo implements Serializable {
     private int mylevel;
     // 유저 누적 경험치
     private int myExp;
+
+    // 유저 현재 경험치
+    private int myCurrentExp;
+    // 유저 현재 전체 경험치
+    private int myCurrentFullExp;
     // 유저 힌트
     private int myHint;
     // 유저 코인
@@ -33,6 +38,24 @@ public class UserInfo implements Serializable {
         email =_email;
         // 상점정보는 해당 UserInfo 내에서만 사용하기 때문에 이곳에서 인스턴스 생성
         storeInfo = new StorePropertyInfo();
+
+        // 레벨이 1일때는 누적 경험치가 내 현재 경험치임
+        if(mylevel==1)
+        {
+            // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
+            myCurrentFullExp = stageInfo.Stages[mylevel].getLevelUpExp();
+            myCurrentExp = myExp;
+
+        }else
+            // 레벨이 1이상일때는 누적경험치 에서 이전 레벨업 경험치를 빼줘야함
+        {
+            // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
+            myCurrentFullExp = stageInfo.Stages[mylevel].getLevelUpExp() - stageInfo.Stages[mylevel-1].getLevelUpExp();
+            // 현재 경험치는 현재 누적 경험치 - 이전 레벨의 레벨업 경험치임.
+            myCurrentExp = myExp - stageInfo.Stages[mylevel-1].getLevelUpExp();
+        }
+
+
     }
 
     public int getLevel() {
@@ -51,9 +74,16 @@ public class UserInfo implements Serializable {
         return myCoin;
     }
 
-    public int getLevelUpExp(){return stageInfo.Stages[mylevel].getLevelUpCoin();}
     public String getEmail() {
         return email;
+    }
+
+    public int getMyCurrentExp() {
+        return myCurrentExp;
+    }
+
+    public int getMyCurrentFullExp() {
+        return myCurrentFullExp;
     }
 
 
@@ -64,6 +94,11 @@ public class UserInfo implements Serializable {
         int levelupcoin = stageInfo.Stages[mylevel].getLevelUpCoin();
         mylevel++;
         myCoin += levelupcoin;
+        // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
+        myCurrentFullExp = stageInfo.Stages[mylevel].getLevelUpExp() - stageInfo.Stages[mylevel-1].getLevelUpExp();
+        // 현재 경험치는 현재 누적 경험치 - 이전 레벨의 레벨업 경험치임.
+        myCurrentExp = 0;
+
     }
     // 게임상에서 힌트 사용
     public void ConsumeHintCount()
@@ -81,8 +116,23 @@ public class UserInfo implements Serializable {
         int levelupexp = stageInfo.Stages[mylevel].getLevelUpExp();
         // 코인 증가
         myCoin+=wincoin*coinratio;
-        // 경험치 증가
+        // 누적경험치 증가
         myExp+=winexp;
+        // 레벨이 1일때는 누적 경험치가 내 현재 경험치임
+        if(mylevel==1)
+        {
+            // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
+            myCurrentFullExp = levelupexp;
+            myCurrentExp = myExp;
+
+        }else
+        // 레벨이 1이상일때는 누적경험치 에서 이전 레벨업 경험치를 빼줘야함
+        {
+            // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
+            myCurrentFullExp = levelupexp - stageInfo.Stages[mylevel-1].getLevelUpExp();
+            // 현재 경험치는 현재 누적 경험치 - 이전 레벨의 레벨업 경험치임.
+            myCurrentExp = myExp - stageInfo.Stages[mylevel-1].getLevelUpExp();
+        }
         // 레벨업 확인
         if(myExp>= levelupexp)
         {
