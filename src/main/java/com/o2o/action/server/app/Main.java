@@ -334,9 +334,9 @@ public class Main extends DialogflowApp {
             stage = user.getLevel();
         } else {
             stage = ((Double) request.getParameter("number")).intValue();
-            if(stage>user.getLevel()){
-                stage(request);
-            }
+            System.out.println("stage : "+stage + "  level : " + user.getLevel());
+            if(stage>user.getLevel())
+                return stage(request);
         }
         data.put("history", "difficultySelect");
         data.put("special case", false);
