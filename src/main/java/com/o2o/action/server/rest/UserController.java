@@ -63,6 +63,13 @@ public class UserController implements Serializable {
         return "done!" + newCoin + " " +email;
     }
 
+    @Modifying
+    @RequestMapping("/resetUser/{email}")
+    public String resetUser(@PathVariable String email){
+        repository.queryByUserEmail(email);
+        return "reset " + email + "'s data";
+    }
+
 
     //변수명에 "_"붙이면 오류생겨서 _안붙이도록함
     @GetMapping("/getTotalRank")

@@ -34,4 +34,10 @@ public interface UserRepository extends PagingAndSortingRepository<User, String>
     @Modifying
     @Query(value = "update User d set d.userCoin= :coin where d.userEmail in (:email)")
     void queryByUserCoinAndUserEmail(Integer coin, String email);
+
+    //리셋 누르면 들어가는 쿼리
+    @Transactional
+    @Modifying
+    @Query(value = "delete from User e where e.userEmail in (:email)")
+    void queryByUserEmail(String email);
 }
