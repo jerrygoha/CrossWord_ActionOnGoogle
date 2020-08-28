@@ -76,7 +76,7 @@ public class DBConnector implements Serializable {
         String updateUserExpResult = queryController.get(updateUserExpUrl);
         System.out.println(updateUserExpResult);
     }
-    public void updateUserHing(int hint, String email){
+    public void updateUserHint(int hint, String email){
 
         String updateUserHintUrl = defaultSendUrl + commandUpdate + "Hint/" + hint + "/" + email;
         String updateUserHintResult = queryController.get(updateUserHintUrl);
