@@ -285,7 +285,7 @@ button {
     border-radius: 1vh;
 }
 #hintScrollBox{
-    height: 25vh;
+    height: 30vh;
     overflow : auto;
 }
 #hintScrollBox::-webkit-scrollbar {
