@@ -10,7 +10,6 @@ import java.util.List;
 
 //@Service
 public class DBConnector implements Serializable {
-    String userEmail = "";
 
     String commandGetUser = "/getUser/";
     String commandCreateUser = "/createUser/";
@@ -18,13 +17,15 @@ public class DBConnector implements Serializable {
     String commandGetWord = "/getWord/";
     String commandGetTotalRank = "/getTotalRank";
     String commandGetMyRank = "/getMyRank/";
-    String defaultSendUrl = "https://actions.o2o.kr/devsvr5";
+    String commandGet = "/get";
+    String commandUpdate = "/update/";
+    String defaultSendUrl = "https://actions.o2o.kr/devsvr7";
     QueryController queryController;
     JsonParser jsonParser;
     JsonArray user;
 
     public DBConnector(String email) {
-        userEmail = email;
+        String userEmail = email;
         String userCheckUrl = defaultSendUrl + commandGetUser + userEmail;
         queryController = new QueryController();
         String result = queryController.get(userCheckUrl);
@@ -63,7 +64,33 @@ public class DBConnector implements Serializable {
     public String getUserHint() {
         return user.get(0).getAsJsonObject().get("userHint").toString();
     }
-    public List<JsonArray> getTotalRank(){
+    public void updateUserLevel(int level, String email){
+
+        String updateUserLevelUrl = defaultSendUrl + commandUpdate + "Level/" + level + "/" + email;
+        String updateUserLevelResult = queryController.get(updateUserLevelUrl);
+        System.out.println(updateUserLevelResult);
+    }
+    public void updateUserExp(int exp, String email){
+
+        String updateUserExpUrl = defaultSendUrl + commandUpdate + "Exp/" + exp + "/" + email;
+        String updateUserExpResult = queryController.get(updateUserExpUrl);
+        System.out.println(updateUserExpResult);
+    }
+    public void updateUserHint(int hint, String email){
+
+        String updateUserHintUrl = defaultSendUrl + commandUpdate + "Hint/" + hint + "/" + email;
+        String updateUserHintResult = queryController.get(updateUserHintUrl);
+        System.out.println(updateUserHintResult);
+    }
+    public void updateUserCoin(int coin, String email){
+
+        String updateUserCoinUrl = defaultSendUrl + commandUpdate + "Coin/" + coin + "/" + email;
+        String updateUserCoinResult = queryController.get(updateUserCoinUrl);
+        System.out.println(updateUserCoinResult);
+    }
+
+
+    public String[][] getTotalRank(){
         String getTotalRankUrl = defaultSendUrl + commandGetTotalRank;
         String getTotalRankResult = queryController.get(getTotalRankUrl);
         JsonArray totalRankArray = (JsonArray) jsonParser.parse(getTotalRankResult);
@@ -80,15 +107,15 @@ public class DBConnector implements Serializable {
         }
 
 
-        return Arrays.asList(totalRankArray);
+        return totalRank2X;
     }
 
     public int getMyRank(String email){
         String getMyRankUrl = defaultSendUrl + commandGetMyRank + email;
         String getMyRankResult = queryController.get(getMyRankUrl);
-        return  Integer.parseInt(getMyRankResult);
+        System.out.println("myrank - " + jsonParser.parse(getMyRankResult).getAsInt());
+        return jsonParser.parse(getMyRankResult).getAsInt();
     }
-
 
 
     public List<String> getWord(int stage, int difficulty){
