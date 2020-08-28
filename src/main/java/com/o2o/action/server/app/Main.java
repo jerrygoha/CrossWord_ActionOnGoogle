@@ -450,17 +450,13 @@ public class Main extends DialogflowApp {
         GameBoard gameBoard = (GameBoard) Desrial(boardserial);
         if (word.isEmpty()) {
 
-            if (hint.equals("open")) {
-                htmldata.put("command", "openhint");
-                // 힌트 개수 차감
-                user.ConsumeHintCount();
-                dbConnector.updateUserHint(user.getMyHint(),user.getEmail());
-                htmldata.put("hint", gameBoard.getHintMessage());
-                response = "open hint";
-            } else {
-                htmldata.put("command", "closehint");
-                response = "close hint";
-            }
+            htmldata.put("command", "openhint");
+            // 힌트 개수 차감
+            user.ConsumeHintCount();
+            dbConnector.updateUserHint(user.getMyHint(),user.getEmail());
+            htmldata.put("hint", gameBoard.getHintMessage());
+            response = "open hint";
+
 
         } else {
             if (gameBoard.tryAnswer(word)) {
