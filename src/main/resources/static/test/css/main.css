@@ -585,7 +585,7 @@ input:checked + .slider:before {
     margin-top : 5vh;
 }
 #rank{
-    height: 8 vh;
+    height: 8vh;
     display : flex;
     font-size : 2vw;
 }
