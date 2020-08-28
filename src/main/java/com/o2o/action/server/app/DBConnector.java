@@ -17,8 +17,7 @@ public class DBConnector implements Serializable {
     String commandGetWord = "/getWord/";
     String commandGetTotalRank = "/getTotalRank";
     String commandGetMyRank = "/getMyRank/";
-    String commandGet = "/get";
-    String commandUpdate = "/update/";
+    String commandUpdate = "/update";
     String defaultSendUrl = "https://actions.o2o.kr/devsvr7";
     QueryController queryController;
     JsonParser jsonParser;
