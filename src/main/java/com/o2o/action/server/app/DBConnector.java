@@ -63,6 +63,11 @@ public class DBConnector implements Serializable {
     public String getUserHint() {
         return user.get(0).getAsJsonObject().get("userHint").toString();
     }
+//    public String setUserLevel(Short level, String email){
+//
+//    }
+
+
     public String[][] getTotalRank(){
         String getTotalRankUrl = defaultSendUrl + commandGetTotalRank;
         String getTotalRankResult = queryController.get(getTotalRankUrl);
@@ -76,7 +81,10 @@ public class DBConnector implements Serializable {
             System.out.print(totalRank2X[i][0]);
             totalRank2X[i][1] = totalRankArray.get(i).getAsJsonObject().get("userExp").toString();
             System.out.println(totalRank2X[i][1]);
+
         }
+
+
         return totalRank2X;
     }
 
@@ -86,7 +94,6 @@ public class DBConnector implements Serializable {
         System.out.println("myrank - " + jsonParser.parse(getMyRankResult).getAsInt());
         return jsonParser.parse(getMyRankResult).getAsInt();
     }
-
 
 
     public List<String> getWord(int stage, int difficulty){
