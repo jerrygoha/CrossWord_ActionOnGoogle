@@ -22,8 +22,6 @@ public class Main extends DialogflowApp {
 
     public static void main(String[] args) {
 
-
-
         BoardCell[][] Board = new BoardCell[4][4];
         int answercount = 3;
         AnswerWord[] answers = new AnswerWord[answercount];
@@ -73,11 +71,11 @@ public class Main extends DialogflowApp {
             System.out.println();
         }
         String ss = Createserial(boardAlgorithm);
-    boardAlgorithm = (BoardAlgorithm) Desrial(ss);
+        boardAlgorithm = (BoardAlgorithm) Desrial(ss);
 
     }
 
-    String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr4/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -92,7 +90,7 @@ public class Main extends DialogflowApp {
 
     }
 
-   static String Createserial(Object obj) {
+    static String Createserial(Object obj) {
         byte[] serializedMember = null;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -107,7 +105,7 @@ public class Main extends DialogflowApp {
         return Base64.getEncoder().encodeToString(serializedMember);
     }
 
-   static Object Desrial(String outst) {
+    static Object Desrial(String outst) {
         byte[] inserializedMember = Base64.getDecoder().decode(outst);
         ;
         try {
@@ -226,7 +224,9 @@ public class Main extends DialogflowApp {
         data.put("special case", false);
         htmldata.put("command", "welcome");
 
-
+        UserSettingInfo info = new UserSettingInfo();
+        String settingserial = Createserial(info);
+        data.put("setting", settingserial);
         //db 연결
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
@@ -243,7 +243,7 @@ public class Main extends DialogflowApp {
                 String exp = dbConnector.getUserExp();
                 String coin = dbConnector.getUserCoin();
                 String hint = dbConnector.getUserHint();
-                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo);
+                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo,email);
                 System.out.println("userc ocin!!!! " + user.getMyCoin());
                 String serial = Createserial(user);
                 System.out.println("first Seiral!!!!1!!!!! : " + serial);
@@ -367,7 +367,7 @@ public class Main extends DialogflowApp {
         // User정보 가져오기
         String userserial = (String)data.get("user");
         UserInfo user = (UserInfo) Desrial(userserial);
-       // UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
+        // UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
         //메인에서 왔는지,, 스테이지에서왔는지
         int stage;
         if (data.get("history").equals("main")) {
@@ -431,8 +431,8 @@ public class Main extends DialogflowApp {
 
         String response;
         // 게임보드 생성
-       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,dbConnector);
-       // 게임보드 직렬화 후 전송
+        GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,dbConnector);
+        // 게임보드 직렬화 후 전송
         String boardserial = Createserial(gameBoard);
         data.put("gameboard",boardserial);
         char[][] board = gameBoard.getBoard();
@@ -599,10 +599,13 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
         data.put("special case", true);
         htmldata.put("command", "ranking");
-
+        DBConnector db= new DBConnector("test");
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+        htmldata.put("myRank",db.getMyRank(user.getEmail()));
+        htmldata.put("totalRank",db.getTotalRank());
         String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
