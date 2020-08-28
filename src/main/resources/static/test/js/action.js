@@ -126,6 +126,10 @@ function setting() {
     window.canvas.sendTextQuery("setting");
 }
 
+function home() {
+    window.canvas.sendTextQuery("home");
+}
+
 //ranking으로 가는 함수
 function ranking() {
     window.canvas.sendTextQuery("ranking");
@@ -377,7 +381,7 @@ class Action {
                 const mainButton = document.createElement("i");
                 mainButton.setAttribute("class", "fa fa-home");
                 mainButton.setAttribute("id", "main");
-                mainButton.onclick = main;
+                mainButton.onclick = home;
                 bottomCommon.appendChild(mainButton);
 
                 const welcomeback = document.createElement("i");
@@ -540,6 +544,9 @@ class Action {
                 const boardCol = data.board.length; //행
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
+
+                const test = data.corect;
+                console.log("test" + test);
                 cnt = 0;
                 // hintCnt = 0;
                 // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
@@ -906,6 +913,9 @@ class Action {
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
                 container.appendChild(SettingBox);
@@ -992,6 +1002,9 @@ class Action {
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                }
 
                 let totalRank = data.totalRank;
                 let myrank = data.myRank;
@@ -1052,6 +1065,9 @@ class Action {
                 }
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
+                }
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");
