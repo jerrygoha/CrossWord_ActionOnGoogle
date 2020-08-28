@@ -1,9 +1,4 @@
-/**
- * appendChild를 사용한 stageLock
- * 스테이지 선택할 때 level에 따라 선택할 수 있는 스테이지와 그렇지 않은 스테이지로 바뀜
- * @param level
- * @returns {*}
- */
+
 function stepLock(step) {
     let stepNum = 0;
     const stepBox = document.querySelector("#stepButton");
@@ -205,6 +200,29 @@ class Action {
         let userEmail = "";
 
 
+
+        const correctAudio = document.createElement("audio");
+        correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
+        correctAudio.canPlayType("audio/mp3");
+        correctAudio.volume = 1.0;
+
+        const wrongAudio = document.createElement("audio");
+        wrongAudio.canPlayType("audio/mp3");
+        wrongAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/wrong_sound.mp3");
+        wrongAudio.volume = 1.0;
+
+        const successAudio = document.createElement("audio");
+        successAudio.canPlayType("audio/mp3");
+        successAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/success_sound.mp3");
+        successAudio.volume = 1.0;
+
+
+        const failAudio = document.createElement("audio");
+        failAudio.canPlayType("audio/mp3");
+        failAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/fail_sound.mp3");
+        failAudio.volume = 1.0;
+
+
         this.canvas = window.interactiveCanvas;
         this.scene = scene;
         this.commands = {
@@ -213,6 +231,8 @@ class Action {
                 console.log(data.inputemail);
 
                 userEmail = data.inputemail;
+
+
 
             },
             MAIN: function (data) {
@@ -279,8 +299,8 @@ class Action {
                  * 중앙에 이어하기, 단계 선택 버튼
                  * @type {HTMLDivElement}
                  */
-                const continue_stageButton = document.createElement("div")
-                continue_stageButton.setAttribute("id", "continue_stageButton")
+                const continue_stageButton = document.createElement("div");
+                continue_stageButton.setAttribute("id", "continue_stageButton");
                 container.appendChild(continue_stageButton);
 
                 const continueButton = document.createElement("div");
@@ -350,10 +370,10 @@ class Action {
                 mainButton.onclick = home;
                 bottomCommon.appendChild(mainButton);
 
-                const welcomeback = document.createElement("i");
-                welcomeback.setAttribute("class", "fa fa-reply");
-                welcomeback.setAttribute("id", "welcomeback");
-                bottomCommon.appendChild(welcomeback);
+                // const welcomeback = document.createElement("i");
+                // welcomeback.setAttribute("class", "fa fa-reply");
+                // welcomeback.setAttribute("id", "welcomeback");
+                // bottomCommon.appendChild(welcomeback);
 
                 const rankingButton = document.createElement("i");
                 rankingButton.setAttribute("class", "fa fa-star");
@@ -621,10 +641,6 @@ class Action {
                 // 게임 종료 여부를 받아옴, 변경되면 안되므로 상수 선언
                 const finish = data.finish;
 
-                const correctAudio = document.createElement("audio");
-                correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
-                correctAudio.canPlayType("audio/mp3");
-                correctAudio.volume = 1.0;
                 correctAudio.load();
                 correctAudio.autoplay = true;
 
@@ -651,10 +667,7 @@ class Action {
                 /**
                  * 틀렸다는 팝업창보다는 소리가 나도록 하거나 게임판을 좌우로 흔드는 쪽으로 -> 한 번만 흔들림, 소리 재생되지 않음
                  */
-                const wrongAudio = document.createElement("audio");
-                wrongAudio.canPlayType("audio/mp3");
-                wrongAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/wrong_sound.mp3");
-                wrongAudio.volume = 1.0;
+
                 wrongAudio.load();
                 wrongAudio.autoplay = true;
                 const gameBoard = document.querySelector("#gameBoard");
@@ -784,10 +797,6 @@ class Action {
                 progressbar.setAttribute("max", data.fullExp);
                 levelBox.appendChild(progressbar);
                 if (result == "success") {
-                    const successAudio = document.createElement("audio");
-                    successAudio.canPlayType("audio/mp3");
-                    successAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/success_sound.mp3");
-                    successAudio.volume = 1.0;
                     successAudio.load();
                     successAudio.autoplay = true;
                     const gainexp = document.createElement("div");
@@ -801,10 +810,6 @@ class Action {
 
                     levelBox.appendChild(gainexp);
                 } else if (result == "fail") {
-                    const failAudio = document.createElement("audio");
-                    failAudio.canPlayType("audio/mp3");
-                    failAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/fail_sound.mp3");
-                    failAudio.volume = 1.0;
                     failAudio.load();
                     failAudio.autoplay = true;
                     const gainexp = document.createElement("div");
@@ -879,6 +884,7 @@ class Action {
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
+
                 if (document.querySelector("#stepBox") != null) {
                     container.removeChild(document.querySelector("#stepBox"));
                 }
@@ -900,16 +906,15 @@ class Action {
                 if (document.querySelector("#resultBox") != null) {
                     container.removeChild(document.querySelector("#resultBox"));
                 }
+                let backgroundsoundeffect = data.backgroundsound; //1
+                let soundeffect = data.soundeffect; //1
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
                 container.appendChild(SettingBox);
                 const UserID = document.createElement("div");
                 UserID.setAttribute("id", "UserID");
-                UserID.textContent = "O2Ogmail.com";
+                UserID.textContent = userEmail;
                 SettingBox.appendChild(UserID);
-                // const middleBox = document.createElement("div");
-                // middleBox.setAttribute("id","middleBox");
-                // container.appendChild(middleBox);
                 const leftBox = document.createElement("div");
                 leftBox.setAttribute("id", "leftBox");
                 SettingBox.appendChild(leftBox);
@@ -944,6 +949,26 @@ class Action {
                 const span2 = document.createElement("span");
                 span2.setAttribute("class", "slider round");
                 label2.appendChild(span2);
+
+                console.log(soundeffect);
+
+
+                if(soundeffect == 1){
+                    document.querySelector("#input").checked = true;
+                }
+                else
+                {
+                    document.querySelector("#input").checked = false;
+                }
+                if(backgroundsoundeffect == 1){
+                    document.querySelector("#input2").checked = true;
+                }
+                else
+                {
+                    document.querySelector("#input2").checked = false;
+
+                }
+
                 /**
                  * 초기화
                  */
@@ -954,18 +979,34 @@ class Action {
             },
             SETTINGSELECT: function (data) {
                 let sound = data.sound; //1. soundEffect 2.background sound
-                let onoff = data.onoff; //1.  1 오면 true -> on/ 0오면 false;
-                if ((onoff == "[1]") && (sound == "SoundEffect")) {
-                    document.querySelector("#input").checked = true;
-                }
-                if ((onoff == "[0]") && (sound == "SoundEffect")) {
+                let onoff = data.onoff; //1.  0오면 off/1오면 on
+                if ((onoff == "0") && (sound == "SoundEffect")) {
+                    correctAudio.volume = 0;
+                    wrongAudio.volume = 0;
+                    successAudio.volume = 0;
+                    failAudio.volume = 0;
                     document.querySelector("#input").checked = false;
                 }
-                if ((onoff == "[1]") && (sound == "BackGround")) {
-                    document.querySelector("#input2").checked = true;
+                if ((onoff == "1") && (sound == "SoundEffect")) {
+                    correctAudio.volume = 1;
+                    wrongAudio.volume = 1;
+                    successAudio.volume = 1;
+                    failAudio.volume = 1;
+                    document.querySelector("#input").checked = true;
                 }
-                if ((onoff == "[0]") && (sound == "BackGround")) {
+                if ((onoff == "0") && (sound == "BackGround")) {
+                    correctAudio.volume = 0;
+                    wrongAudio.volume = 0;
+                    successAudio.volume = 0;
+                    failAudio.volume = 0;
                     document.querySelector("#input2").checked = false;
+                }
+                if ((onoff == "1") && (sound == "BackGround")) {
+                    correctAudio.volume = 1;
+                    wrongAudio.volume = 1;
+                    successAudio.volume = 1;
+                    failAudio.volume = 1;
+                    document.querySelector("#input2").checked = true;
                 }
             },
             RANKING: function (data) {

@@ -186,6 +186,7 @@ public class Main extends DialogflowApp {
         String settingserial = Createserial(userSettingInfo);
         data.put("setting", settingserial);
 
+
         //db 연결
         if (!request.hasCapability("actions.capability.INTERACTIVE_CANVAS")) {
             response = "Inveractive Canvas가 지원되지 않는 기기예요.";
@@ -327,14 +328,16 @@ public class Main extends DialogflowApp {
         String userserial = (String)data.get("user");
         UserInfo user = (UserInfo) Desrial(userserial);
        // UserInfo user = new UserInfo(1,0,3,5000,stageinfo);
-        //메인에서 왔는지,, 스테이지에서왔는지
+        //메인에서 왔는지, 스테이지에서왔는지
         int stage;
         if (data.get("history").equals("main")) {
             stage = user.getLevel();
         } else {
             stage = ((Double) request.getParameter("number")).intValue();
+            if(stage>user.getLevel()){
+                stage(request);
+            }
         }
-
         data.put("history", "difficultySelect");
         data.put("special case", false);
         data.put("stage", stage);
@@ -400,13 +403,14 @@ public class Main extends DialogflowApp {
             dif = 3;
         //나중에 구성자 바꾸어야됌
         DBConnector dbConnector = new DBConnector(user.getEmail());
-        List<String> wordlist = dbConnector.getWord(stage,dif);
+        List<String> wordlist = dbConnector.getWord(dif);
         Collections.shuffle(wordlist);
         List<String> hintlist = new ArrayList<>();
         for(int i=0; i< wordlist.size(); i++)
         {
             String word = wordlist.get(i).replaceAll("\"","");
             wordlist.set(i,word);
+            System.out.println(word);
             String hint = dbConnector.getHint(word).get(0).replaceAll("\"","");
             hintlist.add(hint);
         }
@@ -548,6 +552,11 @@ public class Main extends DialogflowApp {
         HtmlResponse htmlResponse = new HtmlResponse();
         data.put("special case", true);
         htmldata.put("command", "setting");
+        String settingserial = (String)data.get("setting");
+        UserSettingInfo userSettingInfo =  (UserSettingInfo) Desrial(settingserial);
+        System.out.println("soundeffect" + userSettingInfo.isSoundEffect() + "backgroundsound" + userSettingInfo.isBackGroundSound());
+        htmldata.put("soundeffect", userSettingInfo.isSoundEffect());
+        htmldata.put("backgroundsound", userSettingInfo.isBackGroundSound());
         String response = tts.getTtsmap().get("setting");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -565,11 +574,22 @@ public class Main extends DialogflowApp {
         UserSettingInfo userSettingInfo = (UserSettingInfo) Desrial(serial);
         String sound = request.getParameter("Sound").toString();
         String isonoff = request.getParameter("onoff").toString();
+        System.out.println("sound : " + sound + "isonoff : " + isonoff);
+        // 설정값을 userSettingInfo 객체에 세팅
+        if(sound.equals("BackgroundSound"))
+        {
+            userSettingInfo.setBackGroundSound(Integer.parseInt(isonoff));
+        }
+        else if(sound.equals("SoundEffect"))
+        {
+            userSettingInfo.setSoundEffect(Integer.parseInt(isonoff));
+        }
+        // 설정된 객체를 저장
+        String settingserial = Createserial(userSettingInfo);
+        data.put("setting", settingserial);
         htmldata.put("command", "settingselect");
         htmldata.put("sound",sound);
         htmldata.put("onoff",isonoff);
-        // userSettingInfo.setBackGroundSound(sound,isonoff);
-//        htmldata.put("command","setting");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
                 .build();
