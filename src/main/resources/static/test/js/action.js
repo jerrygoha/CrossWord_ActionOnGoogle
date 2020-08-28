@@ -1,4 +1,3 @@
-
 function stepLock(step) {
     let stepNum = 0;
     const stepBox = document.querySelector("#stepButton");
@@ -200,7 +199,6 @@ class Action {
         let userEmail = "";
 
 
-
         const correctAudio = document.createElement("audio");
         correctAudio.setAttribute("src", "https://actions.o2o.kr/devsvr1/audio/correct_sound.mp3");
         correctAudio.canPlayType("audio/mp3");
@@ -231,8 +229,6 @@ class Action {
                 console.log(data.inputemail);
 
                 userEmail = data.inputemail;
-
-
 
             },
             MAIN: function (data) {
@@ -299,8 +295,8 @@ class Action {
                  * 중앙에 이어하기, 단계 선택 버튼
                  * @type {HTMLDivElement}
                  */
-                const continue_stageButton = document.createElement("div");
-                continue_stageButton.setAttribute("id", "continue_stageButton");
+                const continue_stageButton = document.createElement("div")
+                continue_stageButton.setAttribute("id", "continue_stageButton")
                 container.appendChild(continue_stageButton);
 
                 const continueButton = document.createElement("div");
@@ -626,13 +622,12 @@ class Action {
 
 
                 if (difficulty == 1) {
-                    myCoin -= betMoney1;
+                    document.querySelector("#coinText").textContent = myCoin - betMoney1;
                 } else if (difficulty == 2) {
-                    myCoin -= betMoney2;
+                    document.querySelector("#coinText").textContent = myCoin - betMoney2;
                 } else if (difficulty == 3) {
-                    myCoin -= betMoney3;
+                    document.querySelector("#coinText").textContent = myCoin - betMoney3;
                 }
-                document.querySelector("#coinText").textContent = myCoin;
                 console.log("mycoin - betMoney" + myCoin - betMoney1);
             },
             CORRECT: function (data) {
@@ -767,8 +762,7 @@ class Action {
                 }
                 const result = data.result;
                 let islevelup = false;
-                if(level < data.level)
-                {
+                if (level < data.level) {
                     islevelup = true;
                 }
                 level = data.level;
@@ -800,11 +794,9 @@ class Action {
                     successAudio.load();
                     successAudio.autoplay = true;
                     const gainexp = document.createElement("div");
-                    if(islevelup)
-                    {
+                    if (islevelup) {
                         gainexp.textContent = "+" + (data.fullExp - exp);
-                    }else
-                    {
+                    } else {
                         gainexp.textContent = "+" + (data.myExp - exp);
                     }
 
@@ -830,6 +822,8 @@ class Action {
                     gaincoin.textContent = "+" + (data.myCoin - myCoin);
                     coinBox.appendChild(gaincoin);
                 } else if (result == "fail") {
+                    console.log("mycoin" + myCoin);
+                    console.log("data.mycoin" + data.myCoin);
                     const gaincoin = document.createElement("div");
                     gaincoin.textContent = "-" + (myCoin - data.myCoin);
                     coinBox.appendChild(gaincoin);
@@ -953,18 +947,14 @@ class Action {
                 console.log(soundeffect);
 
 
-                if(soundeffect == 1){
+                if (soundeffect == 1) {
                     document.querySelector("#input").checked = true;
-                }
-                else
-                {
+                } else {
                     document.querySelector("#input").checked = false;
                 }
-                if(backgroundsoundeffect == 1){
+                if (backgroundsoundeffect == 1) {
                     document.querySelector("#input2").checked = true;
-                }
-                else
-                {
+                } else {
                     document.querySelector("#input2").checked = false;
 
                 }
