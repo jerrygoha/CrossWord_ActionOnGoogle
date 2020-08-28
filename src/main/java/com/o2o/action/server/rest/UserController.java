@@ -1,9 +1,11 @@
 package com.o2o.action.server.rest;
 
+import com.o2o.action.server.app.Main;
 import com.o2o.action.server.model.User;
 import com.o2o.action.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -32,6 +34,35 @@ public class UserController implements Serializable {
     public List getUser(@PathVariable String email){
         return repository.findByUserEmail(email);
     }
+
+    @Modifying
+    @RequestMapping("/updateLevel/{newLevel}/{email}")
+    public String newLevel(@PathVariable Short newLevel, @PathVariable String email){
+        repository.queryByUserLevelAndUserEmail(newLevel, email);
+        return "done!" + newLevel + " " +email;
+    }
+
+    @Modifying
+    @RequestMapping("/updateExp/{newExp}/{email}")
+    public String newExp(@PathVariable Integer newExp, @PathVariable String email){
+        repository.queryByUserExpAndUserEmail(newExp, email);
+        return "done!" + newExp + " " +email;
+    }
+
+    @Modifying
+    @RequestMapping("/updateHint/{newHint}/{email}")
+    public String newHint(@PathVariable Integer newHint, @PathVariable String email){
+        repository.queryByUserHintAndUserEmail(newHint, email);
+        return "done!" + newHint + " " +email;
+    }
+
+    @Modifying
+    @RequestMapping("/updateCoin/{newCoin}/{email}")
+    public String newCoin(@PathVariable Integer newCoin, @PathVariable String email){
+        repository.queryByUserCoinAndUserEmail(newCoin, email);
+        return "done!" + newCoin + " " +email;
+    }
+
 
     //변수명에 "_"붙이면 오류생겨서 _안붙이도록함
     @GetMapping("/getTotalRank")

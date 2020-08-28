@@ -404,6 +404,7 @@ public class Main extends DialogflowApp {
         UserInfo user = (UserInfo) Desrial(userserial);
         // 유저 게임 시작 시 코인 감소
         user.GameStartChange(stage,difficulty);
+        dbConnector.updateUserCoin(user.getMyCoin(),user.getEmail());
         // 유저 정보 저장
         userserial = Createserial(user);
         data.put("user",userserial);
@@ -474,6 +475,7 @@ public class Main extends DialogflowApp {
                 htmldata.put("command", "openhint");
                 // 힌트 개수 차감
                 user.ConsumeHintCount();
+                dbConnector.updateUserHint(user.getMyHint(),user.getEmail());
                 htmldata.put("hint", gameBoard.getHintMessage());
                 response = "open hint";
             } else {
@@ -534,6 +536,9 @@ public class Main extends DialogflowApp {
         {
             response = tts.getTtsmap().get("success");
             user.UserStageClearChange((int)stage,difficulty);
+            dbConnector.updateUserExp(user.getMyExp(),user.getEmail());
+            dbConnector.updateUserCoin(user.getMyCoin(),user.getEmail());
+            dbConnector.updateUserLevel(user.getLevel(),user.getEmail());
         }
 
         else
@@ -603,12 +608,13 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-
         data.put("special case", true);
         htmldata.put("command", "ranking");
+        DBConnector db= new DBConnector("test");
         String userserial = (String)data.get("user");
         UserInfo user = (UserInfo) Desrial(userserial);
-        htmldata.put("rank",user.getEmail());
+        htmldata.put("myRank",db.getMyRank(user.getEmail()));
+        htmldata.put("totalRank",db.getTotalRank());
         String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
