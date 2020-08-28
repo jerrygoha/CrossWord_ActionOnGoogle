@@ -1,3 +1,9 @@
+/**
+ * appendChild를 사용한 stageLock
+ * 스테이지 선택할 때 level에 따라 선택할 수 있는 스테이지와 그렇지 않은 스테이지로 바뀜
+ * @param level
+ * @returns {*}
+ */
 function stepLock(step) {
     let stepNum = 0;
     const stepBox = document.querySelector("#stepButton");
