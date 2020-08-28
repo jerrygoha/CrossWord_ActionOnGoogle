@@ -1,9 +1,4 @@
-/**
- * appendChild를 사용한 stageLock
- * 스테이지 선택할 때 level에 따라 선택할 수 있는 스테이지와 그렇지 않은 스테이지로 바뀜
- * @param level
- * @returns {*}
- */
+
 function stepLock(step) {
     let stepNum = 0;
     const stepBox = document.querySelector("#stepButton");
@@ -111,11 +106,6 @@ function main() {
     window.canvas.sendTextQuery("play");
 }
 
-// //main에서 back 해서 welcome화면으로 가는 함수
-// function backwelcome(){
-//     window.canvas.sendTextQuery("select stage");
-// }
-
 //상점으로 가는 함수
 function shop() {
     window.canvas.sendTextQuery("store");
@@ -124,6 +114,10 @@ function shop() {
 //setting으로 가는 함수
 function setting() {
     window.canvas.sendTextQuery("setting");
+}
+
+function home() {
+    window.canvas.sendTextQuery("home");
 }
 
 //ranking으로 가는 함수
@@ -196,6 +190,8 @@ class Action {
 
         //ingame, correct에서 사용
         let cnt = 0;
+
+        //main -> 공통 화면
         let userEmail = "";
 
 
@@ -206,43 +202,7 @@ class Action {
                 console.log("실행 : welcome");
                 console.log(data.inputemail);
 
-                const test = document.createElement("div");
-                test.textContent = data.inputemail;
-                container.appendChild(test);
                 userEmail = data.inputemail;
-
-
-
-                /*while (container.hasChildNodes()) {
-                    container.removeChild(container.firstChild);
-                }
-
-                const welcomeBox = document.createElement("div");
-                welcomeBox.setAttribute("id", "welcomeBox");
-                container.appendChild(welcomeBox);
-
-                const title = document.createElement("h1");
-                title.setAttribute("id", "title");
-                title.textContent = "WORD SEARCH";
-                welcomeBox.appendChild(title);
-
-                const playButton = document.createElement("div");
-                playButton.setAttribute("id", "playbutton");
-                playButton.onclick = main;
-                const playText = document.createElement("p");
-                playText.textContent = "PLAY";
-                playButton.appendChild(playText);
-                welcomeBox.appendChild(playButton);
-
-                const copyright = document.createElement("span");
-                copyright.setAttribute("id", "copyright");
-                copyright.textContent = "COPYRIGHT O2O.INC. ALL RIGHT RESERVED";
-                container.appendChild(copyright);
-
-                const o2ologo = document.createElement("span");
-                o2ologo.setAttribute("id", "o2ologo");
-                o2ologo.textContent = "O2OCI";
-                container.appendChild(o2ologo);*/
 
             },
             MAIN: function (data) {
@@ -377,7 +337,7 @@ class Action {
                 const mainButton = document.createElement("i");
                 mainButton.setAttribute("class", "fa fa-home");
                 mainButton.setAttribute("id", "main");
-                mainButton.onclick = main;
+                mainButton.onclick = home;
                 bottomCommon.appendChild(mainButton);
 
                 const welcomeback = document.createElement("i");
@@ -540,17 +500,10 @@ class Action {
                 const boardCol = data.board.length; //행
                 const timeLimit = data.timeLimit;
                 const totalWord = data.totalWord;
+
+                const test = data.corect;
+                console.log("test" + test);
                 cnt = 0;
-                // hintCnt = 0;
-                // const board = [['a', 'b', 'c', 'd'], ['e', 'f', 'g', 'h'], ['i', 'j', 'k', 'l'], ['m', 'n', 'o', 'p']];
-                // const board = [['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd'], ['a', 'b', 'c', 'd', 'd', 'd', 'd', 'd'], ['e', 'f', 'g', 'h', 'd', 'd', 'd', 'd'], ['i', 'j', 'k', 'l', 'd', 'd', 'd', 'd'], ['m', 'n', 'o', 'p', 'd', 'd', 'd', 'd']];
-                // console.log(board[0][0]);
-                // const boardRow = board[0].length;
-                // console.log(boardRow);
-                // const boardCol = board.length;
-                // console.log(boardCol);
-                // const timeLimit = 100;
-                // const totalWord = 5;
                 /**
                  * 좌측 중앙에
                  * 사용자가 사용한 힌트가 보임
@@ -666,7 +619,6 @@ class Action {
                 for(let cnt = 0; cnt < matchedWord.length; cnt++) {
                     document.getElementById(matchedWord[cnt]).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
                 }
-                // document.getElementById(matchedWord).style.backgroundColor = "rgba( 255, 255, 255, 0.2)";
 
                 //다 맞추면 fulfillment로 textQuery 전송
                 if (finish) {
@@ -695,78 +647,84 @@ class Action {
             },
             OPENHINT: function (data) {
                 console.log("실행 : openHint");
-
                 /**
                  * hint = data.hint -> fulfillment에서 보내주는 hint
                  * 게임판을 가리고 힌트를 보여줌
                  * 타이머가 잠시 멈춤
                  */
-                //몇 단계의 힌트인지
-                // hintCnt++;
+                const hint = data.hint;
                 //힌트를 열면 타이머를 잠시 멈춤
                 Timer.stop();
-                //사용자의 남은 힌트를 보여줌
-                const remainingHint = document.querySelector("#hintText");
-                if (myHint > 0) myHint--;
-                remainingHint.textContent = myHint;
-
-                const hint = data.hint;
-
-                if (hintCnt < 3) {
-                    const backgroundModal = document.createElement("div");
-                    backgroundModal.setAttribute("class", "backgroundModal");
-                    backgroundModal.setAttribute("id", "backgroundModal");
-                    container.appendChild(backgroundModal);
-
-                    const contentModal = document.createElement("div");
-                    contentModal.setAttribute("class", "contentModal");
-                    contentModal.style.height = document.getElementById("gameBoard").clientHeight + "px";
-                    contentModal.style.width = document.getElementById("gameBoard").clientWidth + "px";
-                    backgroundModal.appendChild(contentModal);
-
-                    const hintModalText = document.createElement("p");
-                    hintModalText.textContent = "HINT";
-                    contentModal.appendChild(hintModalText);
-                    contentModal.appendChild(document.createElement("br"));
-                    contentModal.appendChild(document.createElement("hr"));
-                    contentModal.appendChild(document.createElement("br"));
-
-                    const hintModal = document.createElement("p");
-                    if (hint != "noHint") {
-                        hintModal.textContent = hint;
-                        console.log(hint);
-                        contentModal.appendChild(hintModal);
-                    } else if (hint == "noHint") {
-                        hintModal.textContent = "Please charge your hint";
-                        contentModal.appendChild(hintModal);
+                const backgroundModal = document.createElement("div");
+                backgroundModal.setAttribute("class", "backgroundModal");
+                backgroundModal.setAttribute("id", "backgroundModal");
+                container.appendChild(backgroundModal);
+                const contentModal = document.createElement("div");
+                contentModal.setAttribute("class", "contentModal");
+                contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
+                contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
+                backgroundModal.appendChild(contentModal);
+                const hintModalText = document.createElement("p");
+                hintModalText.textContent = "HINT";
+                contentModal.appendChild(hintModalText);
+                contentModal.appendChild(document.createElement("br"));
+                contentModal.appendChild(document.createElement("hr"));
+                contentModal.appendChild(document.createElement("br"));
+                //사용자의 힌트 개수가 1개 이상인지 체크
+                if (myHint >= 1) {
+                    if (hint.length == 1) { //첫 글자는 알파벳이고 뒤부터는 알파벳이 아닌 경우
+                        backgroundModal.style.display = "none";
+                        document.getElementsByName(hint).style.textShadow = "1px 1px 8px #FF0000";
+                        setTimeout(function () {
+                            /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
+                            Timer.resume();
+                            // for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                            document.getElementsByName(hint).style.textShadow = "none";
+                            const usedHint = document.querySelector("#hintScrollBox");
+                            const content = document.createElement("p");
+                            content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
+                            usedHint.appendChild(content);
+                        }, 5000);
+                        //사용자의 남은 힌트를 보여줌
+                        const remainingHint = document.querySelector("#hintText");
+                        if (myHint > 0) myHint--;
+                        remainingHint.textContent = myHint;
+                    } else if (hint.length > 1) {
+                        const hintModal = document.createElement("p");
+                        if (hint != "noHint") {
+                            hintModal.textContent = hint;
+                            console.log(hint);
+                            contentModal.appendChild(hintModal);
+                            //사용자의 남은 힌트를 보여줌
+                            const remainingHint = document.querySelector("#hintText");
+                            if (myHint > 0) myHint--;
+                            remainingHint.textContent = myHint;
+                        } else if (hint == "noHint") {
+                            hintModal.textContent = "Please charge your hint";
+                            contentModal.appendChild(hintModal);
+                        }
+                        backgroundModal.style.display = "block";
+                        setTimeout(function () {
+                            backgroundModal.style.display = "none";
+                            Timer.resume();
+                            if (hint != "noHint") {
+                                const usedHint = document.querySelector("#hintScrollBox");
+                                const content = document.createElement("p");
+                                content.textContent = hint;
+                                console.log(hint);
+                                usedHint.appendChild(content);
+                            }
+                        }, 5000);
                     }
+                } else if (myHint <= 0) {
+                    //사용자의 남은 힌트가 없다면 힌트를 보여주지 않음
+                    const hintModal = document.createElement("p");
+                    hintModal.textContent = "Please charge your hint";
+                    contentModal.appendChild(hintModal);
                     backgroundModal.style.display = "block";
-
                     setTimeout(function () {
                         backgroundModal.style.display = "none";
                         Timer.resume();
-                        if (hint != "noHint") {
-                            const usedHint = document.getElementById("hintScrollBox");                            const content = document.createElement("p");
-                            content.textContent = hint;
-                            console.log(hint);
-                            usedHint.appendChild(content);
-                        }
-                    }, 5000);
-                } else if (hintCnt == 3) {
-                    /*첫 글자 알파벳이 존재하는 부분에 하이라이트 -> 텍스트만 하이라이트
-                    * text-shadow: 2px 2px 2px gray; text-shadow: 2px 2px 6px gray;*/
-                    console.log("hint : " + document.getElementsByName(hint).length);
-                    for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                        document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
-                    setTimeout(function () {
-                        /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
-                        Timer.resume();
-                        for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                            document.getElementsByName(hint)[i].style.textShadow = "none";
-                        const usedHint = document.getElementById("hintScrollBox");
-                        const content = document.createElement("p");
-                        content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
-                        usedHint.appendChild(content);
                     }, 5000);
                 }
             },
@@ -894,9 +852,6 @@ class Action {
                 if (document.querySelector("#continue_stageButton") != null) {
                     container.removeChild(document.querySelector("#continue_stageButton"));
                 }
-                if (document.querySelector("#difficultyBox") != null) {
-                    container.removeChild(document.querySelector("#difficultyBox"));
-                }
                 if (document.querySelector("#rankBox") != null) {
                     container.removeChild(document.querySelector("#rankBox"));
                 }
@@ -905,6 +860,12 @@ class Action {
                 }
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
+                }
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                }
+                if(document.querySelector("#resultBox") != null){
+                    container.removeChild(document.querySelector("#resultBox"));
                 }
                 const SettingBox = document.createElement("div");
                 SettingBox.setAttribute("id", "SettingBox");
@@ -958,8 +919,7 @@ class Action {
                 ResetButton.textContent = "RESET";
                 SettingBox.appendChild(ResetButton);
             },
-            SETTINGSELECT: function (data)
-            {
+            SETTINGSELECT: function (data) {
                 let sound = data.sound; //1. soundEffect 2.background sound
                 let onoff = data.onoff; //1.  1 오면 true -> on/ 0오면 false;
                 if((onoff == "[1]")&&(sound == "SoundEffect")){
@@ -992,20 +952,28 @@ class Action {
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
-                // let array = {a : [{"email":"o2o","level" : 2,"exp" : 250},{"email" : "ja","level" : 3, "exp" : 550 }]};
-                //
-                // var test = JSON.stringify(array);
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                }
+                if(document.querySelector("#resultBox") != null){
+                    container.removeChild(document.querySelector("#resultBox"));
+                }
+                let totalRank = data.totalRank;
+                let myrank = data.myRank;
+                console.log("totalRank : " + totalRank); //list.json
+                console.log("myrank : "+ myrank);
+
                 const rankBox = document.createElement("div");
                 rankBox.setAttribute("id", "rankBox");
                 container.appendChild(rankBox);
                 const yourrank = document.createElement("div");
                 yourrank.setAttribute("id", "yourrank");
-                yourrank.textContent = "O2O@gmail.com 님의 랭킹은 1위";
+                yourrank.textContent = userEmail+"님의 랭킹은"+myrank+"위입니다.";
                 rankBox.appendChild(yourrank);
                 const ranking = document.createElement("div");
                 ranking.setAttribute("class", "ranking");
                 rankBox.appendChild(ranking);
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < totalRank.length; i++) {
                     const rank = document.createElement("div");
                     rank.setAttribute("id", "rank");
                     ranking.appendChild(rank);
@@ -1018,12 +986,12 @@ class Action {
                     User.appendChild(ranknum);
                     const rankId = document.createElement("div");
                     rankId.setAttribute("id", "rankId");
-                    rankId.textContent = "o2o@gmail.com";
+                    rankId.textContent = totalRank[i][0];
                     User.appendChild(rankId);
                     const rankexp = document.createElement("div");
                     rankexp.setAttribute("id", "rankexp");
                     rank.appendChild(rankexp);
-                    rankexp.textContent = "exp 5140"
+                    rankexp.textContent = "exp \t"+totalRank[i][1];
                 }
             },
             SHOP: function (data) {
@@ -1049,6 +1017,12 @@ class Action {
                 }
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
+                }
+                if(document.querySelector("#difficultyBox") != null){
+                    container.removeChild(document.querySelector("#difficultyBox"));
+                }
+                if(document.querySelector("#resultBox") != null){
+                    container.removeChild(document.querySelector("#resultBox"));
                 }
                 const Store = document.createElement("div");
                 Store.setAttribute("id", "Store");
