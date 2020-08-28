@@ -12,19 +12,25 @@ public class UserInfo implements Serializable {
     private int myHint;
     // 유저 코인
     private int myCoin;
+
+
+
+    // 유저 이메일
+    private String email;
     // 스테이지 프로퍼티 정보
     private StagePropertyInfo stageInfo;
     // 상점 프로퍼티 정보
     private StorePropertyInfo storeInfo;
 
     // 유저 정보 생성 - DB에서 초기화할것임.
-    public UserInfo(String _mylevel, String _myExp, String _myHint, String _myCoin, StagePropertyInfo _stageInfo )
+    public UserInfo(String _mylevel, String _myExp, String _myHint, String _myCoin, StagePropertyInfo _stageInfo, String _email )
     {
         mylevel = Integer.parseInt(_mylevel) ;
         myExp = Integer.parseInt(_myExp);
         myHint = Integer.parseInt(_myHint);
         myCoin = Integer.parseInt(_myCoin);
         stageInfo = _stageInfo;
+        email =_email;
         // 상점정보는 해당 UserInfo 내에서만 사용하기 때문에 이곳에서 인스턴스 생성
         storeInfo = new StorePropertyInfo();
     }
@@ -45,6 +51,10 @@ public class UserInfo implements Serializable {
         return myCoin;
     }
 
+    public int getLevelUpExp(){return stageInfo.Stages[mylevel].getLevelUpCoin();}
+    public String getEmail() {
+        return email;
+    }
 
 
     // 유저 레벨업 - 레벨과 코인 증가

@@ -1,10 +1,11 @@
 package com.o2o.action.server.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "hint_info")
-public class HintInfo {
+public class HintInfo implements Serializable {
 
 
 

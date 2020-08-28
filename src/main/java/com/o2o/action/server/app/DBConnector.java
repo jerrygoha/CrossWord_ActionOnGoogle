@@ -18,7 +18,7 @@ public class DBConnector implements Serializable {
     String commandGetWord = "/getWord/";
     String commandGetTotalRank = "/getTotalRank";
     String commandGetMyRank = "/getMyRank/";
-    String defaultSendUrl = "https://actions.o2o.kr/devsvr5";
+    String defaultSendUrl = "https://actions.o2o.kr/devsvr4";
     QueryController queryController;
     JsonParser jsonParser;
     JsonArray user;
@@ -97,6 +97,7 @@ public class DBConnector implements Serializable {
         String sndn = "s"+stage+"d"+difficulty;
         String getWordUrl = defaultSendUrl + commandGetWord + sndn;
         String getWordResult = queryController.get(getWordUrl);
+        System.out.println("wordre"+getWordResult);
         JsonArray wordArray = (JsonArray) jsonParser.parse(getWordResult);
         int size = wordArray.size();
         for(int i = 0; i<size; i++){

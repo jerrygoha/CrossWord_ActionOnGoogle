@@ -1,10 +1,11 @@
 package com.o2o.action.server.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "word_info")
-public class WordInfo {
+public class WordInfo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

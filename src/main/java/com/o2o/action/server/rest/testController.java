@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-public class testController {
+public class testController implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(testController.class);
     private final Main main;
 

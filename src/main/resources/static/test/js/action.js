@@ -206,9 +206,7 @@ class Action {
                 console.log("실행 : welcome");
                 console.log(data.inputemail);
 
-                const test = document.createElement("div");
-                test.textContent = data.inputemail;
-                container.appendChild(test);
+
                 userEmail = data.inputemail;
 
 

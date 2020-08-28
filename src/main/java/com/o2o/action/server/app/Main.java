@@ -22,62 +22,43 @@ public class Main extends DialogflowApp {
 
     public static void main(String[] args) {
 
+       DBConnector dbConnectors = new DBConnector("intern2001@o2o.kr");
+        try{
 
-
-        BoardCell[][] Board = new BoardCell[4][4];
-        int answercount = 3;
-        AnswerWord[] answers = new AnswerWord[answercount];
-
-        AnswerWord answerWord = new AnswerWord("back", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
-        answers[0] = answerWord;
-        answerWord = new AnswerWord("dog", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
-        answers[1] = answerWord;
-        answerWord = new AnswerWord("wing", new String[]{"힌트입니다.", "힌트입닌다2", "힌트입니다3"});
-        answers[2] = answerWord;
-    /*    answerWord = new AnswerWord("comes",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[3]=answerWord;
-        answerWord = new AnswerWord("apple",new String[]{"힌트입니다.","힌트입닌다2","힌트입니다3"});
-        answers[4]=answerWord;*/
-        Arrays.sort(answers);
-        boolean issucess = false;
-        ArrayList dirarray1 = new ArrayList(Arrays.asList(2, 4));
-
-        ArrayList dirarray2 = new ArrayList(Arrays.asList(2, 3, 4));
-
-        ArrayList dirarray3 = new ArrayList(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
-
-        // 보드판 알고리즘 클래스 인스턴스 생성
-        BoardAlgorithm boardAlgorithm = new BoardAlgorithm(4, 4, Board, answers);
-        // 보드판에 정답 알파벳 넣기
-        boardAlgorithm.MakeUpBoardAnswer(dirarray3);
-        //보드판에서 정답아닌곳에 랜덤 알파벳 구성
-        boardAlgorithm.MakeUpBoardAlphabet();
-        issucess = boardAlgorithm.isBoardSuccess;
-        // 보드판 알고리즘이 성공할때까지 계속 시도
-        while (!issucess) {
-            System.out.println("보드생성 실패!");
-            boardAlgorithm = new BoardAlgorithm(4, 4, Board, answers);
-            // 보드판에 정답 알파벳 넣기
-            boardAlgorithm.MakeUpBoardAnswer(dirarray3);
-            //보드판에서 정답아닌곳에 랜덤 알파벳 구성
-            boardAlgorithm.MakeUpBoardAlphabet();
-            issucess = boardAlgorithm.isBoardSuccess;
-
-        }
-
-        Board = boardAlgorithm.Successboard;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(Board[i][j].cellchar + " ");
+            StagePropertyInfo info = new StagePropertyInfo();
+            List<String> wordlist = dbConnectors.getWord(1,1);
+            System.out.println("realsword" + wordlist);
+            Collections.shuffle(wordlist);
+            List<String> hintlist = new ArrayList<>();
+            for(int i=0; i< wordlist.size(); i++)
+            {
+                String word = wordlist.get(i).replaceAll("\"","");
+                wordlist.set(i,word);
+                System.out.println(word);
+                if(!word.equals("ttt"))
+                {
+                    String hint = dbConnectors.getHint(word).get(0).replaceAll("\"","");
+                    hintlist.add(hint);
+                    System.out.println(hint);
+                }
             }
-            System.out.println();
-        }
-        String ss = Createserial(boardAlgorithm);
-    boardAlgorithm = (BoardAlgorithm) Desrial(ss);
+            System.out.println("wl : " + wordlist);
+            System.out.println("hl : " + hintlist);
+            GameBoard gameBoard = new GameBoard("easy",1,info,wordlist,hintlist);
+            System.out.println(gameBoard.tryAnswer("dog"));
+            System.out.println(gameBoard.tryAnswer("cat"));
+            System.out.println(gameBoard.tryAnswer("uk"));
+            System.out.println(gameBoard.getResult().getRestWord());
+            System.out.println(gameBoard.getResult().getAnser());
+            System.out.println(gameBoard.getResult().isWin());
 
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    String URL = "https://actions.o2o.kr/devsvr5/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr3/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -214,7 +195,6 @@ public class Main extends DialogflowApp {
         Map<String, Object> data = rb.getConversationData();
         Map<String, Object> htmldata = new HashMap<>();
         HtmlResponse htmlResponse = new HtmlResponse();
-        DBConnector dbConnector;
 
         String response;
         request.getConversationData().clear();
@@ -243,7 +223,7 @@ public class Main extends DialogflowApp {
                 String exp = dbConnector.getUserExp();
                 String coin = dbConnector.getUserCoin();
                 String hint = dbConnector.getUserHint();
-                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo);
+                UserInfo user = new UserInfo(level, exp, hint, coin, stageinfo,email);
                 System.out.println("userc ocin!!!! " + user.getMyCoin());
                 String serial = Createserial(user);
                 System.out.println("first Seiral!!!!1!!!!! : " + serial);
@@ -333,7 +313,7 @@ public class Main extends DialogflowApp {
         htmldata.put("myExp", user.getMyExp());
         htmldata.put("myHint", user.getMyHint());
         htmldata.put("myCoin", user.getMyCoin());
-        htmldata.put("fullExp",1024000);
+        htmldata.put("fullExp",user.getLevelUpExp());
         String response = tts.getTtsmap().get("main");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))
@@ -398,7 +378,6 @@ public class Main extends DialogflowApp {
                 .build();
     }
 
-
     public ActionResponse ingame(ActionRequest request) throws ExecutionException, InterruptedException {
         ResponseBuilder rb = getResponseBuilder(request);
         Map<String, Object> data = rb.getConversationData();
@@ -431,8 +410,30 @@ public class Main extends DialogflowApp {
 
         String response;
         // 게임보드 생성
-       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,dbConnector);
-       // 게임보드 직렬화 후 전송
+
+        int dif = 0;
+        if(difficulty.equals("easy"))
+            dif = 1;
+        else if(difficulty.equals("medium"))
+            dif = 2;
+        else if(difficulty.equals("hard"))
+            dif = 3;
+        //나중에 구성자 바꾸어야됌
+        DBConnector dbConnector = new DBConnector(user.getEmail());
+        List<String> wordlist = dbConnector.getWord(stage,dif);
+        Collections.shuffle(wordlist);
+        List<String> hintlist = new ArrayList<>();
+        for(int i=0; i< wordlist.size(); i++)
+        {
+            String word = wordlist.get(i).replaceAll("\"","");
+            wordlist.set(i,word);
+            String hint = dbConnector.getHint(word).get(0).replaceAll("\"","");
+            hintlist.add(hint);
+        }
+
+       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,wordlist,hintlist);
+        System.out.println("answerlist : " + gameBoard.getResult().getRestWord());
+           // 게임보드 직렬화 후 전송
         String boardserial = Createserial(gameBoard);
         data.put("gameboard",boardserial);
         char[][] board = gameBoard.getBoard();
@@ -466,6 +467,7 @@ public class Main extends DialogflowApp {
         // GameBoard정보 가져오기
         String boardserial = (String)data.get("gameboard");
         GameBoard gameBoard = (GameBoard) Desrial(boardserial);
+        System.out.println("before!!!!!! " + word);
         if (word.isEmpty()) {
 
             if (hint.equals("open")) {
@@ -480,10 +482,12 @@ public class Main extends DialogflowApp {
             }
 
         } else {
-
+                System.out.println("realereal word!!!! : "+ word);
             if (gameBoard.tryAnswer(word)) {
+                System.out.println(gameBoard.tryAnswer(word));
                 htmldata.put("command", "correct");
                 htmldata.put("matchpoint", gameBoard.GetAnswerPoint(word));
+                System.out.println(gameBoard.GetAnswerPoint(word));
                 response = "correct";
                 Result result = gameBoard.getResult();
                 if (result.isWin())
@@ -602,7 +606,9 @@ public class Main extends DialogflowApp {
 
         data.put("special case", true);
         htmldata.put("command", "ranking");
-
+        String userserial = (String)data.get("user");
+        UserInfo user = (UserInfo) Desrial(userserial);
+        htmldata.put("rank",user.getEmail());
         String response = tts.getTtsmap().get("ranking");
         return rb.add(new SimpleResponse().setTextToSpeech(response))
                 .add(htmlResponse.setUrl(URL).setUpdatedState(htmldata))

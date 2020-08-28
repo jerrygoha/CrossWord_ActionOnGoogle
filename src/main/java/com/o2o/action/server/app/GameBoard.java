@@ -1,13 +1,12 @@
 package com.o2o.action.server.app;
 
 
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 import javax.print.DocFlavor;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class GameBoard implements Serializable {
     // 보드 배열
@@ -30,9 +29,11 @@ public class GameBoard implements Serializable {
     private String difficulty;
     // 스테이지 프로퍼티 정보
     private StagePropertyInfo stageinfo;
-    // DB정보
-    private DBConnector dbConnector;
-    public GameBoard(String _difficulty, int _stage, StagePropertyInfo _stageinfo, DBConnector _db)
+    // 정답 배열
+    private List<String> wordlist;
+    // 힌트 배열
+    private List<String> hintlist;
+    public GameBoard(String _difficulty, int _stage, StagePropertyInfo _stageinfo, List<String>_wordlist,List<String>_hintlist )
     {
         // 매개변수 대입
         stageinfo = _stageinfo;
@@ -41,7 +42,8 @@ public class GameBoard implements Serializable {
         row = stageinfo.Stages[stage].getSize_Row();
         col = stageinfo.Stages[stage].getSize_Col();
         answercount = stageinfo.Stages[stage].getAnswerCount();
-        dbConnector = _db;
+        wordlist = _wordlist;
+        hintlist = _hintlist;
         // 보드판 생성
         makeBoard();
     }
@@ -83,59 +85,26 @@ public class GameBoard implements Serializable {
     // 정답 DB에서 가져오기
     private void loadAnswer()
     {
+        if(wordlist.size()<answercount || hintlist.size()<answercount)
+        {
+            System.out.println("DB의 정답이나 힌트 리스트가 정답 개수 보다 적습니다.");
+            return;
+
+        }
+
         answers = new AnswerWord[answercount];
-       /* int diff=0;
+        int dif = 0;
         if(difficulty.equals("easy"))
-        {
-            diff = 1;
-        }
+            dif = 1;
         else if(difficulty.equals("medium"))
-        {
-            diff = 2;
-        }else if(difficulty.equals("hard"))
-        {
-            diff  = 3;
-        }else
-        {
-            System.out.println("난이도 글자가 잘못들어옴");
-        }
-        System.out.println("stage " + stage + "diff : " + diff);
-        ArrayList<String> list = new ArrayList<>();
-        list = (ArrayList<String>) dbConnector.getWord(stage, diff);
-        System.out.println("List !!! : " + list);
-        int a[] = new int[answercount]; //int형 배열 선언
-        Random r = new Random(); //객체생성
-        for(int i=0;i<answercount;i++)    //숫자 6개를 뽑기위한 for문
-        {
-            a[i] = r.nextInt(list.size()); //1~10숫자중 랜덤으로 하나를 뽑아 a[0]~a[5]에 저장
-            for(int j=0;j<i;j++) //중복제거를 위한 for문
-            {
-                *//*현재 a[]에 저장된 랜덤숫자와 이전에 a[]에 들어간 숫자 비교
-                 ※예를 들어
-                 배열 a[3]에 숫자 6이 들어갔을때 이전에 완성된 배열 a[0],a[1],a[2]와 비교하여
-                 숫자 6이 중복되지 않을시 다음 a[4]으로 넘어가고, 중복된다면 다시 a[3]에 중복되지
-                 않는 숫자를 넣기 위하여 i를 한번 감소한후 처음 for문으로 돌아가 다시 a[3]을 채운다
-                 *//*
-                if(a[i]==a[j])
-                {
-                    i--;
-                }
-            }
-        }
+            dif = 2;
+        else if(difficulty.equals("hard"))
+            dif = 3;
         for(int i=0; i< answercount; i++)
         {
-         *//*   String word = list.get(a[i]);
-            ArrayList<String> hint =dbConnector.getHint(word.replaceAll("\"",""));
-         *//*   AnswerWord answerWord = new AnswerWord(word,new String[]{String.valueOf(hint).replaceAll("\"","")});
-            //answers[i]=answerWord;
-        }*/
-        AnswerWord answerWord = new AnswerWord("ant",new String[]{"anthint"});
-        answers[0] =  answerWord;
-
-        AnswerWord answerWord1 = new AnswerWord("cat",new String[]{"anthint"});
-        answers[1] =  answerWord1;
-        AnswerWord answerWord2 = new AnswerWord("dog",new String[]{"anthint"});
-        answers[2] =  answerWord2;
+            AnswerWord answerWord = new AnswerWord(wordlist.get(i),new String[]{hintlist.get(i)});
+            answers[i]=answerWord;
+        }
 
         Arrays.sort(answers);
     }
@@ -145,7 +114,7 @@ public class GameBoard implements Serializable {
         Board = new BoardCell[row][col];
         answerlist = new ArrayList<AnswerWord>();
         restanswerlist = new ArrayList<AnswerWord>();
-        // 정답 불러오기
+         // 정답 불러오기
         loadAnswer();
         // 채워야할 정답 리스트에 모든 정답 넣기
         for (int i=0; i<answercount; i++)
