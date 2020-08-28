@@ -63,7 +63,7 @@ public class DBConnector implements Serializable {
     public String getUserHint() {
         return user.get(0).getAsJsonObject().get("userHint").toString();
     }
-    public List<JsonArray> getTotalRank(){
+    public String[][] getTotalRank(){
         String getTotalRankUrl = defaultSendUrl + commandGetTotalRank;
         String getTotalRankResult = queryController.get(getTotalRankUrl);
         JsonArray totalRankArray = (JsonArray) jsonParser.parse(getTotalRankResult);
@@ -80,7 +80,7 @@ public class DBConnector implements Serializable {
         }
 
 
-        return Arrays.asList(totalRankArray);
+        return totalRank2X;
     }
 
     public int getMyRank(String email){
