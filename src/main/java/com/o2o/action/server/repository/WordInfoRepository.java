@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface WordInfoRepository extends PagingAndSortingRepository<WordInfo, Short> , Serializable {
     List<WordInfo> findAll();
-    List<WordInfo.wordMapping> findByStageDifficulty(String stageDifficulty);
+    List<WordInfo.wordMapping> findByStageDifficulty(Short stageDifficulty);
 }

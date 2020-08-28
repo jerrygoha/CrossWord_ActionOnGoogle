@@ -16,7 +16,7 @@ public class WordInfoController implements Serializable {
     WordInfoRepository repository;
 
     @RequestMapping("/getWord/{stageDifficulty}")
-    public List<WordInfo.wordMapping> getWord(@PathVariable String stageDifficulty){
+    public List<WordInfo.wordMapping> getWord(@PathVariable Short stageDifficulty){
         return repository.findByStageDifficulty(stageDifficulty);
     }
 }

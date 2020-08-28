@@ -12,7 +12,7 @@ public class WordInfo implements Serializable {
     private short word_seq;
 
     @Column(name = "stage_difficulty")
-    private String stageDifficulty;
+    private Short stageDifficulty;
 
     @Column(name = "word_content")
     private String wordContent;
@@ -20,7 +20,7 @@ public class WordInfo implements Serializable {
     @Column(name = "use_flag", nullable = false, columnDefinition = "boolean default true")
     private boolean useFlag;
 
-    public WordInfo(String stageDifficulty, String wordContent) {
+    public WordInfo(Short stageDifficulty, String wordContent) {
         this.stageDifficulty = stageDifficulty;
         this.wordContent = wordContent;
         this.useFlag = true;
@@ -40,10 +40,10 @@ public class WordInfo implements Serializable {
     public void setWordSeq(short word_seq) {
         this.word_seq = word_seq;
     }
-    public String getStageDifficulty() {
+    public Short getStageDifficulty() {
         return stageDifficulty;
     }
-    public void setStageDifficulty(String stageDifficulty) {
+    public void setStageDifficulty(Short stageDifficulty) {
         this.stageDifficulty = stageDifficulty;
     }
     public String getWordContent() {

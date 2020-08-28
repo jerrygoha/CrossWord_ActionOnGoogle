@@ -119,11 +119,10 @@ public class DBConnector implements Serializable {
 
 
 
-    public List<String> getWord(int stage, int difficulty){
-        System.out.println(stage + " " + difficulty);
+    public List<String> getWord(int difficulty){
+        System.out.println(difficulty);
         ArrayList<String> wordList = new ArrayList<>();
-        String sndn = "s"+stage+"d"+difficulty;
-        String getWordUrl = defaultSendUrl + commandGetWord + sndn;
+        String getWordUrl = defaultSendUrl + commandGetWord + difficulty;
         String getWordResult = queryController.get(getWordUrl);
         JsonArray wordArray = (JsonArray) jsonParser.parse(getWordResult);
         int size = wordArray.size();
