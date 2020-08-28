@@ -63,6 +63,11 @@ public class DBConnector implements Serializable {
     public String getUserHint() {
         return user.get(0).getAsJsonObject().get("userHint").toString();
     }
+//    public String setUserLevel(Short level, String email){
+//
+//    }
+
+
     public String[][] getTotalRank(){
         String getTotalRankUrl = defaultSendUrl + commandGetTotalRank;
         String getTotalRankResult = queryController.get(getTotalRankUrl);
