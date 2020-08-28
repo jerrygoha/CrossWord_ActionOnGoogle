@@ -75,7 +75,7 @@ public class Main extends DialogflowApp {
 
     }
 
-    String URL = "https://actions.o2o.kr/devsvr4/test/index.html";
+    String URL = "https://actions.o2o.kr/devsvr7/test/index.html";
 
     StagePropertyInfo stageinfo;
     TTS tts;
@@ -425,6 +425,7 @@ public class Main extends DialogflowApp {
         UserInfo user = (UserInfo) Desrial(userserial);
         // 유저 게임 시작 시 코인 감소
         user.GameStartChange(stage,difficulty);
+        dbConnector.updateUserCoin(user.getMyCoin(),user.getEmail());
         // 유저 정보 저장
         userserial = Createserial(user);
         data.put("user",userserial);
@@ -472,6 +473,7 @@ public class Main extends DialogflowApp {
                 htmldata.put("command", "openhint");
                 // 힌트 개수 차감
                 user.ConsumeHintCount();
+                dbConnector.updateUserHint(user.getMyHint(),user.getEmail());
                 htmldata.put("hint", gameBoard.getHintMessage());
                 response = "open hint";
             } else {
@@ -530,6 +532,9 @@ public class Main extends DialogflowApp {
         {
             response = tts.getTtsmap().get("success");
             user.UserStageClearChange((int)stage,difficulty);
+            dbConnector.updateUserExp(user.getMyExp(),user.getEmail());
+            dbConnector.updateUserCoin(user.getMyCoin(),user.getEmail());
+            dbConnector.updateUserLevel(user.getLevel(),user.getEmail());
         }
 
         else

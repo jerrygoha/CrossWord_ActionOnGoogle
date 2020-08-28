@@ -61,6 +61,7 @@ public class UserInfo implements Serializable {
         int levelupcoin = stageInfo.Stages[mylevel].getLevelUpCoin();
         mylevel++;
         myCoin += levelupcoin;
+
     }
     // 게임상에서 힌트 사용
     public void ConsumeHintCount()
