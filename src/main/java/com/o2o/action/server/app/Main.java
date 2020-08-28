@@ -411,7 +411,7 @@ public class Main extends DialogflowApp {
             hintlist.add(hint);
         }
 
-       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,wordlist,hintlist);
+       GameBoard gameBoard = new GameBoard(difficulty, stage,stageinfo,wordlist,hintlist,user.getLevel());
         System.out.println("answerlist : " + wordlist);
            // 게임보드 직렬화 후 전송
         String boardserial = Createserial(gameBoard);

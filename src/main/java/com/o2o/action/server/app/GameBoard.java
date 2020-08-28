@@ -1,8 +1,5 @@
 package com.o2o.action.server.app;
 
-
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
 import javax.print.DocFlavor;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -33,7 +30,9 @@ public class GameBoard implements Serializable {
     private List<String> wordlist;
     // 힌트 배열
     private List<String> hintlist;
-    public GameBoard(String _difficulty, int _stage, StagePropertyInfo _stageinfo, List<String>_wordlist,List<String>_hintlist )
+    // 유저 레벨
+    private int userlevel;
+    public GameBoard(String _difficulty, int _stage, StagePropertyInfo _stageinfo, List<String>_wordlist,List<String>_hintlist, int _userlevel )
     {
         // 매개변수 대입
         stageinfo = _stageinfo;
@@ -44,6 +43,7 @@ public class GameBoard implements Serializable {
         answercount = stageinfo.Stages[stage].getAnswerCount();
         wordlist = _wordlist;
         hintlist = _hintlist;
+        userlevel = _userlevel;
         // 보드판 생성
         makeBoard();
     }
@@ -120,7 +120,25 @@ public class GameBoard implements Serializable {
         {
             restanswerlist.add(answers[i]);
         }
+        // 오른쪽 아래 1~5스테이지
         ArrayList dirarray1 = new ArrayList(Arrays.asList(2,4));
+        // 오른쪽, 오른쪽 아래,아래 6~9스테이지
+        ArrayList dirarray2 = new ArrayList(Arrays.asList(2,3,4));
+        // 전방향 10스테이지
+        ArrayList dirarray3 = new ArrayList(Arrays.asList(0,1,2,3,4,5,6,7));
+        ArrayList dirarray = null;
+        if(userlevel<6)
+        {
+            dirarray = dirarray1;
+        }
+        else if(userlevel<10)
+        {
+            dirarray = dirarray2;
+        }else if( userlevel>=10)
+        {
+            dirarray = dirarray3;
+        }
+
         // 보드판 알고리즘 클래스 인스턴스 생성
         BoardAlgorithm boardAlgorithm = new BoardAlgorithm(col,row,Board,answers);
         // 보드판 알고리즘이 성공할때까지 계속 시도
@@ -130,7 +148,7 @@ public class GameBoard implements Serializable {
             System.out.println("보드생성 실패!");
             boardAlgorithm = new BoardAlgorithm(col,row,Board,answers);
             // 보드판에 정답 알파벳 넣기
-            boardAlgorithm.MakeUpBoardAnswer(dirarray1);
+            boardAlgorithm.MakeUpBoardAnswer(dirarray);
             //보드판에서 정답아닌곳에 랜덤 알파벳 구성
             boardAlgorithm.MakeUpBoardAlphabet();
             issucess = boardAlgorithm.isBoardSuccess;
