@@ -97,13 +97,17 @@ public class UserInfo implements Serializable {
         // 현재 풀 경험치는 현재 레벨의 레벨업 경험치에서 이전 레벨의 레벨업 경험치를 뺀거임
         myCurrentFullExp = stageInfo.Stages[mylevel].getLevelUpExp() - stageInfo.Stages[mylevel-1].getLevelUpExp();
         // 현재 경험치는 현재 누적 경험치 - 이전 레벨의 레벨업 경험치임.
-        myCurrentExp = 0;
+        myCurrentExp = myExp - stageInfo.Stages[mylevel-1].getLevelUpExp();
 
     }
     // 게임상에서 힌트 사용
     public void ConsumeHintCount()
     {
-        myHint--;
+        if(myHint>0)
+        {
+            myHint--;
+        }
+
     }
     // 스테이지 클리어 - 경험치, 코인 증가
     public void UserStageClearChange(int _stage, String _difficulty)

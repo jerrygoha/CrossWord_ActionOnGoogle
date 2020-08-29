@@ -4,40 +4,27 @@ import java.io.Serializable;
 
 public class UserSettingInfo implements Serializable {
     // 배경음
-    private boolean BackGroundSound;
+    private int BackGroundSound;
     // 효과음
-    private boolean SoundEffect;
+    private int SoundEffect;
 
     public UserSettingInfo()
     {
-        BackGroundSound = true;
-        SoundEffect = true;
+        BackGroundSound = 1;
+        SoundEffect = 1;
     }
-    public void setBackGroundSound(String sound, int onoff) {
-        System.out.println("sound : " + sound + "onoff : " + onoff);
-        boolean isonoff = onoff==1? true:false;
-        if(sound.equals("BackGround"))
-        {
-            BackGroundSound = isonoff;
-        }
-        else if(sound.equals("SoundEffect"))
-        {
-            SoundEffect = isonoff;
-        }
-        else
-        {
-            System.out.println("Sound의 종류가 다릅니다");
-        }
+    public void setBackGroundSound( int onoff) {
+            BackGroundSound= onoff;
     }
 
-    public void setSoundEffect(boolean soundEffect) {
-        SoundEffect = soundEffect;
+    public void setSoundEffect(int onoff) {
+        SoundEffect = onoff;
     }
-    public boolean isBackGroundSound() {
+    public int isBackGroundSound() {
         return BackGroundSound;
     }
 
-    public boolean isSoundEffect() {
+    public int isSoundEffect() {
         return SoundEffect;
     }
 }

@@ -22,7 +22,7 @@ public class AnswerWord implements Comparable, Serializable {
         String LenSt = "";
         for(int i=0; i< Answer.length(); i++)
         {
-            LenSt +="X ";
+            LenSt +="_ ";
         }
         HintsStack.push(LenSt);
 

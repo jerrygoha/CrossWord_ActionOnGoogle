@@ -44,7 +44,7 @@ public class DBConnector implements Serializable {
         }else{
             //이미 등록된 사용
             //유저 한명 data 전체 row
-             user = (JsonArray) jsonParser.parse(result);
+            user = (JsonArray) jsonParser.parse(result);
             String userData = user.toString();
             System.out.println("user = " + userData);
             System.out.println(user.get(0).getAsJsonObject().size());
@@ -153,11 +153,3 @@ public class DBConnector implements Serializable {
     }
 
 }
-
-
-
-
-
-
-
-
