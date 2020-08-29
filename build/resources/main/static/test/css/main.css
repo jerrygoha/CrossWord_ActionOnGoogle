@@ -476,7 +476,7 @@ button {
     border-radius : 0.5vw;
 }
 ::-webkit-progress-value {
-    background-color: #0a1b4c;
+    background-color: #4b8de4;
     border-radius : 0.5vw;
 }
 /*setting*/
@@ -585,13 +585,12 @@ input:checked + .slider:before {
     margin-top : 5vh;
 }
 #rank{
-    height: 8vh;
+    height: 9vh;
     display : flex;
     font-size : 2vw;
 }
 .ranking{
-    height: 30vh;
-    margin-left: 3vw;
+    height: 34vh;
     overflow : auto;
 }
 .ranking::-webkit-scrollbar {
@@ -609,22 +608,23 @@ input:checked + .slider:before {
     background-color: rgba(255,255,255,0.2);
     border-radius: 1vh;
     border-color : white;
-    margin-right : 1vw;
     display : flex;
     width : 38vw;
-    height : 7vh;
+    height : 6vh;
     justify-content: left;
     padding-left : 2vw;
-    margin-bottom : 1vh;
+    padding-top : 1vh;
+    margin-right : 1vw;
 }
 #rankexp{
     background-color: rgba(255,255,255,0.2);
     border-radius: 1vh;
+    padding-top : 1vh;
     border-color : white;
     margin-right : 1em;
     display : flex;
     width : 18vw;
-    height : 7vh;
+    height : 6vh;
     justify-content: center;
     white-space : pre-wrap;
 }
@@ -650,6 +650,7 @@ input:checked + .slider:before {
     padding-top: 3vh;
     text-align : center;
     margin-right: 6vh;
+    font-size : 3vh;
 }
 #top{
     height: 18vh;
@@ -673,6 +674,8 @@ input:checked + .slider:before {
     border-color : white;
     padding-top: 3vh;
     text-align : center;
+    font-size : 3vh;
+
 }
 #cointop{
     height: 18vh;
