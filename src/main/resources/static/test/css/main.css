@@ -304,14 +304,13 @@ button {
     flex-direction: row;
     position: relative;
     bottom: 1vh;
-    right: 4vw;
+    right: 5.5vw;
 }
 #gameBoard {
     width: 45vw;
     height: 75vh;
     border: 2px solid white;
     border-radius: 1.4vh;
-    /*padding: 1vh;*/
 }
 .rowBox {
     display: flex;
@@ -319,11 +318,11 @@ button {
 }
 
 .alphabetBox {
+    border: 2px solid rgba(255, 255, 255, 0.3);
     background-color: rgba(255,255,255,0.4);
     display: flex;
     justify-content: center;
     align-items: center;
-    /*margin: 0.1vh;*/
 }
 
 .alphabet {
@@ -379,7 +378,7 @@ button {
     font-size: 4vh;
     text-align: center;
     color: black;
-    background-color: #fefefe;
+    background-color: #ccff99;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
@@ -646,11 +645,10 @@ input:checked + .slider:before {
 #HintBox{
     background-color: rgba(255,255,255,0.2);
     border-radius: 0.5vh;
-    border-color : white;
     padding-top: 3vh;
     text-align : center;
     margin-right: 6vh;
-    font-size : 3vh;
+    font-size : 3.5vh;
 }
 #top{
     height: 18vh;
@@ -674,7 +672,7 @@ input:checked + .slider:before {
     border-color : white;
     padding-top: 3vh;
     text-align : center;
-    font-size : 3vh;
+    font-size : 3.5vh;
 
 }
 #cointop{
@@ -695,7 +693,7 @@ input:checked + .slider:before {
     border-color : white;
     height: 5vh;
     width : 13vw;
-    font-size : 2vw;
+    font-size : 3.3vh;
     margin-top : 45vh;
     margin-left : 13vw;
     text-align : center;
