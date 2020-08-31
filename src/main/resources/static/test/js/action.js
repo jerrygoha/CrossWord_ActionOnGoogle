@@ -1028,40 +1028,6 @@ class Action {
                     document.querySelector("#input2").checked = true;
                 }
             },
-            SETTINGSELECT: function (data) {
-            console.log("실행: settingselect");
-            document.querySelector("#coinBox").style.visibility = "visible";
-                let sound = data.sound; //1. soundEffect 2.background sound
-                let onoff = data.onoff; //1.  0오면 off/1오면 on
-                if ((onoff == "0") && (sound == "SoundEffect")) {
-                    correctAudio.volume = 0;
-                    wrongAudio.volume = 0;
-                    successAudio.volume = 0;
-                    failAudio.volume = 0;
-                    document.querySelector("#input").checked = false;
-                }
-                if ((onoff == "1") && (sound == "SoundEffect")) {
-                    correctAudio.volume = 1;
-                    wrongAudio.volume = 1;
-                    successAudio.volume = 1;
-                    failAudio.volume = 1;
-                    document.querySelector("#input").checked = true;
-                }
-                if ((onoff == "0") && (sound == "BackGround")) {
-                    correctAudio.volume = 0;
-                    wrongAudio.volume = 0;
-                    successAudio.volume = 0;
-                    failAudio.volume = 0;
-                    document.querySelector("#input2").checked = false;
-                }
-                if ((onoff == "1") && (sound == "BackGround")) {
-                    correctAudio.volume = 1;
-                    wrongAudio.volume = 1;
-                    successAudio.volume = 1;
-                    failAudio.volume = 1;
-                    document.querySelector("#input2").checked = true;
-                }
-            },
             RANKING: function (data) {
                 console.log("실행 : ranking");
                 document.querySelector("#coinBox").style.visibility = "visible";
