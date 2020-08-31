@@ -1,4 +1,13 @@
 function stepLock(step) {
+    const totalStep = 10;
+    if(step > 12) {
+        const nextPage = document.createElement("div");
+        nextPage.setAttribute("id", "nextPage");
+        const nextIcon = document.createElement("i");
+        nextIcon.setAttribute("class", "fa fa-angle-right fa-4x");
+        nextPage.appendChild(nextIcon);
+        document.querySelector("#stepBox").appendChild(nextPage);
+    }
     let stepNum = 0;
     const stepBox = document.querySelector("#stepButton");
     for (let row = 0; row < 3; row++) {
@@ -6,7 +15,7 @@ function stepLock(step) {
         stepRow.setAttribute("id", "stepRow");
         stepBox.appendChild(stepRow);
         for (let col = 0; col < 4; col++) {
-            if (stepNum == 10) return;
+            if (stepNum == totalStep) return;
             stepNum++;
             const underBox = document.createElement("div");
             if (step < stepNum) { //disable
@@ -167,6 +176,21 @@ class Action {
      */
     constructor(scene) {
 
+//        if (navigator.userAgent.match(/Android/i)) { //안드로이드일 때만 가로화면 고정시키기
+//            const orientation = window.orientation;
+//            if(orientation != undefined) {
+//                if(orientation == 0) {
+//                     window.screen.
+//                }
+//            }
+//             const lockScreen = async () => {
+//                 return await window.screen.orientation.lock("landscape-primary");
+//             };
+//             lockScreen().then(function (result) {
+//                 console.log("lnscp?? : " + result);
+//             });
+//        }
+
         // index.html 안의 <div id="screen"></div>
         const container = document.querySelector("#screen"); // container
         const headerheight = async () => {
@@ -233,6 +257,8 @@ class Action {
             },
             MAIN: function (data) {
                 console.log("실행 : main");
+                if(document.querySelector("#coinBox") != null)
+                    document.querySelector("#coinBox").style.visibility = "visible";
 
                 while (container.hasChildNodes()) {
                     container.removeChild(container.firstChild);
@@ -386,6 +412,7 @@ class Action {
             },
             STAGESELECT: function (data) {
                 console.log("실행 : stage");
+                document.querySelector("#coinBox").style.visibility = "visible";
                 /**
                  * 메인 화면, 중앙에 생성했던
                  * continue, view all 버튼 제거
@@ -402,16 +429,11 @@ class Action {
                 const stepButton = document.createElement("div");
                 stepButton.setAttribute("id", "stepButton");
                 stepBox.appendChild(stepButton);
-                const nextPage = document.createElement("div");
-                nextPage.setAttribute("id", "nextPage");
-                const nextIcon = document.createElement("i");
-                nextIcon.setAttribute("class", "fa fa-angle-right fa-4x");
-                nextPage.appendChild(nextIcon);
-                stepBox.appendChild(nextPage);
                 stepLock(level); //단계 버튼 생성(10개)
             },
             DIFFICULTYSELECT: function (data) {
                 console.log("실행 : difficulty");
+                document.querySelector("#coinBox").style.visibility = "visible";
                 let winMoney1 = 0;
                 let winMoney2 = 0;
                 let winMoney3 = 0;
@@ -510,6 +532,8 @@ class Action {
             },
             INGAME: function (data) {
                 console.log("실행 : inGame");
+                document.querySelector("#coinBox").style.visibility = "hidden";
+                console.log("cnbx: " + document.querySelector("#coinBox").style.visible);
                 if (document.querySelector("#difficultyBox") != null)
                     container.removeChild(document.querySelector("#difficultyBox"));
                 if (document.querySelector("#resultBox") != null)
@@ -569,8 +593,8 @@ class Action {
                 const gameBoard = document.createElement("div");
                 gameBoard.setAttribute("id", "gameBoard");
                 gameBoardBox.appendChild(gameBoard);
-                const gameBoardHeight = gameBoard.clientHeight;
-                const gameBoardWidth = gameBoard.clientWidth;
+                const gameBoardHeight = gameBoard.clientHeight - (boardRow*4);
+                const gameBoardWidth = gameBoard.clientWidth - (boardCol*4);
                 //게임판 안에 넣을 n x n 배열
                 for (let col = 0; col < boardCol; col++) {
                     const rowBox = document.createElement("div");
@@ -628,7 +652,6 @@ class Action {
                 } else if (difficulty == 3) {
                     document.querySelector("#coinText").textContent = myCoin - betMoney3;
                 }
-                console.log("mycoin - betMoney" + myCoin - betMoney1);
             },
             CORRECT: function (data) {
                 console.log("실행 : correct");
@@ -671,92 +694,94 @@ class Action {
                 gameBoard.classList.add("shake");
             },
             OPENHINT: function (data) {
-                console.log("실행 : openHint");
-                /**
-                 * hint = data.hint -> fulfillment에서 보내주는 hint
-                 * 게임판을 가리고 힌트를 보여줌
-                 * 타이머가 잠시 멈춤
-                 */
-                const hint = data.hint;
-                //힌트를 열면 타이머를 잠시 멈춤
-                Timer.stop();
-                const backgroundModal = document.createElement("div");
-                backgroundModal.setAttribute("class", "backgroundModal");
-                backgroundModal.setAttribute("id", "backgroundModal");
-                container.appendChild(backgroundModal);
-                const contentModal = document.createElement("div");
-                contentModal.setAttribute("class", "contentModal");
-                contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
-                contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
-                backgroundModal.appendChild(contentModal);
-                const hintModalText = document.createElement("p");
-                hintModalText.textContent = "HINT";
-                contentModal.appendChild(hintModalText);
-                contentModal.appendChild(document.createElement("br"));
-                contentModal.appendChild(document.createElement("hr"));
-                contentModal.appendChild(document.createElement("br"));
-                //사용자의 힌트 개수가 1개 이상인지 체크
-                if (myHint >= 1) {
-                    if (hint.length == 1) { //첫 글자는 알파벳이고 뒤부터는 알파벳이 아닌 경우
-                        backgroundModal.style.display = "none";
-                        console.log(hint);
-                        for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                            document.getElementsByName(hint)[i].style.textShadow = "1px 1px 8px #FF0000";
-                        setTimeout(function () {
-                            /*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*/
-                            Timer.resume();
-                            for (let i = 0; i < document.getElementsByName(hint).length; i++)
-                                document.getElementsByName(hint)[i].style.textShadow = "none";
-                            const usedHint = document.querySelector("#hintScrollBox");
-                            const content = document.createElement("p");
-                            content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
-                            usedHint.appendChild(content);
-                        }, 5000);
-                        //사용자의 남은 힌트를 보여줌
-                        const remainingHint = document.querySelector("#hintText");
-                        if (myHint > 0) myHint--;
-                        remainingHint.textContent = myHint;
-                    } else if (hint.length > 1) {
-                        const hintModal = document.createElement("p");
-                        if (hint != "noHint") {
-                            hintModal.textContent = hint;
-                            console.log(hint);
-                            contentModal.appendChild(hintModal);
-                            //사용자의 남은 힌트를 보여줌
-                            const remainingHint = document.querySelector("#hintText");
-                            if (myHint > 0) myHint--;
-                            remainingHint.textContent = myHint;
-                        } else if (hint == "noHint") {
-                            hintModal.textContent = "Please charge your hint";
-                            contentModal.appendChild(hintModal);
-                        }
-                        backgroundModal.style.display = "block";
-                        setTimeout(function () {
-                            backgroundModal.style.display = "none";
-                            Timer.resume();
-                            if (hint != "noHint") {
-                                const usedHint = document.querySelector("#hintScrollBox");
-                                const content = document.createElement("p");
-                                content.textContent = hint;
-                                console.log(hint);
-                                usedHint.appendChild(content);
+                            console.log("실행 : openHint");
+                            /**
+                             * hint = data.hint -> fulfillment에서 보내주는 hint
+                             * 게임판을 가리고 힌트를 보여줌
+                             * 타이머가 잠시 멈춤
+                             */
+                            const hint = data.hint;
+                            //힌트를 열면 타이머를 잠시 멈춤
+                            // Timer.stop(); //demo를 위함
+                            const backgroundModal = document.createElement("div");
+                            backgroundModal.setAttribute("class", "backgroundModal");
+                            backgroundModal.setAttribute("id", "backgroundModal");
+                            container.appendChild(backgroundModal);
+                            const contentModal = document.createElement("div");
+                            contentModal.setAttribute("class", "contentModal");
+                            contentModal.style.height = document.querySelector("#gameBoard").clientHeight + "px";
+                            contentModal.style.width = document.querySelector("#gameBoard").clientWidth + "px";
+                            backgroundModal.appendChild(contentModal);
+                            const hintModalText = document.createElement("p");
+                            hintModalText.textContent = "HINT";
+                            contentModal.appendChild(hintModalText);
+                            contentModal.appendChild(document.createElement("br"));
+                            contentModal.appendChild(document.createElement("hr"));
+                            contentModal.appendChild(document.createElement("br"));
+                            //사용자의 힌트 개수가 1개 이상인지 체크
+                            if (myHint >= 1) {
+                                if (hint.length == 1) {
+                                    backgroundModal.style.display = "none";
+                                    console.log(hint);
+                                    for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                                        document.getElementsByName(hint)[i].style.textShadow = "0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #49ff18, 0 0 30px #49FF18, 0 0 40px #49FF18, 0 0 55px #49FF18, 0 0 75px #49ff18";
+                                    /*setTimeout(function () { //demo를 위해 주석처리
+                                        *//*글자가 다시 원상태로 돌아오록 함, usedHint에 추가 "first alphabet : A"*//*
+                                         Timer.resume();
+                                        for (let i = 0; i < document.getElementsByName(hint).length; i++)
+                                            document.getElementsByName(hint)[i].style.textShadow = "none";
+                                        const usedHint = document.querySelector("#hintScrollBox");
+                                        const content = document.createElement("p");
+                                        content.textContent = "first alphabet is \"" + hint.toUpperCase() + "\"";
+                                        usedHint.appendChild(content);
+                                    }, 5000);*/
+                                    //사용자의 남은 힌트를 보여줌
+                                    const remainingHint = document.querySelector("#hintText");
+                                    if (myHint > 0) myHint--;
+                                    remainingHint.textContent = myHint;
+                                } else if (hint.length > 1) {
+                                    Timer.stop(); // demo를 위함
+                                    const hintModal = document.createElement("p");
+                                    if (hint != "noHint") {
+                                        hintModal.textContent = hint;
+                                        console.log(hint);
+                                        contentModal.appendChild(hintModal);
+                                        //사용자의 남은 힌트를 보여줌
+                                        const remainingHint = document.querySelector("#hintText");
+                                        if (myHint > 0) myHint--;
+                                        remainingHint.textContent = myHint;
+                                    } else if (hint == "noHint") {
+                                        hintModal.textContent = "Please charge your hint";
+                                        contentModal.appendChild(hintModal);
+                                    }
+                                    backgroundModal.style.display = "block";
+                                    setTimeout(function () {
+                                        backgroundModal.style.display = "none";
+                                        Timer.resume();
+                                        if (hint != "noHint") {
+                                            const usedHint = document.querySelector("#hintScrollBox");
+                                            const content = document.createElement("p");
+                                            content.textContent = hint;
+                                            console.log(hint);
+                                            usedHint.appendChild(content);
+                                        }
+                                    }, 5000);
+                                }
+                            } else if (myHint <= 0) {
+                                //사용자의 남은 힌트가 없다면 힌트를 보여주지 않음
+                                const hintModal = document.createElement("p");
+                                hintModal.textContent = "Please charge your hint";
+                                contentModal.appendChild(hintModal);
+                                backgroundModal.style.display = "block";
+                                setTimeout(function () {
+                                    backgroundModal.style.display = "none";
+                                    Timer.resume();
+                                }, 5000);
                             }
-                        }, 5000);
-                    }
-                } else if (myHint <= 0) {
-                    //사용자의 남은 힌트가 없다면 힌트를 보여주지 않음
-                    const hintModal = document.createElement("p");
-                    hintModal.textContent = "Please charge your hint";
-                    contentModal.appendChild(hintModal);
-                    backgroundModal.style.display = "block";
-                    setTimeout(function () {
-                        backgroundModal.style.display = "none";
-                        Timer.resume();
-                    }, 5000);
-                }
-            },
+                        },
             RESULT: function (data) {
                 console.log("실행 : result");
+                document.querySelector("#coinBox").style.visibility = "visible";
                 if (document.querySelector("#inGameBox") != null) {
                     container.removeChild(document.querySelector("#inGameBox"));
                 }
@@ -815,6 +840,7 @@ class Action {
                 coin.setAttribute("class", "fa fa-eur");
                 coinBox.appendChild(coin);
                 const mycoin = document.createElement("div");
+                mycoin.setAttribute("id", "resultCoinText");
                 mycoin.textContent = myCoin;
                 coinBox.appendChild(mycoin);
                 if (result == "success") {
@@ -878,6 +904,7 @@ class Action {
             },
             SETTING: function (data) {
                 console.log("실행 : setting");
+                document.querySelector("#coinBox").style.visibility = "visible";
 
                 if (document.querySelector("#stepBox") != null) {
                     container.removeChild(document.querySelector("#stepBox"));
@@ -968,6 +995,8 @@ class Action {
                 SettingBox.appendChild(ResetButton);
             },
             SETTINGSELECT: function (data) {
+            console.log("실행: settingselect");
+            document.querySelector("#coinBox").style.visibility = "visible";
                 let sound = data.sound; //1. soundEffect 2.background sound
                 let onoff = data.onoff; //1.  0오면 off/1오면 on
                 if ((onoff == "0") && (sound == "SoundEffect")) {
@@ -1001,6 +1030,7 @@ class Action {
             },
             RANKING: function (data) {
                 console.log("실행 : ranking");
+                document.querySelector("#coinBox").style.visibility = "visible";
                 if (document.querySelector("#stepBox") != null) {
                     container.removeChild(document.querySelector("#stepBox"));
                 }
@@ -1060,6 +1090,7 @@ class Action {
             },
             SHOP: function (data) {
                 console.log("실행 : shop");
+                document.querySelector("#coinBox").style.visibility = "visible";
                 /**
                  * 상점은
                  * 뒤로 가기
